@@ -1,0 +1,98 @@
+{
+  "user_permissions": [
+    {
+      "email": "a0903383712@gmail.com",
+      "role": "manager",
+      "user_id_string": "C0001",
+      "password": "12345",
+      "status": "已註冊",
+      "created_at": "2026-03-06T12:48:13.405403+00:00"
+    },
+    {
+      "email": "testcoach001@gmail.com",
+      "role": "coach",
+      "user_id_string": "B001",
+      "password": "12345",
+      "status": "已註冊",
+      "created_at": "2026-03-06T12:54:40.791239+00:00"
+    },
+    {
+      "email": "teststudent001@gmail.com",
+      "role": "student",
+      "user_id_string": "A001",
+      "password": "12345",
+      "status": "已註冊",
+      "created_at": "2026-03-07T10:09:50.526931+00:00"
+    },
+    {
+      "email": "testcoach002@gmail.com",
+      "role": "coach",
+      "user_id_string": "B002",
+      "password": "12345",
+      "status": "已註冊",
+      "created_at": "2026-03-12T03:18:47.263527+00:00"
+    },
+    {
+      "email": "testcoach003@gmail.com",
+      "role": "coach",
+      "user_id_string": "B003",
+      "password": "12345",
+      "status": "已註冊",
+      "created_at": "2026-03-12T06:10:36.227126+00:00"
+    }
+  ],
+  "articles": [
+    {
+      "id": "70d05f99-412a-41de-9f38-866d7747bd7b",
+      "title": "健身前後怎麼吃？營養師教你正確飲食，增肌減脂效果加倍！",
+      "category": "Nutrition",
+      "author": "蔡宜方 營養師",
+      "source": "米蔚 MIDWAY",
+      "publish_date": "2026-03-11",
+      "excerpt": "您將得到的收穫...\n先了解身體中的三類能量系統：磷酸機酸、糖酵解、有氧\n❶磷酸機酸系統\n❷糖酵解系統\n❸有氧系統",
+      "content": null,
+      "image_url": "https://uxbqrpsmvaighyjrdfwd.supabase.co/storage/v1/object/public/articles/klc3f9845b-1773210440628.png",
+      "link_url": "https://midwayforyou.com/nutritionist-what-to-eat-before-and-after-a-workout/",
+      "created_at": "2026-03-11T06:29:15.061264+00:00"
+    },
+    {
+      "id": "023fe349-1235-4047-98c6-c1447fac7c2c",
+      "title": "女生別再只練重訓！TRX＋皮拉提斯 7 動作，瘦小腹、練出緊實高級線條！",
+      "category": "Fitness",
+      "author": " 安妮",
+      "source": "Women'sHealth",
+      "publish_date": "2026-03-11",
+      "excerpt": "7 個受皮拉提斯啟發的 TRX 動作\nWomen's Health美力圈SAY",
+      "content": null,
+      "image_url": "https://uxbqrpsmvaighyjrdfwd.supabase.co/storage/v1/object/public/articles/aagfgvs7biq-1773210658609.png",
+      "link_url": "https://www.womenshealthmag.com/tw/fitness/work-outs/a70599673/trx-reformer-pilates/",
+      "created_at": "2026-03-11T06:36:00.084634+00:00"
+    },
+    {
+      "id": "e03b1dd2-107b-4b49-80c4-8f3f7fae6737",
+      "title": "【2026最詳細】｜8款最有特色的魚油推薦，每款適合的需求都不同！",
+      "category": "Nutrition",
+      "author": "未知",
+      "source": "Medical News",
+      "publish_date": "2026-03-11",
+      "excerpt": "5大魚油功效介紹\n魚油怎麼挑？把握7大挑選原則\n8大頂級魚油推薦\n結論",
+      "content": null,
+      "image_url": "https://uxbqrpsmvaighyjrdfwd.supabase.co/storage/v1/object/public/articles/mkofay8ox89-1773211236127.png",
+      "link_url": "https://medicalnewstw.com/article/02-c-fishoil-comparison-traffic-2/?gad_source=1&gad_campaignid=22499121499&gbraid=0AAAAA-Xwp53t7c2u-LSnlrj2Dpym2zWIz&gclid=Cj0KCQjwgr_NBhDFARIsAHiUWr6Jx0N1TGQSxl_ErwMwX2T7Vjwk9q7Ts5R72saslox6zBFEjrlAm9gaAn06EALw_wcB",
+      "created_at": "2026-03-11T06:42:56.916369+00:00"
+    },
+    {
+      "id": "e8fc53f6-1ffc-4bc2-97e7-2ff153df1af1",
+      "title": "3招養成運動習慣！設立簡單目標，規律運動好處多",
+      "category": "Nutrition",
+      "author": "賴建翰醫師",
+      "source": "hello 醫師",
+      "publish_date": "2026-03-11",
+      "excerpt": "究竟該如何養成規律運動習慣，避免三分鐘熱度？不妨嘗試看看《Hello醫師》將提供的3個小訣竅，幫助你找到運動的樂趣，以便持之以恆的享有運動帶來的好處",
+      "content": null,
+      "image_url": "https://uxbqrpsmvaighyjrdfwd.supabase.co/storage/v1/object/public/articles/whgudqd0axe-1773211531335.png",
+      "link_url": "https://helloyishi.com.tw/fitness/fitness-motivation/how-to-stay-motivated-to-exercise/",
+      "created_at": "2026-03-11T06:46:01.155639+00:00"
+    }
+  ]
+}

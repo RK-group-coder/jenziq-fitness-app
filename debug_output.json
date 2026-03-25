@@ -1,0 +1,65 @@
+{
+  "profiles": [
+    {
+      "email": "a0903383712@gmail.com",
+      "name": "楊柏諺",
+      "gender": "男",
+      "age": 20,
+      "phone": "0903383712",
+      "branch": null,
+      "first_login_completed": true,
+      "created_at": "2026-03-06T12:53:09.733498+00:00",
+      "total_xp": 0,
+      "avatar_url": null,
+      "bio": null,
+      "last_checkin_date": null,
+      "role": null
+    },
+    {
+      "email": "teststudent001@gmail.com",
+      "name": "學員",
+      "gender": "男",
+      "age": 20,
+      "phone": "0903383712",
+      "branch": null,
+      "first_login_completed": true,
+      "created_at": "2026-03-07T10:10:59.063493+00:00",
+      "total_xp": 10,
+      "avatar_url": "https://uxbqrpsmvaighyjrdfwd.supabase.co/storage/v1/object/public/student-dashboard-image/avatars/teststudent001_gmail_com-1773058241223.png",
+      "bio": "目前還算是健身新手，很多動作和器材都在學習中，希望在教練和大家的指導下慢慢進步。我個性比較有耐心，只要看到一點點進步就會很有動力繼續努力。未來希望能養成長期運動的習慣",
+      "last_checkin_date": "2026-03-09",
+      "role": null
+    },
+    {
+      "email": "testcoach001@gmail.com",
+      "name": "測試教練001",
+      "gender": "男",
+      "age": 38,
+      "phone": "0902214578",
+      "branch": "MU 沐光瑜珈運動空間",
+      "first_login_completed": true,
+      "created_at": "2026-03-06T12:56:00.817926+00:00",
+      "total_xp": 10900,
+      "avatar_url": "https://uxbqrpsmvaighyjrdfwd.supabase.co/storage/v1/object/public/student-dashboard-image/avatars/anonymous-1772968308949.png",
+      "bio": "哈囉！我是YUAN。我知道開始運動、改變飲食習慣真的不容易，所以我不會給學員太大的壓力。我的任務是陪著你從零開始，把複雜的動作變簡單，把枯燥的菜單變有趣。",
+      "last_checkin_date": "2026-03-10",
+      "role": null
+    },
+    {
+      "email": "testcoach002@gmail.com",
+      "name": "測試教練2",
+      "gender": "男",
+      "age": 25,
+      "phone": "0978548754",
+      "branch": "MU 沐光瑜珈運動空間",
+      "first_login_completed": true,
+      "created_at": "2026-03-12T03:25:36.319157+00:00",
+      "total_xp": 0,
+      "avatar_url": null,
+      "bio": null,
+      "last_checkin_date": null,
+      "role": "coach"
+    }
+  ],
+  "friends": []
+}

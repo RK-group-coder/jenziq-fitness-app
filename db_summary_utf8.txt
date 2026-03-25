@@ -1,0 +1,11 @@
+--- DB Summary ---
+
+--- User Profiles ---
+Email: a0903383712@gmail.com | Name: 楊柏諺 | XP: 0 | Avatar: NO
+Email: teststudent001@gmail.com | Name: 楊學員 | XP: 0 | Avatar: NO
+Email: testcoach001@gmail.com | Name: 測試教練001 | XP: 10880 | Avatar: YES
+
+--- User Permissions ---
+Email: a0903383712@gmail.com | Role: manager | Status: 已註冊
+Email: testcoach001@gmail.com | Role: coach | Status: 已註冊
+Email: teststudent001@gmail.com | Role: student | Status: 已註冊

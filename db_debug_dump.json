@@ -1,0 +1,87 @@
+{
+  "profiles": [
+    {
+      "email": "a0903383712@gmail.com",
+      "name": "楊柏諺",
+      "role": null,
+      "branch": null
+    },
+    {
+      "email": "teststudent001@gmail.com",
+      "name": "學員",
+      "role": null,
+      "branch": null
+    },
+    {
+      "email": "testcoach001@gmail.com",
+      "name": "測試教練001",
+      "role": "coach",
+      "branch": "MU 沐光瑜珈運動空間"
+    },
+    {
+      "email": "testcoach002@gmail.com",
+      "name": "測試教練2",
+      "role": "coach",
+      "branch": "MU 沐光瑜珈運動空間"
+    },
+    {
+      "email": "testcoach003@gmail.com",
+      "name": "測試教練3",
+      "role": "coach",
+      "branch": "SUNNY 晴天瑜珈健身俱樂部"
+    }
+  ],
+  "friends": [
+    {
+      "id": "c544570a-3a20-4f34-8e98-4463fc649d9f",
+      "user_email": "testcoach001@gmail.com",
+      "friend_email": "testcoach002@gmail.com",
+      "created_at": "2026-03-12T04:44:31.188573+00:00"
+    },
+    {
+      "id": "ae6e48ce-c236-421e-a84e-7d6575cb2fba",
+      "user_email": "testcoach002@gmail.com",
+      "friend_email": "testcoach001@gmail.com",
+      "created_at": "2026-03-12T04:44:31.188573+00:00"
+    },
+    {
+      "id": "d15882a8-94d3-45c9-be6b-3d272b32ab97",
+      "user_email": "teststudent001@gmail.com",
+      "friend_email": "testcoach002@gmail.com",
+      "created_at": "2026-03-12T06:22:24.90076+00:00"
+    },
+    {
+      "id": "6d944f9d-b20b-403e-a42e-9d18245aaa2e",
+      "user_email": "testcoach002@gmail.com",
+      "friend_email": "teststudent001@gmail.com",
+      "created_at": "2026-03-12T06:22:24.90076+00:00"
+    }
+  ],
+  "permissions": [
+    {
+      "email": "a0903383712@gmail.com",
+      "role": "manager",
+      "status": "已註冊"
+    },
+    {
+      "email": "testcoach001@gmail.com",
+      "role": "coach",
+      "status": "已註冊"
+    },
+    {
+      "email": "teststudent001@gmail.com",
+      "role": "student",
+      "status": "已註冊"
+    },
+    {
+      "email": "testcoach002@gmail.com",
+      "role": "coach",
+      "status": "已註冊"
+    },
+    {
+      "email": "testcoach003@gmail.com",
+      "role": "coach",
+      "status": "已註冊"
+    }
+  ]
+}

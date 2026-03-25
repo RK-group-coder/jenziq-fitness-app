@@ -1,0 +1,3 @@
+ALTER TABLE public.coach_certifications 
+ADD COLUMN IF NOT EXISTS category TEXT,
+ADD COLUMN IF NOT EXISTS xp_reward INTEGER DEFAULT 0;

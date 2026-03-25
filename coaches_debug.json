@@ -1,0 +1,20 @@
+[
+  {
+    "email": "testcoach001@gmail.com",
+    "role": "coach",
+    "user_id_string": "B001",
+    "branch": "MU 沐光瑜珈運動空間"
+  },
+  {
+    "email": "testcoach002@gmail.com",
+    "role": "coach",
+    "user_id_string": "B002",
+    "branch": "MU 沐光瑜珈運動空間"
+  },
+  {
+    "email": "testcoach003@gmail.com",
+    "role": "coach",
+    "user_id_string": "B003",
+    "branch": "SUNNY 晴天瑜珈健身俱樂部"
+  }
+]

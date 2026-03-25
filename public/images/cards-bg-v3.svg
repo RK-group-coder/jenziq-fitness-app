@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="190" viewBox="0 0 300 190">
+  <defs>
+    <!-- Gold Metallic Gradient -->
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b38728" />
+      <stop offset="30%" stop-color="#fff6b0" />
+      <stop offset="60%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#8a6327" />
+    </linearGradient>
+    
+    <!-- Deep Black Metallic Gradient -->
+    <linearGradient id="black-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#050505" />
+      <stop offset="40%" stop-color="#1c1c1e" />
+      <stop offset="60%" stop-color="#0a0a0a" />
+      <stop offset="100%" stop-color="#333336" />
+    </linearGradient>
+
+    <!-- Text Gradients for contrast -->
+    <linearGradient id="text-gold-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdf5a9" />
+      <stop offset="100%" stop-color="#c49a37" />
+    </linearGradient>
+
+    <style>
+      .bg-black { fill: url(#black-grad); }
+      .bg-gold { fill: url(#gold-grad); }
+      .text-gold { fill: url(#text-gold-grad); font-family: "Arial", sans-serif; font-weight: 900; font-size: 26px; letter-spacing: -0.5px; }
+      .text-black { fill: #111; font-family: "Arial", sans-serif; font-weight: 900; font-size: 26px; letter-spacing: -0.5px; }
+      .sub { font-size: 5.5px; font-weight: 800; letter-spacing: 0.5px; }
+      .sub-gold { fill: #c49a37; }
+      .sub-black { fill: #111; }
+      .chip-gold { fill: none; stroke: url(#text-gold-grad); stroke-width: 1.5px; }
+      .chip-black { fill: none; stroke: #222; stroke-width: 1.5px; }
+    </style>
+    
+    <g id="black-card">
+      <rect x="2" y="2" width="146" height="91" rx="6" class="bg-black" stroke="#222" stroke-width="1" />
+      <text x="15" y="52" class="text-gold">JENZiQ</text>
+      <text x="16" y="64" class="sub sub-gold">PREMIUM MEMBERSHIP</text>
+      <rect x="15" y="20" width="16" height="12" rx="2" class="chip-gold" />
+      <line x1="23" y1="20" x2="23" y2="32" class="chip-gold" />
+      <line x1="15" y1="26" x2="31" y2="26" class="chip-gold" />
+    </g>
+    
+    <g id="gold-card">
+      <rect x="2" y="2" width="146" height="91" rx="6" class="bg-gold" stroke="#8a6327" stroke-width="1" />
+      <text x="15" y="52" class="text-black">JENZiQ</text>
+      <text x="16" y="64" class="sub sub-black">PREMIUM MEMBERSHIP</text>
+      <rect x="15" y="20" width="16" height="12" rx="2" class="chip-black" />
+      <line x1="23" y1="20" x2="23" y2="32" class="chip-black" />
+      <line x1="15" y1="26" x2="31" y2="26" class="chip-black" />
+    </g>
+  </defs>
+  
+  <rect width="300" height="190" fill="#000" />
+  
+  <use href="#gold-card" x="0" y="0" />
+  <use href="#black-card" x="150" y="0" />
+  <use href="#black-card" x="0" y="95" />
+  <use href="#gold-card" x="150" y="95" />
+  <use href="#gold-card" x="0" y="190" />
+  <use href="#black-card" x="150" y="190" />
+</svg>

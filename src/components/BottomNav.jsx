@@ -5,7 +5,7 @@ const BottomNav = ({ activePage, onPageChange }) => {
   const navItems = [
     { id: 'home', icon: Home, label: '首頁' },
     { id: 'records', icon: ClipboardList, label: '紀錄' },
-    { id: 'events', icon: Calendar, label: '活動' },
+    { id: 'events', icon: Calendar, label: '活動&課程' },
     { id: 'tools', icon: Wrench, label: '工具' },
     { id: 'profile', icon: User, label: '等級' }
   ];

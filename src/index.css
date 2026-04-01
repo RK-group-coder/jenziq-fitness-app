@@ -26,6 +26,15 @@
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
+  /* Disable selection for native feel (optional) */
+  /* user-select: none; */
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Lock the root scrolling */
+  overscroll-behavior: none; /* Disable rubber-band pull to refresh */
 }
 
 body {
@@ -40,18 +49,23 @@ body {
 #root {
   display: flex;
   justify-content: center;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+  height: 100dvh; /* Dynamic viewport height for mobile */
 }
 
 .app-container {
   width: 100%;
   max-width: 480px; /* Mobile width cap for desktop */
   background-color: var(--background);
-  min-height: 100vh;
+  height: 100%;
+  height: 100dvh;
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-bottom: var(--bottom-nav-height);
+  /* padding-bottom: var(--bottom-nav-height); moved to internal components */
+  overflow-y: auto; /* Only allow scrolling inside the app container */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 img {

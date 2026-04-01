@@ -66,15 +66,32 @@ const FloatingCoachBot = ({ lastAction }) => {
       </div>
       
       <div className="bot-trigger-group" onClick={() => setIsVisible(!isVisible)}>
-        <div className="bot-head-icon">
-          <div className="bot-eyes">
-            <span className="eye"></span>
-            <span className="eye"></span>
+        <div className="robot-body-anim">
+          {/* Head */}
+          <div className="robot-head-v2">
+            <div className="visor-v2">
+              <div className="bot-eyes-v2">
+                <span className="eye-v2"></span>
+                <span className="eye-v2"></span>
+              </div>
+            </div>
+            <div className="ear-glow-left"></div>
+            <div className="ear-glow-right"></div>
+          </div>
+          
+          {/* Neck Ring */}
+          <div className="neck-ring"></div>
+          
+          {/* Torso & Shoulders */}
+          <div className="body-container">
+            <div className="shoulder-v2 left"></div>
+            <div className="shoulder-v2 right"></div>
+            <div className="robot-torso-v2">
+              <div className="torso-detail"></div>
+            </div>
           </div>
         </div>
-        <div className="bot-bottom-icon">
-          <Zap size={14} className="pulse-icon" />
-        </div>
+        <div className="robot-platform-v2"></div>
       </div>
     </div>
   );
@@ -1064,41 +1081,119 @@ const CoachScheduleContent = ({ user }) => {
         }
         
         .bot-trigger-group {
+            position: relative;
             display: flex;
             flex-direction: column;
-            gap: 6px;
             align-items: center;
             cursor: pointer;
-            transition: transform 0.2s;
+            pointer-events: auto;
         }
-        .bot-trigger-group:active { transform: scale(0.9); }
-
-        .bot-head-icon {
-            width: 48px;
-            height: 36px;
-            background: #2D3748;
-            border: 2px solid #E2E8F0;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .bot-eyes { display: flex; gap: 8px; }
-        .eye { width: 5px; height: 5px; background: #FF5C00; border-radius: 50%; box-shadow: 0 0 5px #FF5C00; }
         
-        .bot-bottom-icon {
-            width: 36px;
-            height: 28px;
-            background: #2D3748;
-            border: 2px solid #E2E8F0;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        .robot-body-anim { 
+            width: 80px; height: 100px; 
+            display: flex; flex-direction: column; align-items: center; 
+            animation: robotHoverV2 4s ease-in-out infinite; 
+            z-index: 2;
         }
-        .pulse-icon { color: #FF5C00; }
+        
+        /* Head Structure */
+        .robot-head-v2 { 
+            width: 54px; height: 50px; 
+            background: radial-gradient(circle at 30% 30%, #fff 0%, #eef2f3 100%); 
+            border-radius: 50% 50% 45% 45%; 
+            position: relative; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset -2px -2px 5px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        .visor-v2 {
+            width: 38px; height: 20px;
+            background: #0a0a0a;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            margin-top: 2px;
+        }
+        .bot-eyes-v2 { display: flex; gap: 10px; }
+        .eye-v2 { 
+            width: 7px; height: 7px; 
+            background: #00f2ff; 
+            border-radius: 50%; 
+            animation: robotBlinkV2 5s infinite; 
+            box-shadow: 0 0 10px #00f2ff, 0 0 20px rgba(0,242,255,0.4);
+        }
+        .ear-glow-left, .ear-glow-right {
+          position: absolute;
+          width: 6px; height: 14px;
+          background: rgba(0, 242, 255, 0.4);
+          border-radius: 50%;
+          top: 35%;
+          filter: blur(2px);
+        }
+        .ear-glow-left { left: -2px; }
+        .ear-glow-right { right: -2px; }
+
+        /* Neck Ring */
+        .neck-ring {
+          width: 22px; height: 4px;
+          background: #00f2ff;
+          border-radius: 4px;
+          margin-top: -2px;
+          box-shadow: 0 0 10px #00f2ff;
+          z-index: 8;
+          animation: glowPulseV2 2s ease-in-out infinite;
+        }
+
+        /* Body Structure */
+        .body-container {
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          margin-top: -1px;
+          position: relative;
+        }
+        .robot-torso-v2 { 
+            width: 44px; height: 42px; 
+            background: radial-gradient(circle at 40% 40%, #fff 0%, #dae1e7 100%); 
+            border-radius: 20px 20px 30px 30px; 
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            z-index: 5;
+        }
+        .torso-detail {
+          position: absolute;
+          bottom: 8px; left: 50%;
+          transform: translateX(-50%);
+          width: 14px; height: 2px;
+          background: #dae1e7;
+          border-radius: 2px;
+        }
+
+        .shoulder-v2 {
+            width: 18px; height: 20px;
+            background: #7f8c8d;
+            border-radius: 10px;
+            position: absolute;
+            top: 2px;
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 4;
+        }
+        .shoulder-v2.left { left: -14px; transform: rotate(-15deg); }
+        .shoulder-v2.right { right: -14px; transform: rotate(15deg); }
+
+        .robot-platform-v2 { 
+            width: 50px; height: 6px; 
+            background: rgba(0, 242, 255, 0.2); 
+            border-radius: 50%; 
+            filter: blur(4px); 
+            margin-top: 5px; 
+            animation: shadowPulseV2 4s ease-in-out infinite; 
+        }
+
+        @keyframes glowPulseV2 { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        @keyframes robotHoverV2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes shadowPulseV2 { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(0.6); opacity: 0.05; } }
+        @keyframes robotBlinkV2 { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
         
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 

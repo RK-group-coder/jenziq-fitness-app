@@ -18,6 +18,19 @@ import {
 } from 'lucide-react';
 import { supabase } from '../supabase';
 
+const RobotHeadAvatar = ({ size = 40 }) => (
+    <div className="robot-head-avatar-ui" style={{ width: size, height: size * 0.9 }}>
+        <div className="visor-avatar-ui">
+            <div className="eyes-avatar-ui">
+                <div className="eye-avatar-ui"></div>
+                <div className="eye-avatar-ui"></div>
+            </div>
+        </div>
+        <div className="ear-glow-l-ui"></div>
+        <div className="ear-glow-r-ui"></div>
+    </div>
+);
+
 const Chatroom = ({ user, onBack, initialFriend }) => {
     const [friends, setFriends] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(initialFriend || null);
@@ -311,10 +324,11 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
     // 4.5 AI 處理邏輯
     const handleAiTrigger = async (userMsg, myEmail, friendEmail) => {
         setIsTyping(true);
-        const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+        const apiKey = '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';
 
         try {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
+            const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -355,10 +369,11 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
     // 4.6 支援中心 AI 自動回覆
     const handleSupportAiTrigger = async (userMsg, myEmail, friendEmail) => {
         setIsTyping(true);
-        const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+        const apiKey = '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';
 
         try {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
+            const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -511,7 +526,7 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                             <div className="avatar-box">
                                 {friend.email === SUPPORT_EMAIL ? (
                                     <div className="support-robot-avatar">
-                                        <img src="/images/support_bot.png" alt="Support" className="robot-img" />
+                                        <RobotHeadAvatar size={44} />
                                     </div>
                                 ) : friend.avatar_url ? (
                                     <img src={friend.avatar_url} alt={friend.name} className="avatar-img" />
@@ -560,7 +575,7 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                 <div className="header-friend-info">
                     <div className={`mini-avatar ${selectedFriend.email === SUPPORT_EMAIL ? 'support-glow' : ''}`}>
                         {selectedFriend.email === SUPPORT_EMAIL ? (
-                            <img src="/images/support_bot.png" alt="Support" />
+                            <RobotHeadAvatar size={34} />
                         ) : selectedFriend.avatar_url ? (
                             <img src={selectedFriend.avatar_url} alt={selectedFriend.name} />
                         ) : (
@@ -582,7 +597,7 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                 <div className="chat-intro">
                     <div className={`large-avatar ${selectedFriend.email === SUPPORT_EMAIL ? 'support-glow-large' : ''}`}>
                         {selectedFriend.email === SUPPORT_EMAIL ? (
-                            <img src="/images/support_bot.png" alt="Support" />
+                            <RobotHeadAvatar size={80} />
                         ) : selectedFriend.avatar_url ? (
                             <img src={selectedFriend.avatar_url} alt={selectedFriend.name} />
                         ) : (
@@ -774,18 +789,47 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                 .support-robot-avatar { 
                     width: 56px; height: 56px; background: #18181B; border-radius: 50%; 
                     display: flex; align-items: center; justify-content: center; 
-                    border: 2px solid #10B981; overflow: hidden;
-                    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+                    border: 2px solid rgba(0, 242, 255, 0.4); overflow: hidden;
+                    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
                 }
                 .robot-img { width: 100%; height: 100%; object-fit: cover; }
-                .support-glow { border: 2px solid #10B981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); overflow: hidden; }
+                .support-glow { border: 2px solid #00f2ff; box-shadow: 0 0 10px rgba(0, 242, 255, 0.4); overflow: hidden; }
                 .support-glow img { width: 100%; height: 100%; object-fit: cover; }
                 .support-glow-large { 
                     width: 90px; height: 90px; border-radius: 50%; overflow: hidden;
-                    border: 3px solid #10B981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+                    border: 3px solid #00f2ff; box-shadow: 0 0 25px rgba(0, 242, 255, 0.4);
                     margin-bottom: 16px; background: #18181B;
+                    display: flex; align-items: center; justify-content: center;
                 }
-                .support-glow-large img { width: 100%; height: 100%; object-fit: cover; }
+                
+                /* Robot Avatar Component Styles */
+                .robot-head-avatar-ui {
+                    background: radial-gradient(circle at 30% 30%, #fff 0%, #eef2f3 100%);
+                    border-radius: 50% 50% 45% 45%;
+                    position: relative;
+                    display: flex; align-items: center; justify-content: center;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                }
+                .visor-avatar-ui {
+                    width: 75%; height: 45%;
+                    background: #0a0a0a;
+                    border-radius: 12px;
+                    display: flex; align-items: center; justify-content: center;
+                }
+                .eyes-avatar-ui { display: flex; gap: 5px; }
+                .eye-avatar-ui {
+                    width: 4px; height: 4px;
+                    background: #00f2ff;
+                    border-radius: 50%;
+                    box-shadow: 0 0 6px #00f2ff;
+                }
+                .ear-glow-l-ui, .ear-glow-r-ui {
+                    position: absolute; width: 10%; height: 35%;
+                    background: rgba(0, 242, 255, 0.4);
+                    border-radius: 50%; top: 35%; filter: blur(1px);
+                }
+                .ear-glow-l-ui { left: -1px; }
+                .ear-glow-r-ui { right: -1px; }
                 
                 .typing-robot .bubble-content { 
                     display: flex; align-items: center; gap: 12px; 

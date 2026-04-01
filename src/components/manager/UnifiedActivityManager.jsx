@@ -34,7 +34,7 @@ const UnifiedActivityManager = ({ initialTab = 'student' }) => {
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
 
-    const studentCategories = ['全部', '健身', '競賽', '課程', '優惠', '其他'];
+    const studentCategories = ['全部', '健身', '競賽', '優惠', '其他'];
     const coachCategories = ['全部', '交流', '認證', '競賽', '課程', '其他'];
     const categories = activeTab === 'student' ? studentCategories : coachCategories;
 

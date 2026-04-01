@@ -1,0 +1,21 @@
+RAW:
+HashKey=5294y06JbYqUOuvM&ChoosePayment=Credit&EncryptType=1&ExecTimes=12&Frequency=1&ItemName=MembershipPlan&MerchantID=2000132&MerchantTradeDate=2026/04/01 01:56:47&MerchantTradeNo=JZ1743447407123&PaymentType=aio&PeriodAmount=1600&PeriodReturnURL=https://your-domain.com/api/ecpay-return&PeriodType=M&ReturnURL=https://your-domain.com/api/ecpay-return&TotalAmount=1600&TradeDesc=MembershipPlan&HashIV=v77hoKGq4kWxRGZt
+
+NEW_ENC:
+hashkey%3d5294y06jbyquouvm%26choosepayment%3dcredit%26encrypttype%3d1%26exectimes%3d12%26frequency%3d1%26itemname%3dmembershipplan%26merchantid%3d2000132%26merchanttradedate%3d2026%2f04%2f01+01%3a56%3a47%26merchanttradeno%3djz1743447407123%26paymenttype%3daio%26periodamount%3d1600%26periodreturnurl%3dhttps%3a%2f%2fyour-domain.com%2fapi%2fecpay-return%26periodtype%3dm%26returnurl%3dhttps%3a%2f%2fyour-domain.com%2fapi%2fecpay-return%26totalamount%3d1600%26tradedesc%3dmembershipplan%26hashiv%3dv77hokgq4kwxrgzt
+
+NEW_HASH: 5F7A63A13863B3313EFD0F3A2FDBDDF4CE298E9FB3CC94EC8216B7B2C0FD4BA3
+
+A_ENC:
+hashkey%3d5294y06jbyquouvm%26choosepayment%3dcredit%26encrypttype%3d1%26exectimes%3d12%26frequency%3d1%26itemname%3dmembershipplan%26merchantid%3d2000132%26merchanttradedate%3d2026%2f04%2f01%2001%3a56%3a47%26merchanttradeno%3djz1743447407123%26paymenttype%3daio%26periodamount%3d1600%26periodreturnurl%3dhttps%3a%2f%2fyour-domain.com%2fapi%2fecpay-return%26periodtype%3dm%26returnurl%3dhttps%3a%2f%2fyour-domain.com%2fapi%2fecpay-return%26totalamount%3d1600%26tradedesc%3dmembershipplan%26hashiv%3dv77hokgq4kwxrgzt
+
+A_HASH: 1C3A6654A15E7BAABE4534C572A2CE8CB744C18CFDBDCFE739C11BA59B173CDA
+
+SAME? NO
+
+DIFFS (NEW vs A):
+  pos 190: NEW="+01%3a56%3a47%2" A="%2001%3a56%3a47"
+  pos 191: NEW="01%3a56%3a47%26" A="2001%3a56%3a47%"
+  pos 192: NEW="1%3a56%3a47%26m" A="001%3a56%3a47%2"
+  pos 193: NEW="%3a56%3a47%26me" A="01%3a56%3a47%26"
+  ...

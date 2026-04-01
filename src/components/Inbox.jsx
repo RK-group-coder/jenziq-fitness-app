@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Clock, ChevronRight, X, Inbox as InboxIcon, Filter, CheckCircle, XCircle } from 'lucide-react';
+import { Mail, Clock, ChevronRight, X, Inbox as InboxIcon, Filter, CheckCircle, XCircle, QrCode, RefreshCw, CreditCard as CardIcon } from 'lucide-react';
 import { supabase } from '../supabase';
+import { getPeriodicCheckoutPayload, redirectToECPay } from '../utils/ecpay_service';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedMsg, setSelectedMsg] = useState(null);
     const [activeFilter, setActiveFilter] = useState('全部');
+    const [authEnrollments, setAuthEnrollments] = useState([]);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const filters = ['全部', '活動', '課程', '公告', '優惠', '系統'];
+    const filters = ['全部', '繳費', '活動', '課程', '公告', '優惠', '系統'];
 
     useEffect(() => {
         fetchNotifications();
@@ -17,41 +21,28 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
     const fetchNotifications = async () => {
         setLoading(true);
         try {
-            // 抓取所有通知，並在前端依角色過濾，避免因資料庫缺少特定欄位 (role / target_role) 導致查詢失敗
             const { data, error } = await supabase
                 .from('notifications')
                 .select('*')
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
-
             const myEmail = user?.email?.toLowerCase() || '';
 
-            // 在前端過濾角色
             let filteredByRole = (data || []).filter(notif => {
                 const target = notif.target_role || notif.role || 'all';
                 const tEmail = notif.target_email?.toLowerCase();
                 const uId = notif.user_id;
 
-                // 如果有指定特定信箱
-                if (tEmail) {
-                    return tEmail === myEmail;
-                }
-
-                // 如果有指定特定 user_id，以 user_id 匹配結果為準
-                if (uId) {
-                    return uId === user?.id || uId === user?.userIdString;
-                }
-
-                // 如果這則通知看起來像是系統發給個人的 (全局通知但包含關鍵字)，為了避免所有教練看見，我們隱藏它
+                if (tEmail) return tEmail === myEmail;
+                if (uId) return uId === user?.id || uId === user?.userIdString;
+                
                 if (target === 'coach' && !uId && !tEmail && (notif.title?.includes('通過') || notif.title?.includes('駁回') || notif.title?.includes('退件'))) {
                     return false;
                 }
-
                 return target === role || target === 'all';
             });
 
-            // 如果是教練，額外抓取未處理的綁定申請
             if (role === 'coach' && myEmail) {
                 const { data: bindings } = await supabase
                     .from('coach_bindings')
@@ -76,8 +67,6 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
 
             const finalNotifs = filteredByRole.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
             setNotifications(finalNotifs);
-            
-            // 計算未讀總數並回傳給父組件
             if (onUnreadChange) {
                 const unreadCount = finalNotifs.filter(n => !n.is_read).length;
                 onUnreadChange(unreadCount);
@@ -89,37 +78,49 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
         }
     };
 
-    const filteredNotifications = activeFilter === '全部'
-        ? notifications
-        : notifications.filter(n => n.tag === activeFilter);
+    const fetchAuthEnrollments = async (courseId) => {
+        if (!courseId) return;
+        setIsRefreshing(true);
+        try {
+            const { data, error } = await supabase
+                .from('student_bookings')
+                .select('*')
+                .eq('course_id', courseId);
+            if (error) throw error;
+            setAuthEnrollments(data || []);
+        } catch (err) {
+            console.error('Fetch Auth Enrollments Error:', err);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
 
     const formatDate = (dateString) => {
+        if (!dateString) return '';
         const date = new Date(dateString);
         return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
     };
 
     const handleMarkAsRead = async (msg) => {
+        const AUTH_MARKER_REGEX = /\[\[AUTH_COURSE_ID[:\s]*([^\]\s]*?)\]\]/i;
+        const authMatch = msg?.content?.match(AUTH_MARKER_REGEX);
+        const authCourseId = authMatch ? authMatch[1]?.trim() : null;
+
         if (msg.is_read || msg.is_binding_request) {
             setSelectedMsg(msg);
+            if (authCourseId) fetchAuthEnrollments(authCourseId);
             return;
         }
 
         try {
-            // 先在前端更新狀態，提升流暢感
             setNotifications(prev => prev.map(n => n.id === msg.id ? { ...n, is_read: true } : n));
-            // 如果有給回呼，立即重新計算給父組件
             if (onUnreadChange) {
                 const currentUnread = notifications.filter(n => n.id !== msg.id && !n.is_read).length;
                 onUnreadChange(currentUnread);
             }
-
             setSelectedMsg({ ...msg, is_read: true });
-
-            // 資料庫更新
-            await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('id', msg.id);
+            if (authCourseId) fetchAuthEnrollments(authCourseId);
+            await supabase.from('notifications').update({ is_read: true }).eq('id', msg.id);
         } catch (err) {
             console.error('Mark as read error:', err);
         }
@@ -128,14 +129,9 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
     const handleBindingResponse = async (bindingId, studentEmail, isAccepted) => {
         try {
             const status = isAccepted ? 'accepted' : 'rejected';
-            const { error } = await supabase
-                .from('coach_bindings')
-                .update({ status })
-                .eq('id', bindingId);
-            
+            const { error } = await supabase.from('coach_bindings').update({ status }).eq('id', bindingId);
             if (error) throw error;
 
-            // Notify student
             const targetEmail = studentEmail.toLowerCase();
             const message = isAccepted 
                 ? `您的專屬教練綁定申請已通過！教練 (${user?.email}) 已同意您的邀請。`
@@ -157,6 +153,10 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
     };
 
     if (selectedMsg) {
+        const AUTH_MARKER_REGEX = /\[\[AUTH_COURSE_ID[:\s]*([^\]\s]*?)\]\]/i;
+        const authMatch = selectedMsg.content?.match(AUTH_MARKER_REGEX);
+        const authCourseId = authMatch ? authMatch[1]?.trim() : null;
+
         return (
             <div className="message-detail">
                 <header className="detail-header">
@@ -175,22 +175,84 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
                     <h1 className="msg-title">{selectedMsg.title}</h1>
                     <div className="msg-divider"></div>
                     <div className="msg-body">
-                        {selectedMsg.content.split('\n').map((line, i) => (
+                        {(selectedMsg.content || '').split(/\[\[AUTH_COURSE_ID[:\s]*.*?\]\]/i)[0].split('\n').map((line, i) => (
                             <p key={i}>{line}</p>
                         ))}
                     </div>
+
+                    {(selectedMsg.tag === '繳費' || (selectedMsg.tag === '公告' && (selectedMsg.title?.includes('繳費') || selectedMsg.content?.includes('應繳金額')))) && (
+                        <div className="payment-action-card">
+                            <div className="p-header">
+                                <CardIcon size={20} />
+                                <span>線上繳費終端</span>
+                            </div>
+                            <div className="p-details">
+                                <div className="p-row">
+                                    <span className="p-label">應繳總額</span>
+                                    <span className="p-val">NT$ {selectedMsg.content?.match(/NT\$ (\d+)/)?.[1] || '---'}</span>
+                                </div>
+                                <p className="p-hint">點擊下方按鈕將對轉至綠界科技安全支付頁面</p>
+                            </div>
+                            <button className="pay-now-btn" onClick={async () => {
+                                const match = selectedMsg.content?.match(/NT\$\s*(\d+)/i);
+                                const amount = match ? Number(match[1]) : 0;
+                                if (amount > 0) {
+                                    try {
+                                        const payload = await getPeriodicCheckoutPayload({ name: selectedMsg.title, price: amount, months: 1 }, user);
+                                        redirectToECPay(payload);
+                                    } catch (err) {
+                                        alert('啟動金流失敗：' + err.message);
+                                    }
+                                } else {
+                                    alert('金額解析錯誤');
+                                }
+                            }}>
+                                <CardIcon size={18} /> 立即線上繳費
+                            </button>
+                        </div>
+                    )}
+
+                    {authCourseId && (
+                        <div className="attendance-auth-card">
+                            <div className="auth-header">
+                                <QrCode size={20} />
+                                <span>點名授權控制台</span>
+                            </div>
+                            <div className="auth-qr-section">
+                                <div className="auth-qr-wrapper">
+                                    <QRCodeCanvas value={JSON.stringify({ type: 'attendance', courseId: authCourseId })} size={180} level={"H"} includeMargin={true} />
+                                </div>
+                                <p>請向學員出示此條碼進行簽到</p>
+                            </div>
+                            <div className="auth-list-section">
+                                <div className="list-top">
+                                    <h4>即時報到狀況 ({ (authEnrollments || []).filter(e => e && ['已點名', '已到'].includes(e.status)).length } / { (authEnrollments || []).length })</h4>
+                                    <button onClick={() => fetchAuthEnrollments(authCourseId)} disabled={isRefreshing}>
+                                        <RefreshCw size={14} className={isRefreshing ? 'spin' : ''} />
+                                    </button>
+                                </div>
+                                <div className="auth-scroll-list">
+                                    {(!authEnrollments || authEnrollments.length === 0) ? <div className="empty">尚無學員預約</div> :
+                                     authEnrollments.map((s, i) => (
+                                        <div key={i} className="auth-st-row">
+                                            <span>{s.student_name}</span>
+                                            <span className={`status-pill ${(['已點名', '已到'].includes(s.status)) ? 'done' : 'pending'}`}>
+                                                {(['已點名', '已到'].includes(s.status)) ? '已完成' : '未點名'}
+                                            </span>
+                                        </div>
+                                     ))
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {selectedMsg.is_binding_request && (
                         <div className="binding-actions">
-                            <button 
-                                className="accept-btn"
-                                onClick={() => handleBindingResponse(selectedMsg.binding_id, selectedMsg.student_email, true)}
-                            >
+                            <button className="accept-btn" onClick={() => handleBindingResponse(selectedMsg.binding_id, selectedMsg.student_email, true)}>
                                 <CheckCircle size={20} /> 同意綁定
                             </button>
-                            <button 
-                                className="reject-btn"
-                                onClick={() => handleBindingResponse(selectedMsg.binding_id, selectedMsg.student_email, false)}
-                            >
+                            <button className="reject-btn" onClick={() => handleBindingResponse(selectedMsg.binding_id, selectedMsg.student_email, false)}>
                                 <XCircle size={20} /> 不同意
                             </button>
                         </div>
@@ -198,65 +260,41 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
                 </div>
 
                 <style>{`
-                    .message-detail {
-                        display: flex;
-                        flex-direction: column;
-                        height: 100%;
-                        background-color: var(--background);
-                        animation: slideIn 0.3s ease-out;
-                    }
-                    .detail-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        padding: 16px 20px;
-                        border-bottom: 1px solid var(--border);
-                    }
-                    .detail-content {
-                        flex: 1;
-                        padding: 24px 20px;
-                        overflow-y: auto;
-                    }
-                    .msg-meta {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 16px;
-                    }
-                    .msg-tag {
-                        padding: 4px 10px;
-                        border-radius: 6px;
-                        font-size: 11px;
-                        font-weight: 700;
-                    }
-                    .tag-公告 { background-color: rgba(59, 130, 246, 0.1); color: #3B82F6; }
-                    .tag-課程 { background-color: rgba(168, 85, 247, 0.1); color: #A855F7; }
-                    .tag-活動 { background-color: rgba(255, 92, 0, 0.1); color: var(--primary); }
-                    .tag-優惠 { background-color: rgba(16, 185, 129, 0.1); color: #10B981; }
-                    .tag-系統 { background-color: rgba(239, 68, 68, 0.1); color: #EF4444; }
-                    
-                    .msg-time { font-size: 12px; color: var(--text-secondary); }
-                    .msg-title { font-size: 22px; font-weight: 800; color: white; margin-bottom: 20px; line-height: 1.4; }
-                    .msg-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
-                    .msg-body { font-size: 16px; color: #CBD5E1; line-height: 1.8; }
-                    .msg-body p { margin-bottom: 12px; }
-                    .binding-actions { 
-                        display: flex; gap: 16px; margin-top: 30px; 
-                        padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); 
-                    }
-                    .binding-actions button {
-                        flex: 1; padding: 14px; border: none; border-radius: 12px;
-                        font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
-                        cursor: pointer; transition: all 0.2s;
-                    }
+                    .message-detail { display: flex; flex-direction: column; height: 100%; background-color: var(--background); }
+                    .detail-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+                    .detail-content { flex: 1; padding: 24px 20px; overflow-y: auto; }
+                    .msg-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+                    .msg-tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; opacity: 0.8; }
+                    .tag-公告 { background-color: rgba(59, 130, 246, 0.2); color: #3B82F6; }
+                    .tag-課程 { background-color: rgba(168, 85, 247, 0.2); color: #A855F7; }
+                    .tag-活動 { background-color: rgba(255, 92, 0, 0.2); color: var(--primary); }
+                    .tag-優惠 { background-color: rgba(16, 185, 129, 0.2); color: #10B981; }
+                    .tag-系統 { background-color: rgba(239, 68, 68, 0.2); color: #EF4444; }
+                    .msg-title { font-size: 20px; font-weight: 800; color: white; margin-bottom: 16px; line-height: 1.4; }
+                    .msg-divider { height: 1px; background: rgba(255,255,255,0.05); margin-bottom: 20px; }
+                    .msg-body { font-size: 15px; color: #CBD5E1; line-height: 1.8; }
+                    .msg-body p { margin-bottom: 8px; }
+                    .attendance-auth-card { background: #1E293B; border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.3); padding: 20px; margin-top: 24px; display: flex; flex-direction: column; gap: 20px; }
+                    .auth-header { display: flex; align-items: center; gap: 10px; color: #3b82f6; font-weight: 800; font-size: 13px; }
+                    .auth-qr-section { text-align: center; }
+                    .auth-qr-wrapper { background: white; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 8px; }
+                    .auth-list-section { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; }
+                    .list-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+                    .auth-scroll-list { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+                    .auth-st-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 10px; }
+                    .status-pill { font-size: 10px; padding: 4px 8px; border-radius: 6px; font-weight: 800; }
+                    .status-pill.done { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+                    .status-pill.pending { background: rgba(255,255,255,0.05); color: #64748b; }
+                    .binding-actions { display: flex; gap: 16px; margin-top: 30px; }
+                    .binding-actions button { flex: 1; padding: 14px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
                     .accept-btn { background: var(--primary); color: white; }
-                    .accept-btn:active { transform: scale(0.95); opacity: 0.8; }
                     .reject-btn { background: rgba(255,255,255,0.05); color: #94A3B8; }
-                    .reject-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
-                    @keyframes slideIn {
-                        from { transform: translateX(30px); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
+                    .payment-action-card { background: linear-gradient(135deg, rgba(255, 122, 0, 0.1), rgba(255, 122, 0, 0.02)); border: 1px solid rgba(255, 122, 0, 0.3); border-radius: 20px; padding: 24px; margin-top: 30px; display: flex; flex-direction: column; gap: 20px; }
+                    .p-header { color: #FF7A00; font-weight: 800; font-size: 12px; }
+                    .p-val { font-size: 28px; font-weight: 900; color: white; }
+                    .pay-now-btn { background: #FF7A00; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 900; cursor: pointer; }
+                    .spin { animation: spin 1s linear infinite; }
+                    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
                 `}</style>
             </div>
         );
@@ -290,8 +328,8 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
                         <div className="spinner"></div>
                         <p>正在讀取...</p>
                     </div>
-                ) : filteredNotifications.length > 0 ? (
-                    filteredNotifications.map(notif => (
+                ) : (notifications || []).filter(n => activeFilter === '全部' || n.tag === activeFilter).length > 0 ? (
+                    (notifications || []).filter(n => activeFilter === '全部' || n.tag === activeFilter).map(notif => (
                         <div key={notif.id} className={`notification-card ${!notif.is_read ? 'unread' : ''}`} onClick={() => handleMarkAsRead(notif)}>
                             <div className={`tag-indicator ${notif.tag}`}></div>
                             <div className="card-content">
@@ -303,7 +341,7 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
                                     <span className="time-text">{formatDate(notif.created_at)}</span>
                                 </div>
                                 <h3 className="card-title">{notif.title}</h3>
-                                <p className="card-preview">{notif.content.substring(0, 40)}{notif.content.length > 40 ? '...' : ''}</p>
+                                <p className="card-preview">{(notif.content || '').replace(/\[\[AUTH_COURSE_ID[:\s]*.*?\]\]/i, '').substring(0, 40)}...</p>
                             </div>
                             <ChevronRight size={18} color="var(--text-secondary)" />
                         </div>
@@ -317,102 +355,24 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
             </div>
 
             <style>{`
-                .inbox-container {
-                    display: flex;
-                    flex-direction: column;
-                    height: 100%;
-                    background-color: var(--background);
-                }
-                .inbox-header {
-                    padding: 20px 20px 10px 20px;
-                    background-color: var(--background);
-                    border-bottom: 1px solid var(--border);
-                }
-                .header-top {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 20px;
-                }
+                .inbox-container { height: 100%; display: flex; flex-direction: column; background-color: var(--background); }
+                .inbox-header { padding: 20px; border-bottom: 1px solid var(--border); }
+                .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
                 .title { font-size: 20px; font-weight: 800; color: white; }
-                .close-btn { color: var(--text-secondary); background: none; }
-                
-                .filter-bar { padding-bottom: 10px; }
                 .filter-scroll { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
-                .filter-scroll::-webkit-scrollbar { display: none; }
-                .filter-btn {
-                    padding: 8px 18px;
-                    border-radius: 20px;
-                    background-color: rgba(255,255,255,0.05);
-                    color: var(--text-secondary);
-                    font-size: 13px;
-                    font-weight: 600;
-                    white-space: nowrap;
-                    border: 1px solid transparent;
-                }
-                .filter-btn.active {
-                    background-color: var(--primary);
-                    color: white;
-                }
-                
-                .inbox-list {
-                    flex: 1;
-                    padding: 16px;
-                    overflow-y: auto;
-                }
-                .notification-card {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    background-color: var(--secondary-bg);
-                    border-radius: 16px;
-                    padding: 16px;
-                    margin-bottom: 12px;
-                    border: 1px solid var(--border);
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .notification-card:active { transform: scale(0.98); }
+                .filter-btn { padding: 8px 18px; border-radius: 20px; background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 12px; font-weight: 700; border: none; cursor: pointer; }
+                .filter-btn.active { background: var(--primary); color: white; }
+                .inbox-list { flex: 1; padding: 16px; overflow-y: auto; }
+                .notification-card { display: flex; gap: 16px; background: var(--secondary-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); cursor: pointer; }
                 .tag-indicator { width: 4px; height: 40px; border-radius: 2px; }
-                .tag-indicator.公告 { background-color: #3B82F6; }
-                .tag-indicator.課程 { background-color: #A855F7; }
-                .tag-indicator.活動 { background-color: var(--primary); }
-                .tag-indicator.優惠 { background-color: #10B981; }
-                .tag-indicator.系統 { background-color: #EF4444; }
-                
-                .card-content { flex: 1; }
-                .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-                .tag-text { font-size: 10px; font-weight: 800; }
-                .tag-text.tag-公告 { color: #3B82F6; }
-                .tag-text.tag-課程 { color: #A855F7; }
-                .tag-text.tag-活動 { color: var(--primary); }
-                .tag-text.tag-優惠 { color: #10B981; }
-                .time-text { font-size: 11px; color: var(--text-secondary); }
-                .tag-and-dot { display: flex; align-items: center; gap: 6px; }
-                .unread-dot-small { width: 6px; height: 6px; background-color: #EF4444; border-radius: 50%; box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
-                .notification-card.unread { background-color: rgba(255,255,255,0.02); border-left: 2px solid #EF4444; }
+                .tag-indicator.公告 { background: #3B82F6; }
+                .tag-indicator.活動 { background: var(--primary); }
+                .tag-indicator.課程 { background: #A855F7; }
+                .tag-indicator.系統 { background: #EF4444; }
                 .card-title { font-size: 15px; font-weight: 700; color: white; margin-bottom: 4px; }
-                .notification-card.unread .card-title { font-weight: 800; color: #fff; }
-                .card-preview { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
-                
-                .empty-state {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    height: 300px;
-                    gap: 16px;
-                    color: var(--text-secondary);
-                }
-                .spinner {
-                    width: 30px;
-                    height: 30px;
-                    border: 3px solid rgba(255,255,255,0.1);
-                    border-top-color: var(--primary);
-                    border-radius: 50%;
-                    animation: spin 1s linear infinite;
-                }
-                @keyframes spin { to { transform: rotate(360deg); } }
+                .unread-dot-small { width: 6px; height: 6px; background: #EF4444; border-radius: 50%; }
+                .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+                @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
             `}</style>
         </div>
     );

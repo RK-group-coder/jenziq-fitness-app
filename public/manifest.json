@@ -1,0 +1,23 @@
+{
+  "short_name": "JENZiQ",
+  "name": "JENZiQ Fitness App",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "images/mu_logo_light.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#FF5C00",
+  "background_color": "#0A0A0B",
+  "description": "JENZiQ 專業健身點名與課程管理系統",
+  "orientation": "portrait"
+}

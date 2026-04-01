@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Flame, Users, Award, ChevronRight, Zap, Loader2, Brain, Activity, CalendarDays, Camera, Edit2, Trophy, X, Eye, Image as ImageIcon, FileBadge } from 'lucide-react';
+import { Bell, Flame, Users, Award, ChevronRight, Zap, Loader2, Brain, Activity, CalendarDays, Camera, Edit2, Trophy, X, Eye, Image as ImageIcon, FileBadge, Bot } from 'lucide-react';
 import { supabase } from '../../supabase';
 import coachAvatarDefault from '../../assets/coach-avatar.png';
 import gymBg from '../../assets/gym-bg.png';
@@ -20,15 +20,32 @@ const FloatingCoachGuideBot = ({ onClick, isVisible, setIsVisible }) => {
         <p>教練你好！需要了解如何使用 APP 的功能嗎？點我聊聊吧！👋</p>
       </div>
       <div className="bot-trigger" onClick={onClick}>
-        <div className="bot-head">
-          <div className="bot-eyes">
-            <span className="eye"></span>
-            <span className="eye"></span>
+        <div className="robot-body-anim">
+          {/* Head */}
+          <div className="robot-head-v2">
+            <div className="visor-v2">
+              <div className="bot-eyes-v2">
+                <span className="eye-v2"></span>
+                <span className="eye-v2"></span>
+              </div>
+            </div>
+            <div className="ear-glow-left"></div>
+            <div className="ear-glow-right"></div>
+          </div>
+          
+          {/* Neck Ring */}
+          <div className="neck-ring"></div>
+          
+          {/* Torso & Shoulders */}
+          <div className="body-container">
+            <div className="shoulder-v2 left"></div>
+            <div className="shoulder-v2 right"></div>
+            <div className="robot-torso-v2">
+              <div className="torso-detail"></div>
+            </div>
           </div>
         </div>
-        <div className="bot-body-icon">
-          <Zap size={14} className="pulse-icon" />
-        </div>
+        <div className="robot-platform-v2"></div>
       </div>
     </div>
   );
@@ -99,10 +116,20 @@ const CoachChatModal = ({ isOpen, onClose, user }) => {
       <div className="coach-chat-modal" onClick={e => e.stopPropagation()}>
         <div className="cc-header">
           <div className="cc-title-row">
-            <div className="cc-bot-icon"><Bot size={18} color="white" /></div>
+            <div className="cc-bot-icon">
+              {/* Mini Robot Head for Avatar */}
+              <div className="robot-head-v2" style={{ width: '28px', height: '26px', boxShadow: 'none' }}>
+                <div className="visor-v2" style={{ width: '20px', height: '10px' }}>
+                  <div className="bot-eyes-v2" style={{ gap: '4px' }}>
+                    <span className="eye-v2" style={{ width: '4px', height: '4px' }}></span>
+                    <span className="eye-v2" style={{ width: '4px', height: '4px' }}></span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="cc-title-group">
-              <span className="cc-main-title">JENZiQ 教練導師</span>
-              <span className="cc-status"><span className="status-dot"></span> 在線服務中</span>
+              <span className="cc-main-title">JENZiQ AI 助教</span>
+              <span className="cc-status"><span className="status-dot"></span> 伺服器已連線</span>
             </div>
           </div>
           <button className="cc-close" onClick={onClose}><X size={20} /></button>
@@ -1310,43 +1337,119 @@ const CoachHome = ({ user, onNavigate }) => {
         .floating-guide-bot.hide .bot-bubble { opacity: 0; transform: scale(0.8); pointer-events: none; }
         
         .bot-trigger {
+          position: relative;
           display: flex;
           flex-direction: column;
-          gap: 6px;
           align-items: center;
           cursor: pointer;
-          transition: transform 0.2s;
+          pointer-events: auto;
         }
-        .bot-trigger:active { transform: scale(0.9); }
         
-        .bot-head {
-          width: 48px;
-          height: 36px;
-          background: #2D3748;
-          border: 2px solid #f97316;
-          border-radius: 16px;
+        .robot-body-anim { 
+          width: 80px; height: 100px; 
+          display: flex; flex-direction: column; align-items: center; 
+          animation: robotHoverV2 4s ease-in-out infinite; 
+          z-index: 2;
+        }
+        
+        /* Head Structure */
+        .robot-head-v2 { 
+          width: 54px; height: 50px; 
+          background: radial-gradient(circle at 30% 30%, #fff 0%, #eef2f3 100%); 
+          border-radius: 50% 50% 45% 45%; 
+          position: relative; 
+          display: flex; align-items: center; justify-content: center; 
+          box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset -2px -2px 5px rgba(0,0,0,0.05);
+          z-index: 10;
+        }
+        .visor-v2 {
+          width: 38px; height: 20px;
+          background: #0a0a0a;
+          border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 0 15px rgba(0,0,0,0.5);
+          margin-top: 2px;
+        }
+        .bot-eyes-v2 { display: flex; gap: 10px; }
+        .eye-v2 { 
+          width: 7px; height: 7px; 
+          background: #00f2ff; 
+          border-radius: 50%; 
+          animation: robotBlinkV2 5s infinite; 
+          box-shadow: 0 0 10px #00f2ff, 0 0 20px rgba(0,242,255,0.4);
+        }
+        .ear-glow-left, .ear-glow-right {
+          position: absolute;
+          width: 6px; height: 14px;
+          background: rgba(0, 242, 255, 0.4);
+          border-radius: 50%;
+          top: 35%;
+          filter: blur(2px);
+        }
+        .ear-glow-left { left: -2px; }
+        .ear-glow-right { right: -2px; }
+
+        /* Neck Ring */
+        .neck-ring {
+          width: 22px; height: 4px;
+          background: #00f2ff;
+          border-radius: 4px;
+          margin-top: -2px;
+          box-shadow: 0 0 10px #00f2ff;
+          z-index: 8;
+          animation: glowPulseV2 2s ease-in-out infinite;
+        }
+
+        /* Body Structure */
+        .body-container {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
-          box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+          margin-top: -1px;
+          position: relative;
         }
-        .bot-eyes { display: flex; gap: 8px; }
-        .bot-eyes .eye { width: 5px; height: 5px; background: #f97316; border-radius: 50%; box-shadow: 0 0 5px #f97316; }
-        
-        .bot-body-icon {
-          width: 36px;
-          height: 28px;
-          background: #2D3748;
-          border: 2px solid #E2E8F0;
+        .robot-torso-v2 { 
+          width: 44px; height: 42px; 
+          background: radial-gradient(circle at 40% 40%, #fff 0%, #dae1e7 100%); 
+          border-radius: 20px 20px 30px 30px; 
+          position: relative;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+          z-index: 5;
+        }
+        .torso-detail {
+          position: absolute;
+          bottom: 8px; left: 50%;
+          transform: translateX(-50%);
+          width: 14px; height: 2px;
+          background: #dae1e7;
+          border-radius: 2px;
+        }
+
+        .shoulder-v2 {
+          width: 18px; height: 20px;
+          background: #7f8c8d;
           border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+          position: absolute;
+          top: 2px;
+          box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), 0 2px 5px rgba(0,0,0,0.3);
+          z-index: 4;
         }
-        .pulse-icon { color: #f97316; animation: botPulseZap 2s infinite; }
-        @keyframes botPulseZap { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        
+        .shoulder-v2.left { left: -14px; transform: rotate(-15deg); }
+        .shoulder-v2.right { right: -14px; transform: rotate(15deg); }
+
+        .robot-platform-v2 { 
+          width: 50px; height: 6px; 
+          background: rgba(0, 242, 255, 0.2); 
+          border-radius: 50%; 
+          filter: blur(4px); 
+          margin-top: 5px; 
+          animation: shadowPulseV2 4s ease-in-out infinite; 
+        }
+
+        @keyframes glowPulseV2 { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        @keyframes robotHoverV2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes shadowPulseV2 { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(0.6); opacity: 0.05; } }
+        @keyframes robotBlinkV2 { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
         @keyframes bounceInBot {
           from { opacity: 0; transform: scale(0.5) translateY(20px); }
           to { opacity: 1; transform: scale(1) translateY(0); }
@@ -1368,83 +1471,119 @@ const CoachHome = ({ user, onNavigate }) => {
           width: 100%;
           max-width: 450px;
           height: 80vh;
-          background: #151516;
+          background: rgba(13, 17, 23, 0.9);
+          backdrop-filter: blur(20px) saturate(180%);
           border-radius: 30px;
           overflow: hidden;
           display: flex;
           flex-direction: column;
-          border: 1px solid rgba(249, 115, 22, 0.2);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-          animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          border: 1px solid rgba(0, 242, 255, 0.3);
+          box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 30px rgba(0, 242, 255, 0.1);
+          animation: modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes modalSlideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
         .cc-header {
           padding: 24px;
-          background: #1a1a1c;
-          border-bottom: 1px solid rgba(255,255,255,0.05);
+          background: rgba(26, 26, 28, 0.4);
+          border-bottom: 2px solid rgba(0, 242, 255, 0.1);
           display: flex;
           justify-content: space-between;
           align-items: center;
         }
         .cc-title-row { display: flex; align-items: center; gap: 14px; }
         .cc-bot-icon {
-          width: 40px;
-          height: 40px;
-          background: var(--primary);
+          width: 42px;
+          height: 42px;
+          background: #000;
+          border: 2px solid #00f2ff;
           border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+          box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+          position: relative;
+          overflow: visible;
         }
+        .cc-bot-icon::after {
+          content: '';
+          position: absolute;
+          inset: -4px;
+          border: 1px solid rgba(0, 242, 255, 0.2);
+          border-radius: 14px;
+          animation: borderPulse 2s linear infinite;
+        }
+        @keyframes borderPulse { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.05); } }
         .cc-title-group { display: flex; flex-direction: column; }
-        .cc-main-title { font-size: 16px; font-weight: 800; color: white; }
-        .cc-status { font-size: 11px; color: #10B981; font-weight: 700; display: flex; align-items: center; gap: 5px; }
-        .status-dot { width: 6px; height: 6px; background: #10B981; border-radius: 50%; box-shadow: 0 0 8px #10B981; }
-        .cc-close { background: rgba(255,255,255,0.05); border: none; color: #666; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .cc-main-title { font-size: 17px; font-weight: 900; color: #fff; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        .cc-status { font-size: 11px; color: #00f2ff; font-weight: 800; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .status-dot { width: 8px; height: 8px; background: #00f2ff; border-radius: 50%; box-shadow: 0 0 12px #00f2ff; animation: pulseGlow 1.5s infinite; }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 5px #00f2ff; } 50% { box-shadow: 0 0 20px #00f2ff; } 100% { box-shadow: 0 0 5px #00f2ff; } }
+        .cc-close { background: rgba(0, 242, 255, 0.1); border: 1px solid rgba(0, 242, 255, 0.2); color: #00f2ff; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .cc-close:hover { background: rgba(0, 242, 255, 0.2); transform: rotate(90deg); }
         
-        .cc-messages { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .cc-bubble-wrap { display: flex; width: 100%; }
+        .cc-messages { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; scrollbar-width: thin; scrollbar-color: rgba(0, 242, 255, 0.2) transparent; }
+        .cc-bubble-wrap { display: flex; width: 100%; position: relative; }
         .cc-bubble-wrap.bot { justify-content: flex-start; }
         .cc-bubble-wrap.user { justify-content: flex-end; }
-        .cc-bubble { max-width: 85%; padding: 14px 18px; font-size: 14px; font-weight: 600; line-height: 1.5; }
-        .cc-bubble-wrap.bot .cc-bubble { background: #222; color: #ccc; border-radius: 20px 20px 20px 4px; border: 1px solid rgba(255,255,255,0.05); }
-        .cc-bubble-wrap.user .cc-bubble { background: var(--primary); color: white; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2); }
-        .cc-typing { font-size: 12px; color: #555; padding-left: 10px; font-style: italic; }
+        .cc-bubble { max-width: 85%; padding: 16px 20px; font-size: 15px; font-weight: 600; line-height: 1.6; position: relative; }
+        .cc-bubble-wrap.bot .cc-bubble { 
+          background: rgba(255,255,255,0.03); 
+          color: #e2e8f0; 
+          border-radius: 20px 20px 20px 4px; 
+          border: 1px solid rgba(255,255,255,0.1);
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .cc-bubble-wrap.user .cc-bubble { 
+          background: linear-gradient(135deg, #0066cc 0%, #004499 100%); 
+          color: white; 
+          border-radius: 20px 20px 4px 20px; 
+          border: 1px solid rgba(0, 242, 255, 0.3);
+          box-shadow: 0 8px 20px rgba(0, 71, 171, 0.3);
+        }
+        .cc-typing { font-size: 12px; color: #00f2ff; padding-left: 10px; font-style: italic; opacity: 0.7; }
         
         .cc-input-area {
           padding: 24px;
-          background: #1a1a1c;
-          border-top: 1px solid rgba(255,255,255,0.05);
+          background: rgba(26, 26, 28, 0.6);
+          border-top: 1px solid rgba(0, 242, 255, 0.1);
           display: flex;
-          gap: 12px;
+          gap: 14px;
+          align-items: center;
         }
         .cc-input-area input {
           flex: 1;
-          background: #111;
-          border: 1px solid #333;
-          border-radius: 14px;
-          padding: 14px 18px;
-          color: white;
-          font-size: 14px;
+          background: rgba(0,0,0,0.4);
+          border: 1px solid rgba(0, 242, 255, 0.2);
+          border-radius: 16px;
+          padding: 16px 22px;
+          color: #fff;
+          font-size: 15px;
           outline: none;
-          transition: border-color 0.2s;
+          transition: 0.3s;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
-        .cc-input-area input:focus { border-color: var(--primary); }
+        .cc-input-area input:focus { 
+          border-color: #00f2ff; 
+          box-shadow: 0 0 15px rgba(0, 242, 255, 0.2), inset 0 2px 4px rgba(0,0,0,0.2);
+          background: rgba(0,0,0,0.6);
+        }
         .cc-send-btn {
-          width: 50px;
-          height: 50px;
-          background: var(--primary);
+          width: 54px;
+          height: 54px;
+          background: linear-gradient(135deg, #00f2ff 0%, #0066cc 100%);
           border: none;
-          border-radius: 14px;
+          border-radius: 16px;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: 0.2s;
-          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+          transition: 0.3s;
+          box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+          color: white;
         }
+        .cc-send-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0, 242, 255, 0.5); }
+        .cc-send-btn:active { transform: scale(0.95); }
         .cc-send-btn:active { transform: scale(0.9); }
       `}</style>
     </div>

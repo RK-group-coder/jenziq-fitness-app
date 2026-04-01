@@ -1,0 +1,2 @@
+=== ECPay Server Log ===
+2026-04-01T07:37:25.498Z ECPay API server running at http://localhost:5174

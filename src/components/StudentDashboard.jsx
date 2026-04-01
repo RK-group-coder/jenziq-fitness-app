@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabase';
 import TopNav from './TopNav';
 import Hero from './Hero';
 import PromoBanner from './PromoBanner';
@@ -68,7 +69,7 @@ const StudentDashboard = ({ user, onLogout }) => {
       case 'home':
         return (
           <>
-            <Hero user={user} />
+            <Hero user={user} onNavigate={setActivePage} />
             <PromoBanner />
             <Events user={user} />
             <ShopifyMall />

@@ -12,7 +12,7 @@ import {
   ChevronDown,
   Calculator,
   Sparkles,
-  Bot,
+  Bot as BotIcon,
   Cpu,
   Zap,
   Search,
@@ -23,7 +23,8 @@ import {
   Download,
   Scan,
   Dna,
-  ShieldAlert
+  ShieldAlert,
+  Edit
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import NutritionRecordSheet from './NutritionRecordSheet';
@@ -34,6 +35,7 @@ import toolPlanner from '../assets/tool-planner.png';
 import toolPhotoCal from '../assets/tool-photo-cal.png';
 import toolExerciseDb from '../assets/tool-exercise-db.png';
 import { supabase } from '../supabase';
+import PaymentHistoryManager from './manager/PaymentHistoryManager';
 
 const Tools = ({ initialTool = null, onBack = null, user }) => {
   const [activeTool, setActiveTool] = useState(initialTool);
@@ -49,8 +51,10 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
   if (activeTool === 'nutrition') return <NutritionistDetail onBack={handleBack} />;
   if (activeTool === 'injury') return <InjuryAssessmentDetail onBack={handleBack} user={user} />;
   if (activeTool === 'planner') return <AutoPlannerDetail onBack={handleBack} />;
-  if (activeTool === 'photo_cal') return <PhotoCalDetail onBack={handleBack} />;
+  if (activeTool === 'photo_cal') return <PhotoCalDetail onBack={handleBack} onChat={() => setActiveTool('chat')} />;
   if (activeTool === 'chat') return <ChatBotDetail onBack={handleBack} />;
+  if (activeTool === 'warmup') return <ExerciseDbDetail onBack={handleBack} />;
+  if (activeTool === 'payment_history') return <PaymentHistoryManager onBack={handleBack} />;
 
   return (
     <div className="tools-page">
@@ -133,26 +137,26 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
               return `rgba(${r}, ${g}, ${b}, ${alpha})`;
             };
             return (
-              <div 
-                key={idx} 
-                className="ai-banner-card" 
-                style={{ 
+              <div
+                key={idx}
+                className="ai-banner-card"
+                style={{
                   '--tool-color': tool.color,
                   '--tool-glow': hexToRgba(tool.color, 0.25)
                 }}
-                onClick={() => tool.id !== 'warmup' ? setActiveTool(tool.id) : {}}
+                onClick={() => setActiveTool(tool.id)}
               >
                 <div className="ai-banner-content">
                   <div className="ai-banner-badge">{tool.badge}</div>
                   <h4 className="ai-banner-title">{tool.title}</h4>
                   <p className="ai-banner-desc">{tool.desc}</p>
-                  
+
                   <button className="ai-banner-btn">
                     {tool.btn}
                     <ChevronRight size={16} />
                   </button>
                 </div>
-                
+
                 <div className="ai-banner-image-container">
                   <img src={tool.img} alt="" className="ai-banner-3d-img" />
                 </div>
@@ -160,6 +164,28 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
             );
           })}
         </div>
+        {/* Admin Section */}
+        {user?.user_metadata?.role === 'manager' && (
+          <div className="admin-tools-section">
+            <h4 className="section-label">管理員專區</h4>
+            <div className="ai-banner-card admin-variant" onClick={() => setActiveTool('payment_history')}>
+              <div className="ai-banner-content">
+                <div className="ai-banner-badge" style={{ color: '#F59E0B' }}>PAYMENT CENTER</div>
+                <h4 className="ai-banner-title">金流對帳中心</h4>
+                <p className="ai-banner-desc">查看綠界支付紀錄、學員繳費狀態與入帳明細</p>
+                <button className="ai-banner-btn" style={{ background: '#F59E0B', boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)' }}>
+                  管理對帳單
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+              <div className="ai-banner-image-container">
+                <div className="admin-glow-circle"></div>
+                <CreditCard size={100} color="rgba(245, 158, 11, 0.2)" />
+              </div>
+            </div>
+          </div>
+        )}
+        
         <SupportBot onOpenChat={() => setActiveTool('chat')} />
       </div>
 
@@ -314,7 +340,7 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
           transform: translateX(5%) scale(1.08) rotate(0deg); 
           opacity: 1;
         }
-247,0.1); color: #A855F7; }
+        .active-purple { background: rgba(168,85,247,0.1); color: #A855F7; }
         .active-green { background: rgba(16,185,129,0.1); color: #10B981; }
 
         .tool-desc { font-size: 13px; color: #777; line-height: 1.5; margin-bottom: 16px; font-weight: 600; }
@@ -327,6 +353,12 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
           border-radius: 6px;
           font-weight: 700;
         }
+
+        /* Admin Tools Styles */
+        .admin-tools-section { margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.05); pt: 32px; }
+        .section-label { font-size: 12px; color: #64748B; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+        .admin-variant { border: 1px solid rgba(245, 158, 11, 0.15); }
+        .admin-glow-circle { position: absolute; width: 120px; height: 120px; background: #F59E0B; opacity: 0.05; filter: blur(40px); border-radius: 50%; }
       `}</style>
     </div>
   );
@@ -378,7 +410,7 @@ const NutritionistDetail = ({ onBack }) => {
   const handleSaveRecord = async () => {
     if (!recordSheetRef.current) return;
     setIsGeneratingImage(true);
-    
+
     // Give UI time to update showing the spinner
     await new Promise(r => setTimeout(r, 100));
 
@@ -389,7 +421,7 @@ const NutritionistDetail = ({ onBack }) => {
         backgroundColor: '#ffffff',
         logging: false
       });
-      
+
       const fileName = `JENZiQ_營養紀錄表_${new Date().getTime()}.png`;
       const dataUrl = canvas.toDataURL('image/png', 0.8); // Slight compression
 
@@ -410,7 +442,7 @@ const NutritionistDetail = ({ onBack }) => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       alert('✅ 已生成紀錄表！檔案已開始下載至您的電腦。');
     } catch (err) {
       console.error('Save error:', err);
@@ -452,7 +484,7 @@ const NutritionistDetail = ({ onBack }) => {
     setIsGenerating(true);
     setGeneratedPlan(null);
 
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const apiKey = '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';
 
     if (!apiKey) {
       // Fallback for demo if key is missing, but with a warning in console
@@ -479,7 +511,7 @@ const NutritionistDetail = ({ onBack }) => {
       const prompt = `你是一位專業的運動營養師。請為 JENZiQ 學員生成一份一天的飲食計畫。
       學員資料：
       - 目標：${goal === 'lose' ? '減脂' : '增肌'}
-      - 目標熱量：${results.targetCalories} kcal (誤差不超過 50 kcal)
+      - 目標熱量：${results.targetCalories} kcal (嚴格要求：總熱量誤差絕對「不能超過」上下 50 kcal)
       - 比例：40% 蛋白質, 35% 碳水, 25% 脂肪 (P: ${results.protein}g, C: ${results.carbs}g, F: ${results.fat}g)
       - 餐數：${mealCount} 餐
       - 乳清蛋白：${hasWPI === 'yes' ? wpiServings + ' 份' : '無'}
@@ -505,7 +537,8 @@ const NutritionistDetail = ({ onBack }) => {
         "explanation": "你的專業解釋文本"
       }`;
 
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
+      const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -521,7 +554,10 @@ const NutritionistDetail = ({ onBack }) => {
         })
       });
 
-      if (!response.ok) throw new Error('API request failed');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`OpenAI 錯誤 (${response.status}): ${errorData.error?.message || response.statusText}`);
+      }
 
       const data = await response.json();
       const plan = JSON.parse(data.choices[0].message.content);
@@ -534,7 +570,9 @@ const NutritionistDetail = ({ onBack }) => {
       });
     } catch (err) {
       console.error('OpenAI Error:', err);
-      alert('AI 生成時發生錯誤，請檢查網路連線或 API Key。');
+      // 提供更詳細的錯誤資訊以便排查
+      const errorMsg = err.message || '未知錯誤';
+      alert(`AI 生成時發生錯誤：\n${errorMsg}\n\n請檢查：\n1. Vercel 控制台是否已設定 VITE_OPENAI_API_KEY\n2. OpenAI 帳戶餘額是否充足\n3. 網路連線是否穩定`);
     } finally {
       setIsGenerating(false);
     }
@@ -565,51 +603,49 @@ const NutritionistDetail = ({ onBack }) => {
                 <div className="header-accent"></div>
                 <h4>基本個人數據</h4>
               </div>
-              
+
               <div className="form-card-v2">
                 <div className="form-group-v2">
                   <label><UserIcon size={14} /> 您的性別</label>
-                  
                   <div className="single-gender-visual">
                     <div className="visual-stage">
                       <div className={`gender-visual-box active ${gender}`}>
-                        <img 
-                          src={gender === 'male' ? "/images/male_muscle_v2.png" : "/images/female_muscle_v2.png"} 
-                          alt="Gender Visual" 
-                          className="muscle-fig-static" 
+                        <img
+                          src={gender === 'male' ? "/images/male_muscle_v2.png" : "/images/female_muscle_v2.png"}
+                          alt="Gender Visual"
+                          className="muscle-fig-static"
                         />
                         <div className="visual-platform-static"></div>
                       </div>
                     </div>
                   </div>
-
-                  <div className="modern-toggles">
-                    <div className={`modern-toggle ${gender === 'male' ? 'active male' : ''}`} onClick={() => setGender('male')}>男性</div>
-                    <div className={`modern-toggle ${gender === 'female' ? 'active female' : ''}`} onClick={() => setGender('female')}>女性</div>
+                  <div className={`modern-toggles ${results ? 'locked-toggles' : ''}`}>
+                    <div className={`modern-toggle ${gender === 'male' ? 'active male' : ''}`} onClick={() => !results && setGender('male')}>男性</div>
+                    <div className={`modern-toggle ${gender === 'female' ? 'active female' : ''}`} onClick={() => !results && setGender('female')}>女性</div>
                   </div>
                 </div>
 
                 <div className="form-row-v2">
                   <div className="form-group-v2 flex-1">
                     <label><Activity size={14} /> 身高 (cm)</label>
-                    <input type="number" value={height} onChange={(e) => setHeight(Number(e.target.value))} className="modern-input" placeholder="175" />
+                    <input type="number" value={height} onChange={(e) => setHeight(Number(e.target.value))} className={`modern-input ${results ? 'locked-input' : ''}`} placeholder="175" disabled={!!results} />
                   </div>
                   <div className="form-group-v2 flex-1">
                     <label><Weight size={14} /> 體重 (kg)</label>
-                    <input type="number" value={weight} onChange={(e) => setWeight(Number(e.target.value))} className="modern-input" placeholder="70" />
+                    <input type="number" value={weight} onChange={(e) => setWeight(Number(e.target.value))} className={`modern-input ${results ? 'locked-input' : ''}`} placeholder="70" disabled={!!results} />
                   </div>
                 </div>
 
                 <div className="form-group-v2">
                   <label><Clock size={14} /> 現在年齡</label>
-                  <input type="number" value={age} onChange={(e) => setAge(Number(e.target.value))} className="modern-input" placeholder="25" />
+                  <input type="number" value={age} onChange={(e) => setAge(Number(e.target.value))} className={`modern-input ${results ? 'locked-input' : ''}`} placeholder="25" disabled={!!results} />
                 </div>
 
                 <div className="form-group-v2">
                   <label><Zap size={14} /> 健身目標</label>
-                  <div className="modern-tabs">
+                  <div className={`modern-tabs ${results ? 'locked-toggles' : ''}`}>
                     {['lose', 'gain', 'maintain'].map((m) => (
-                      <div key={m} className={`modern-tab ${goal === m ? 'active' : ''}`} onClick={() => setGoal(m)}>
+                      <div key={m} className={`modern-tab ${goal === m ? 'active' : ''}`} onClick={() => !results && setGoal(m)}>
                         {m === 'lose' ? '減脂' : m === 'gain' ? '增肌' : '維持'}
                       </div>
                     ))}
@@ -618,15 +654,15 @@ const NutritionistDetail = ({ onBack }) => {
 
                 <div className="form-group-v2">
                   <label><Zap size={14} /> 每日活動量</label>
-                  <div className="modern-select-box">
-                    <select className="modern-select" value={activity} onChange={(e) => setActivity(Number(e.target.value))}>
+                  <div className={`modern-select-box ${results ? 'locked-input' : ''}`}>
+                    <select className="modern-select" value={activity} onChange={(e) => setActivity(Number(e.target.value))} disabled={!!results}>
                       {activityLevels.map((l, i) => <option key={i} value={l.value}>{l.label}</option>)}
                     </select>
                     <ChevronDown size={18} className="select-arrow" />
                   </div>
                 </div>
 
-                <button className="premium-submit-btn orange-glow" onClick={calculate}>
+                <button className={`premium-submit-btn orange-glow ${results ? 'dimmed-btn' : ''}`} onClick={calculate} disabled={!!results}>
                   <Calculator size={18} />
                   <span>精準計算需求</span>
                 </button>
@@ -639,7 +675,7 @@ const NutritionistDetail = ({ onBack }) => {
                   <div className="res-item"><span>基礎代謝率 (BMR)</span><span>{results.bmr} <small>kcal</small></span></div>
                   <div className="res-divider"></div>
                   <div className="res-item"><span>每日總消耗 (TDEE)</span><span className="res-value highlight">{results.tdee} <small>kcal</small></span></div>
-                  <button className="ai-plan-btn" onClick={() => setShowMealPlanForm(true)}><Zap size={16} /> 菜單安排智能</button>
+                  <button className={`ai-plan-btn ${results ? 'pulse-glow-orange' : ''}`} onClick={() => setShowMealPlanForm(true)}><Zap size={16} /> 菜單安排智能</button>
                 </div>
                 <h4 className="card-label">🥗 AI 建議每日攝取 (40/35/25)</h4>
                 <div className="result-card">
@@ -665,9 +701,9 @@ const NutritionistDetail = ({ onBack }) => {
             <div className="form-card-v2">
               <div className="form-group-v2">
                 <label><Clock size={14} /> 一天攝取餐數</label>
-                <div className="modern-tabs">
+                <div className={`modern-tabs ${generatedPlan ? 'locked-toggles' : ''}`}>
                   {[2, 3, 4, 5].map(n => (
-                    <div key={n} className={`modern-tab ${mealCount === n ? 'active' : ''}`} onClick={() => setMealCount(n)}>
+                    <div key={n} className={`modern-tab ${mealCount === n ? 'active' : ''}`} onClick={() => !generatedPlan && setMealCount(n)}>
                       {n}餐
                     </div>
                   ))}
@@ -676,18 +712,18 @@ const NutritionistDetail = ({ onBack }) => {
 
               <div className="form-group-v2">
                 <label><Flame size={14} /> 額外乳清補充</label>
-                <div className="modern-toggles">
-                  <div className={`modern-toggle ${hasWPI === 'yes' ? 'active orange' : ''}`} onClick={() => setHasWPI('yes')}>我有喝</div>
-                  <div className={`modern-toggle ${hasWPI === 'no' ? 'active' : ''}`} onClick={() => setHasWPI('no')}>不常喝</div>
+                <div className={`modern-toggles ${generatedPlan ? 'locked-toggles' : ''}`}>
+                  <div className={`modern-toggle ${hasWPI === 'yes' ? 'active orange' : ''}`} onClick={() => !generatedPlan && setHasWPI('yes')}>我有喝</div>
+                  <div className={`modern-toggle ${hasWPI === 'no' ? 'active' : ''}`} onClick={() => !generatedPlan && setHasWPI('no')}>不常喝</div>
                 </div>
               </div>
 
               {hasWPI === 'yes' && (
                 <div className="form-group-v2">
                   <label><Zap size={14} /> 每日份量</label>
-                  <div className="modern-tabs">
+                  <div className={`modern-tabs ${generatedPlan ? 'locked-toggles' : ''}`}>
                     {[1, 2, 3, 4, 5].map(n => (
-                      <div key={n} className={`modern-tab ${wpiServings === n ? 'active' : ''}`} onClick={() => setWpiServings(n)}>
+                      <div key={n} className={`modern-tab ${wpiServings === n ? 'active' : ''}`} onClick={() => !generatedPlan && setWpiServings(n)}>
                         {n}份
                       </div>
                     ))}
@@ -697,18 +733,18 @@ const NutritionistDetail = ({ onBack }) => {
 
               <div className="form-group-v2">
                 <label><X size={14} /> 飲食忌口</label>
-                <input type="text" placeholder="例如：過敏、不吃牛、素食..." className="modern-input" value={restriction} onChange={e => setRestriction(e.target.value)} />
+                <input type="text" placeholder="例如：過敏、不吃牛、素食..." className={`modern-input ${generatedPlan ? 'locked-input' : ''}`} value={restriction} onChange={e => setRestriction(e.target.value)} disabled={!!generatedPlan} />
               </div>
 
               <div className="form-group-v2">
                 <label><Sparkles size={14} /> 進階需求</label>
-                <input type="text" placeholder="例如：多吃原型食物、低碳..." className="modern-input" value={specialNeed} onChange={e => setSpecialNeed(e.target.value)} />
+                <input type="text" placeholder="例如：多吃原型食物、低碳..." className={`modern-input ${generatedPlan ? 'locked-input' : ''}`} value={specialNeed} onChange={e => setSpecialNeed(e.target.value)} disabled={!!generatedPlan} />
               </div>
 
               <button
-                className="premium-submit-btn orange-glow"
+                className={`premium-submit-btn orange-glow ${generatedPlan ? 'dimmed-btn' : ''}`}
                 onClick={generateMealPlan}
-                disabled={isGenerating}
+                disabled={isGenerating || !!generatedPlan}
               >
                 {isGenerating ? (
                   <>
@@ -739,6 +775,10 @@ const NutritionistDetail = ({ onBack }) => {
                   <div className="logic-dots">
                     <span></span><span></span><span></span>
                   </div>
+                  <div className="loading-progress-bar">
+                    <div className="progress-fill"></div>
+                  </div>
+                  <div className="loader-status">正在計算最佳營養配比...</div>
                 </div>
               </div>
             )}
@@ -787,9 +827,9 @@ const NutritionistDetail = ({ onBack }) => {
                   </div>
                 )}
 
-                <button 
-                  className="submit-btn orange" 
-                  style={{ marginTop: '20px', background: '#3B82F6', boxShadow: '0 6px 20px rgba(59, 130, 246, 0.3)' }}
+                <button
+                  className="premium-submit-btn orange-glow"
+                  style={{ marginTop: '20px' }}
                   onClick={handleSaveRecord}
                   disabled={isGeneratingImage}
                 >
@@ -801,10 +841,10 @@ const NutritionistDetail = ({ onBack }) => {
                 </button>
 
                 <div style={{ position: 'fixed', top: 0, left: '-9999px', opacity: 0, pointerEvents: 'none', zIndex: -1 }}>
-                  <NutritionRecordSheet 
-                    ref={recordSheetRef} 
-                    data={generatedPlan} 
-                    results={{...results, height, weight, age, activity}} 
+                  <NutritionRecordSheet
+                    ref={recordSheetRef}
+                    data={generatedPlan}
+                    results={{ ...results, height, weight, age, activity }}
                   />
                 </div>
 
@@ -829,9 +869,9 @@ const NutritionistDetail = ({ onBack }) => {
                         <X size={24} />
                       </button>
                     </div>
-                    <div className="preview-instructions" style={{ 
-                      backgroundColor: '#FF5C00', 
-                      padding: '10px', 
+                    <div className="preview-instructions" style={{
+                      backgroundColor: '#FF5C00',
+                      padding: '10px',
                       borderRadius: '8px',
                       marginBottom: '20px',
                       fontSize: '14px'
@@ -839,18 +879,18 @@ const NutritionistDetail = ({ onBack }) => {
                       💡 請「長按圖片」選擇「儲存影像」或「加入照片」即可存入您的相簿。
                     </div>
                     <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                      <img 
-                        src={previewImage} 
-                        alt="Nutrition Record" 
-                        style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }} 
+                      <img
+                        src={previewImage}
+                        alt="Nutrition Record"
+                        style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
                       />
                     </div>
-                    <button 
+                    <button
                       onClick={() => setPreviewImage(null)}
-                      style={{ 
-                        marginTop: '20px', 
-                        padding: '15px', 
-                        background: '#333', 
+                      style={{
+                        marginTop: '20px',
+                        padding: '15px',
+                        background: '#333',
                         borderRadius: '8px',
                         color: 'white',
                         fontWeight: 'bold'
@@ -1039,6 +1079,10 @@ const NutritionistDetail = ({ onBack }) => {
           appearance: none;
           outline: none;
         }
+        .modern-select option {
+          background: #111;
+          color: white;
+        }
         .select-arrow { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none; }
 
         .premium-submit-btn {
@@ -1095,6 +1139,35 @@ const NutritionistDetail = ({ onBack }) => {
           transition: all 0.2s;
         }
         .ai-plan-btn:hover { background: rgba(255, 255, 255, 0.1); }
+        
+        .pulse-glow-orange {
+          animation: orangePulse 1.5s infinite ease-in-out;
+          background: var(--primary) !important;
+          color: white !important;
+          border: none !important;
+          font-weight: 900 !important;
+          box-shadow: 0 8px 25px rgba(255, 107, 0, 0.4) !important;
+        }
+        @keyframes orangePulse {
+          0% { transform: scale(1); box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4); }
+          50% { transform: scale(1.03); box-shadow: 0 10px 35px rgba(255, 107, 0, 0.7); }
+          100% { transform: scale(1); box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4); }
+        }
+        .dimmed-btn {
+          opacity: 0.3 !important;
+          filter: grayscale(1);
+          pointer-events: none;
+        }
+
+        .locked-input {
+          opacity: 0.5 !important;
+          cursor: not-allowed;
+          filter: grayscale(0.8);
+        }
+        .locked-toggles {
+          pointer-events: none;
+          opacity: 0.6;
+        }
 
         .macros-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .macro-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 16px 12px; border-radius: 18px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -1108,17 +1181,58 @@ const NutritionistDetail = ({ onBack }) => {
         .actual-macros-row { display: flex; gap: 10px; }
         .actual-macros-row span { background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; font-size: 12px; color: #aaa; font-weight: 800; }
 
-        .meal-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; padding: 24px; margin-bottom: 20px; }
-        .meal-header { font-size: 18px; font-weight: 900; color: white; margin-bottom: 20px; }
-        .meal-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .item-food { font-size: 16px; font-weight: 800; color: #eee; }
-        .item-note { font-size: 11px; color: #555; font-weight: 700; margin-top: 2px; }
-        .item-weight { font-size: 18px; font-weight: 900; color: var(--primary); }
-        .item-portion { color: #888; font-size: 11px; margin-top: 4px; }
+        .meal-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .meal-header { font-size: 18px; font-weight: 900; color: white; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; }
+        .meal-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+        .item-info { display: flex; flex-direction: column; gap: 4px; }
+        .item-food { font-size: 16px; font-weight: 900; color: #fff; }
+        .item-note { font-size: 11px; color: #666; font-weight: 700; }
+        .item-weight { font-size: 18px; font-weight: 900; color: #FF6B00; text-shadow: 0 0 10px rgba(255,107,0,0.2); }
+        .item-portion { color: #FF6B00; font-size: 11px; font-weight: 800; margin-top: 4px; opacity: 0.8; }
+        .meal-footer-note { margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 13px; color: #888; font-weight: 600; font-style: italic; }
+
+        .ai-explanation-card { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 24px; padding: 24px; margin-bottom: 20px; }
+        .explanation-title { font-size: 16px; font-weight: 800; color: #10B981; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .explanation-text { font-size: 14px; color: #ccc; line-height: 1.7; font-weight: 500; white-space: pre-wrap; }
 
         .robot-loader-card { padding: 40px 24px; text-align: center; }
         .loader-title { font-size: 18px; font-weight: 900; color: white; margin: 20px 0 10px; }
         .loader-subtitle { font-size: 13px; color: #666; line-height: 1.6; }
+        
+        .loading-progress-bar {
+          width: 80%;
+          height: 6px;
+          background: rgba(255,255,255,0.05);
+          border-radius: 10px;
+          margin: 24px auto 12px;
+          overflow: hidden;
+          position: relative;
+        }
+        .progress-fill {
+          height: 100%;
+          width: 30%;
+          background: var(--primary);
+          border-radius: 10px;
+          box-shadow: 0 0 10px var(--primary);
+          animation: loadingMove 2s infinite ease-in-out;
+        }
+        @keyframes loadingMove {
+          0% { transform: translateX(-100%); width: 20%; }
+          50% { width: 50%; }
+          100% { transform: translateX(300%); width: 20%; }
+        }
+        .loader-status {
+          font-size: 11px;
+          color: #444;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+        .robot-wrap { animation: robotPulse 2s infinite ease-in-out; }
+        @keyframes robotPulse {
+          0%, 100% { transform: translateY(0) rotate(0); }
+          50% { transform: translateY(-15px) rotate(5deg); }
+        }
 
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .intensity-val { color: #E11D48; font-weight: 900; font-size: 18px; }
@@ -1216,7 +1330,7 @@ const DetailStyles = () => (
     .modern-toggle.active.male { border-color: #3b82f6; color: #3b82f6; background: rgba(59,130,246,0.15); }
     .modern-toggle.active.female { border-color: #ec4899; color: #ec4899; background: rgba(236,72,153,0.15); }
     .modern-toggle.active.red { border-color: #E11D48; color: #E11D48; background: rgba(225,29,72,0.15); }
-    .modern-toggle.active.orange { border-color: var(--primary); color: var(--primary); background: rgba(255,107,0,0.15); }
+.modern-toggle.active.orange { border-color: var(--primary); color: var(--primary); background: rgba(255,107,0,0.15); }
 
     .stack-btns-v2 { display: flex; flex-direction: column; gap: 10px; }
     .stack-btn-v2 {
@@ -1255,71 +1369,62 @@ const DetailStyles = () => (
 
     .spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-mary); border-color: var(--primary); color: white; }
-    .toggle-btn.active-red { background: #991b1b; border-color: #dc2626; color: white; }
-    .stack-btns { display: flex; flex-direction: column; gap: 8px; }
-    .stack-btn { padding: 14px; background: #1e1e20; border: 1px solid #2d2d30; border-radius: 12px; color: #888; font-size: 14px; font-weight: 700; text-align: center; }
-    .stack-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
-    .checkbox-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .check-btn { padding: 10px 4px; background: #1e1e20; border: 1px solid #2d2d30; border-radius: 8px; color: #777; font-size: 11px; font-weight: 700; }
-    .check-btn.active { background: rgba(255, 92, 0, 0.1); border-color: var(--primary); color: var(--primary); }
-    .submit-btn { width: 100%; padding: 16px; border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; font-weight: 800; margin-top: 24px; color: white; border: none; outline: none; transition: 0.3s; }
-    .submit-btn.orange { background: var(--primary); box-shadow: 0 6px 20px rgba(255, 92, 0, 0.3); }
-    .submit-btn.gray { background: #27272a; color: #52525b; }
-    .result-placeholder { padding: 60px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; color: #3f3f46; text-align: center; border: 2px dashed #1e1e20; border-radius: 24px; }
-    .select-container { position: relative; width: 100%; }
-    .form-select { width: 100%; background: #1e1e20; border: 1px solid #2d2d30; border-radius: 12px; padding: 14px 16px; padding-right: 40px; color: white; font-size: 14px; font-weight: 600; appearance: none; outline: none; }
-    .select-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none; }
-    .results-container { margin-top: 24px; }
-    .result-card { background: #1a1a1c; border-radius: 20px; padding: 20px; border: 1px solid rgba(255, 107, 0, 0.1); margin-bottom: 24px; }
-    .result-card.main { border-color: rgba(255, 107, 0, 0.3); }
-    .res-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 14px; font-weight: 600; color: #888; }
-    .res-item span:last-child { font-size: 20px; color: white; font-weight: 800; }
-    .res-value.highlight { color: var(--primary) !important; font-size: 24px !important; }
-    .res-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 16px 0; }
-    .macros-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .macro-box { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .macro-name { font-size: 10px; color: #666; font-weight: 700; }
-    .macro-val { font-size: 16px; font-weight: 850; color: white; }
   `}</style>
 );
 
-/* Photo Calorie Detail */
-
-const PhotoCalDetail = ({ onBack }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
+const PhotoCalDetail = ({ onBack, onChat }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
-  useEffect(() => {
-    if (previewUrl && !result && !isAnalyzing) {
-      analyzeImage();
+  const [records, setRecords] = useState(() => {
+    const saved = localStorage.getItem('photo_cal_records_v1');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const saveRecord = (newRec) => {
+    setRecords(prev => {
+      const updated = [newRec, ...prev].slice(0, 7);
+      localStorage.setItem('photo_cal_records_v1', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleRename = (id) => {
+    const targetRec = records.find(r => r.id === id);
+    const newName = prompt('請輸入更具質感的餐點名稱：', targetRec.name);
+    if (newName && newName.trim() !== '') {
+      setRecords(prev => {
+        const updated = prev.map(rec => rec.id === id ? { ...rec, name: newName } : rec);
+        localStorage.setItem('photo_cal_records_v1', JSON.stringify(updated));
+        return updated;
+      });
     }
-  }, [previewUrl]);
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
+        analyzeImage(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const analyzeImage = async () => {
+  const analyzeImage = async (imageB64) => {
     setIsAnalyzing(true);
     setResult(null);
 
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const apiKey = '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';
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
+      const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1328,95 +1433,173 @@ const PhotoCalDetail = ({ onBack }) => {
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [
-            {
-              role: 'system',
-              content: '你是一位專業的營養師。請分析圖片中的食物。回傳格式必須為 JSON 物件。'
-            },
+            { role: 'system', content: '你是一位專業的營養師。請分析圖片中的食物回傳格式為 JSON 物件。' },
             {
               role: 'user',
               content: [
                 {
                   type: 'text',
-                  text: `請分析這張照片中的食物。列出所有可辨識的食材，並估算各食材的熱量及三大營養素（蛋白質、碳水、脂肪）。最後在最下方給出整盤食物的總和統計。
-                  請特別估算這道菜的「整體名稱」。
-                  嚴格回傳 JSON 格式如下：
-                  {
-                    "mealName": "食物名稱(例如: 舒肥雞胸沙拉)",
-                    "items": [
-                      { "food": "食材名稱", "kcal": 150, "protein": 20, "carbs": 5, "fat": 8, "note": "量感描述" }
-                    ],
-                    "total": { "calories": 450, "protein": 35, "carbs": 40, "fat": 15 },
-                    "chefNote": "詳細的健康建議與營養回饋 (至少 60 字)"
-                  }`
+                  text: `你是一位優雅且專業的繁體中文營養師。請分析照片中的食物，估算熱量及三大營養素。
+請務必以「繁體中文」回傳所有分析內容。
+
+【關鍵命名要求】：
+餐點名稱 (mealName) 請命名得「簡潔且有質感」，請避開「主廚、時令、季節、極致」等過於浮誇或不符真實情況的詞彙。
+請使用簡單且好聽的食材描述（例如：不說「烤魚餐」，改說「烤魚佐食蔬」；不說「營養沙拉」，改說「生菜拼盤」）。
+
+針對每個食材，請務必估計其「重量（克數）」。
+
+回傳 JSON 格式如下：
+{ 
+  "mealName": "簡潔質感的餐點名稱", 
+  "items": [{ "food": "食材名", "weight": "約 120g", "kcal": 150, "protein": 10, "carbs": 20, "fat": 5, "note": "食材描述" }], 
+  "total": { "calories": 500, "protein": 30, "carbs": 50, "fat": 20 }, 
+  "chefNote": "營養師特別建議（繁體中文）" 
+}`
                 },
                 {
                   type: 'image_url',
-                  image_url: { url: previewUrl || '' }
+                  image_url: { url: imageB64 }
                 }
               ]
             }
           ],
-          max_tokens: 1000,
           response_format: { type: 'json_object' }
         })
       });
 
       const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
-
       const analysis = JSON.parse(data.choices[0].message.content);
+
+      const newRec = {
+        id: Date.now(),
+        img: imageB64,
+        name: analysis.mealName || '分析餐點',
+        time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }),
+        calories: analysis.total.calories,
+        protein: analysis.total.protein,
+        carbs: analysis.total.carbs,
+        fat: analysis.total.fat
+      };
+      saveRecord(newRec);
       setResult(analysis);
     } catch (err) {
       console.error(err);
-      alert('分析失敗：' + (err.message || '請稍後再試'));
-      setPreviewUrl(null); // Reset on failure
+      alert('分析失敗');
+      setPreviewUrl(null);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
+  const [botMessage, setBotMessage] = useState('');
+  useEffect(() => {
+    if (!previewUrl && !isAnalyzing) {
+      const emptyMessages = [
+        "準備好紀錄今天的第一餐了嗎？拍張照讓我也流流口水！😋",
+        "還沒想到要吃什麼嗎？隨手拍下你的食材，我來幫你看看！",
+        "空的日誌看起來有點孤單呢...要不拍點食物讓我分析看看？",
+        "肚子餓了嗎？快拍下美味的食物，讓我為您精準計算熱量！"
+      ];
+      const filledMessages = [
+        "看下來今天吃得真不錯！有任何營養上的疑問都可以詢問我喔～🥗",
+        "哇，這幾餐的搭配看起來很專業呢！想知道更細節的營養知識嗎？點我聊聊！",
+        "今日份的健康已達標！對剛才辨識的食物有好奇的地方嗎？隨時問我！",
+        "我是您的 AI 助理營養師，您的飲食紀錄我都看在眼裡喔！有什麼想聊的嗎？"
+      ];
+      const pool = records.length > 0 ? filledMessages : emptyMessages;
+      setBotMessage(pool[Math.floor(Math.random() * pool.length)]);
+    }
+  }, [records.length, previewUrl, isAnalyzing]);
+
   return (
     <div className="tool-detail-page photo-cal-page">
       {!result ? (
         <>
-          {/* Landing State with Background */}
           {!previewUrl && !isAnalyzing ? (
-            <div className="photo-cal-landing">
-              <button className="landing-back-btn" onClick={onBack}><ChevronLeft size={24} color="white" /></button>
+            <div className="photo-cal-records-view">
+              <header className="records-header-v2">
+                <button className="h-back-btn" onClick={onBack}><ChevronLeft size={24} color="white" /></button>
+                <h3>辨識歷史</h3>
+                <div style={{ width: 24 }}></div>
+              </header>
 
-              <div className="landing-content">
-                <div className="landing-text-box">
-                  <h2 className="landing-title">AI 視覺熱量計算</h2>
-                  <p className="landing-subtitle">拍照或選擇照片，秒級分析營養成分</p>
+              <div className="records-scroll-area">
+                <div className="records-premium-frame">
+                  <div className="frame-header">
+                    <div className="frame-title">
+                      <Clock size={16} color="#FF6B00" />
+                      <span>歷史辨識日誌</span>
+                    </div>
+                    {records.length > 0 && <span className="frame-count">{records.length}/7</span>}
+                  </div>
+
+                  {records.length > 0 ? (
+                    <div className="records-list">
+                      {records.map(rec => (
+                        <div key={rec.id} className="record-item-v2" onClick={() => {
+                          setPreviewUrl(rec.img);
+                          setResult({
+                            mealName: rec.name,
+                            total: { calories: rec.calories, protein: rec.protein, carbs: rec.carbs, fat: rec.fat },
+                            items: [],
+                            chefNote: "查看歷史紀錄摘要。"
+                          });
+                        }}>
+                          <div className="rec-img-box">
+                            <img src={rec.img} alt={rec.name} />
+                          </div>
+                          <div className="rec-info-box">
+                            <div className="rec-top-row">
+                              <span className="rec-name">
+                                {rec.name}
+                                <button className="mini-edit-btn" onClick={(e) => { e.stopPropagation(); handleRename(rec.id); }}>
+                                  <Edit size={12} color="#888" />
+                                </button>
+                              </span>
+                              <span className="rec-time">{rec.time}</span>
+                            </div>
+                            <div className="rec-cal-row">
+                              <span className="rec-cals">{rec.calories} <small>Cal</small></span>
+                            </div>
+                            <div className="rec-macros-row">
+                              <div className="rec-macro">P: {rec.protein}g</div>
+                              <div className="rec-macro">C: {rec.carbs}g</div>
+                              <div className="rec-macro">F: {rec.fat}g</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="empty-records">
+                      <div className="empty-box">📸</div>
+                      <p>尚未有辨識紀錄<br />開始拍攝您的第一餐吧！</p>
+                    </div>
+                  )}
+
+                  <div className="history-bot-bubble" onClick={onChat}>
+                    <div className="bot-avatar-mini">🤖</div>
+                    <div className="bot-text-bubble">
+                      <p>{botMessage}</p>
+                      <span className="tap-hint">點擊與營養師對談 <Zap size={10} fill="#FF6B00" color="#FF6B00" /></span>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="landing-actions">
-                  <button className="landing-btn primary" onClick={() => cameraInputRef.current.click()}>
-                    <Camera size={20} />
-                    現場拍攝
-                  </button>
-                  <button className="landing-btn secondary" onClick={() => fileInputRef.current.click()}>
-                    <ImageIcon size={20} />
-                    選擇照片
-                  </button>
-                </div>
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  ref={cameraInputRef}
-                  onChange={handleImageChange}
-                  hidden
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  hidden
-                />
               </div>
+
+              <div className="fixed-landing-actions">
+                <button className="landing-btn primary" onClick={() => cameraInputRef.current.click()}>
+                  <Camera size={20} />
+                  現場拍攝
+                </button>
+                <button className="landing-btn secondary" onClick={() => fileInputRef.current.click()}>
+                  <ImageIcon size={20} />
+                  選擇照片
+                </button>
+              </div>
+
+              <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleImageChange} hidden />
+              <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} hidden />
             </div>
           ) : (
             <>
@@ -1431,17 +1614,23 @@ const PhotoCalDetail = ({ onBack }) => {
                   <img src={previewUrl} alt="Preview" className="analyzing-img" />
                   <div className="scanning-line"></div>
                 </div>
-
-                <div className="robot-loader-card" style={{ mt: '24px', borderColor: 'rgba(16,185,129,0.1)' }}>
+                <div className="robot-loader-card">
                   <div className="robot-wrap">
-                    <div className="robot-head" style={{ borderColor: '#10B981' }}>
-                      <div className="eye left" style={{ background: '#10B981', boxShadow: '0 0 10px #10B981' }}></div>
-                      <div className="eye right" style={{ background: '#10B981', boxShadow: '0 0 10px #10B981' }}></div>
+                    <div className="robot-head shadow-bot">
+                      <div className="eye left"></div>
+                      <div className="eye right"></div>
                     </div>
-                    <div className="robot-body"><div className="cpu-core"><Cpu size={24} color="#10B981" /></div></div>
+                    <div className="robot-body-mini">
+                      <div className="cpu-core mini"><Cpu size={14} color="#10B981" /></div>
+                    </div>
                   </div>
-                  <div className="loader-title">AI 視覺中樞啟動</div>
-                  <p className="loader-subtitle">正在掃描圖片中的像素邊緣，解析食物種類與估算份量空間...</p>
+                  <div className="loader-content">
+                    <div className="loader-title">AI 營養師分析中</div>
+                    <p className="loader-subtitle">正在辨識食材比例、解析營養成分與估算熱量...</p>
+                    <div className="logic-dots">
+                      <span></span><span></span><span></span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
@@ -1449,292 +1638,369 @@ const PhotoCalDetail = ({ onBack }) => {
         </>
       ) : (
         <div className="photo-result-hero">
-          {/* Header Controls Overlay */}
           <div className="hero-header">
-            <button className="hero-back-btn" onClick={() => setResult(null)}><ChevronLeft size={24} /></button>
+            <button className="hero-back-btn" onClick={() => { if (records.length > 0) { setResult(null); setPreviewUrl(null); } else { setResult(null); } }}><ChevronLeft size={24} /></button>
             <button className="hero-close-btn" onClick={onBack}><X size={24} /></button>
           </div>
-
-          {/* Top Image */}
           <div className="hero-image-wrap">
             <img src={previewUrl} alt="Analyzed meal" className="hero-image" />
           </div>
-
-          {/* Main Info Box */}
           <div className="result-body">
             <div className="meal-main-header">
-              <h2 className="meal-name">{result.mealName || '分析結果'}</h2>
+              <h2 className="meal-name">{result.mealName}</h2>
               <div className="meal-total-summary">{result.total.calories} Cal</div>
             </div>
-
-            {/* Macros Bar */}
             <div className="macros-strip">
-              <div className="macro-item">
-                <span className="macro-num">{result.total.calories}</span>
-                <span className="macro-label">Calories</span>
-              </div>
-              <div className="macro-item">
-                <span className="macro-num">{result.total.protein}g</span>
-                <span className="macro-label">Proteins</span>
-              </div>
-              <div className="macro-item">
-                <span className="macro-num">{result.total.fat}g</span>
-                <span className="macro-label">Fats</span>
-              </div>
-              <div className="macro-item">
-                <span className="macro-num">{result.total.carbs}g</span>
-                <span className="macro-label">Carbs</span>
-              </div>
+              <div className="macro-item"><span className="macro-num">{result.total.calories}</span><span className="macro-label">Cal</span></div>
+              <div className="macro-item"><span className="macro-num">{result.total.protein}g</span><span className="macro-label">P</span></div>
+              <div className="macro-item"><span className="macro-num">{result.total.carbs}g</span><span className="macro-label">C</span></div>
+              <div className="macro-item"><span className="macro-num">{result.total.fat}g</span><span className="macro-label">F</span></div>
             </div>
-
             <div className="divider-line"></div>
-
-            {/* AI Advice */}
             {result.chefNote && (
-              <div className="ai-advice-section">
-                <p className="advice-text">{result.chefNote}</p>
+              <div className="ai-advice-section"><p className="advice-text">{result.chefNote}</p></div>
+            )}
+            {result.items && result.items.length > 0 && (
+              <div className="ingredients-section">
+                <h4 className="section-title">📊 食材細節分析</h4>
+                <div className="ingredient-cards">
+                  {result.items.map((it, i) => (
+                    <div className="ingredient-card" key={i}>
+                      <div className="ing-card-main">
+                        <div className="ing-name-box">
+                          <span className="ing-title">{it.food}</span>
+                          <span className="ing-subtitle">{it.note}</span>
+                        </div>
+                        <div className="ing-cal-box">
+                          {it.weight && <span className="ing-weight-tag">{it.weight}</span>}
+                          <div className="ing-kcal-val">{it.kcal} <small>kcal</small></div>
+                        </div>
+                      </div>
+                      <div className="ing-macros-row">
+                        <span>P: {it.protein}g</span>
+                        <span>F: {it.fat}g</span>
+                        <span>C: {it.carbs}g</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
-
-            {/* Detailed Ingredients */}
-            <div className="ingredients-section">
-              <h4 className="section-title">📊 食材細節分析</h4>
-              <div className="ingredient-cards">
-                {result.items.map((it, i) => (
-                  <div className="ingredient-card" key={i}>
-                    <div className="ing-card-main">
-                      <div className="ing-name-box">
-                        <span className="ing-title">{it.food}</span>
-                        <span className="ing-subtitle">{it.note}</span>
-                      </div>
-                      <div className="ing-cal-box">{it.kcal} <small>kcal</small></div>
-                    </div>
-                    <div className="ing-macros-row">
-                      <span>P: {it.protein}g</span>
-                      <span>F: {it.fat}g</span>
-                      <span>C: {it.carbs}g</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <p className="result-disclaimer">
-              * AI 分析基於視覺辨識，份量為估算值，僅供參考。
-            </p>
+            <p className="result-disclaimer">* AI 分析基於視覺辨識，僅供參考。</p>
           </div>
         </div>
       )}
 
       <DetailStyles />
       <style>{`
-        .photo-cal-page { }
+        .photo-cal-page { background: #0d1117; min-height: 100vh; }
+        .photo-cal-records-view { position: fixed; inset: 0; background: #0d1117; display: flex; flex-direction: column; z-index: 1100; }
+        .records-header-v2 { padding: 60px 24px 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #111, transparent); }
+        .records-header-v2 h3 { font-size: 20px; font-weight: 900; color: white; margin: 0; }
+        .h-back-btn { background: none; border: none; color: white; cursor: pointer; }
+        .records-scroll-area { flex: 1; padding: 0 20px; overflow-y: auto; padding-bottom: 200px; }
         
-        .hero-header {
-          position: fixed;
-          top: 0; left: 0; right: 0;
-          height: 60px;
-          padding: 0 16px;
-          display: flex; justify-content: space-between; align-items: center;
-          z-index: 100;
-          background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
-        }
-        .hero-back-btn, .hero-close-btn {
-          width: 40px; height: 40px; border-radius: 50%;
-          background: rgba(0,0,0,0.4);
-          border: none; color: white;
-          display: flex; align-items: center; justify-content: center;
-        }
-
-        .hero-image-wrap {
-          width: 100%;
-          height: 45vh;
-          overflow: hidden;
-        }
-        .hero-image {
-          width: 100%; height: 100%;
-          object-fit: cover;
-        }
-
-        .result-body {
-          margin-top: -24px;
-          background: #0a0a0b;
-          border-radius: 24px 24px 0 0;
-          padding: 24px 20px;
+        .records-premium-frame {
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 32px;
+          padding: 20px;
+          margin-top: 10px;
           position: relative;
-          z-index: 5;
-          min-height: 60vh;
+          overflow: hidden;
+          box-shadow: inset 0 0 20px rgba(255,255,255,0.01);
         }
-
-        .meal-main-header {
+        .records-premium-frame::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; height: 1px;
+          background: linear-gradient(to right, transparent, rgba(255,107,0,0.3), transparent);
+        }
+        
+        .frame-header {
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
+          align-items: center;
           margin-bottom: 24px;
+          padding: 0 4px;
         }
-        .meal-name { font-size: 24px; font-weight: 900; color: white; flex: 1; }
-        .meal-total-summary { font-size: 14px; color: #666; font-weight: 700; }
-
-        .macros-strip {
+        .frame-title {
           display: flex;
-          justify-content: space-between;
-          padding: 0 10px;
-          margin-bottom: 24px;
+          align-items: center;
+          gap: 10px;
+          font-size: 14px;
+          font-weight: 800;
+          color: #888;
+          letter-spacing: 0.5px;
         }
-        .macro-item {
+        .frame-count {
+          font-size: 11px;
+          background: rgba(255,107,0,0.1);
+          color: #FF6B00;
+          padding: 3px 10px;
+          border-radius: 8px;
+          font-weight: 800;
+          border: 1px solid rgba(255,107,0,0.1);
+        }
+
+        .records-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+        
+        .history-bot-bubble {
+          margin-top: 10px;
+          display: flex;
+          gap: 12px;
+          align-items: flex-end;
+          cursor: pointer;
+          animation: fadeIn 0.8s ease-out;
+        }
+        .bot-avatar-mini {
+          width: 40px;
+          height: 40px;
+          background: #1e1e1e;
+          border: 1px solid #FF6B00;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          box-shadow: 0 4px 12px rgba(255,107,0,0.2);
+          flex-shrink: 0;
+        }
+        .bot-text-bubble {
+          flex: 1;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 18px 18px 18px 4px;
+          padding: 12px 16px;
+          position: relative;
+        }
+        .bot-text-bubble p {
+          color: #eee;
+          font-size: 13px;
+          line-height: 1.5;
+          margin: 0 0 6px 0;
+          font-weight: 600;
+        }
+        .tap-hint {
+          font-size: 10px;
+          color: #FF6B00;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          text-transform: uppercase;
+          opacity: 0.8;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .record-item-v2 {
+          background: rgba(255,255,255,0.03);
+          border-radius: 20px;
+          padding: 12px;
+          display: flex;
+          gap: 16px;
+          border: 1px solid rgba(255,255,255,0.05);
+          cursor: pointer;
+        }
+        .rec-img-box {
+          width: 100px; height: 100px;
+          border-radius: 16px;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+        .rec-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .rec-info-box { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0; }
+        
+        .rec-top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        .rec-name { font-size: 16px; font-weight: 800; color: #eee; display: flex; align-items: center; gap: 6px; }
+        .mini-edit-btn { background: none; border: none; display: flex; align-items: center; justify-content: center; padding: 4px; cursor: pointer; }
+        .rec-time { font-size: 11px; color: #555; font-weight: 600; margin-top: 2px; }
+        
+        .rec-cal-row { display: flex; align-items: center; gap: 6px; }
+        .rec-cals { font-size: 18px; font-weight: 900; color: #fff; }
+        .rec-cals small { font-size: 12px; color: #666; font-weight: 700; margin-left: 2px; }
+        
+        .rec-macros-row { display: flex; gap: 12px; }
+        .rec-macro { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #888; }
+        .rec-macro img { width: 14px; height: 14px; opacity: 0.8; }
+
+        .empty-records {
+          height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+          text-align: center; color: #444;
+        }
+        .empty-box { font-size: 40px; }
+
+        .fixed-landing-actions {
+          position: fixed; bottom: 0; left: 0; right: 0;
+          padding: 40px 24px;
+          background: linear-gradient(to top, #0d1117 70%, transparent);
+          display: flex; flex-direction: column; gap: 12px;
+          z-index: 50;
+        }
+        .landing-btn {
+          width: 100%; height: 56px; border-radius: 16px; border: none; font-size: 16px; font-weight: 800;
+          display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+          transition: 0.2s;
+        }
+        .landing-btn.primary { background: linear-gradient(135deg, #FF5C00 0%, #E11D48 100%); color: white; box-shadow: 0 8px 25px rgba(255, 92, 0, 0.4); }
+        .landing-btn.secondary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; backdrop-filter: blur(10px); }
+
+        .photo-result-hero { position: relative; }
+        .hero-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
+        .hero-back-btn, .hero-close-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); border: none; color: white; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .hero-image-wrap { width: 100%; height: 40vh; overflow: hidden; }
+        .hero-image { width: 100%; height: 100%; object-fit: cover; }
+        .result-body { margin-top: -24px; background: #0a0a0b; border-radius: 24px 24px 0 0; padding: 30px 20px; position: relative; z-index: 5; min-height: 65vh; }
+        .meal-main-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .meal-name { font-size: 26px; font-weight: 900; color: white; flex: 1; line-height: 1.2; }
+        .meal-total-summary { font-size: 14px; color: #666; font-weight: 700; margin-top: 6px; }
+        .macros-strip { display: flex; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px 10px; margin-bottom: 30px; }
+        .macro-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+        .macro-num { font-size: 26px; font-weight: 900; color: #FF6B00; text-shadow: 0 0 15px rgba(255, 107, 0, 0.4); }
+        .macro-label { font-size: 12px; color: #FF6B00; opacity: 0.7; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .divider-line { height: 1px; background: rgba(255,255,255,0.05); margin: 0 -20px 30px; }
+        .ai-advice-section { margin-bottom: 32px; }
+        .advice-text { font-size: 15px; line-height: 1.7; color: #ccc; font-weight: 500; background: rgba(16,185,129,0.05); padding: 18px; border-radius: 20px; border-left: 4px solid #10B981; }
+        .section-title { font-size: 17px; font-weight: 800; color: white; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+        .ingredient-cards { display: grid; gap: 14px; }
+        .ingredient-card { background: rgba(255,255,255,0.02); border-radius: 18px; padding: 18px; border: 1px solid rgba(255,255,255,0.05); }
+        .ing-card-main { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+        .ing-name-box { display: flex; flex-direction: column; gap: 4px; }
+        .ing-title { font-size: 16px; font-weight: 800; color: #eee; }
+        .ing-subtitle { font-size: 12px; color: #666; font-weight: 500; }
+        .ing-cal-box { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .ing-kcal-val { font-size: 16px; font-weight: 900; color: #10B981; }
+        .ing-weight-tag { font-size: 11px; background: rgba(16,185,129,0.15); color: #10B981; padding: 2px 8px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(16,185,129,0.2); }
+        .ing-macros-row { display: flex; gap: 14px; font-size: 12px; color: #888; font-weight: 700; }
+        .ing-macros-row span { background: rgba(255,255,255,0.03); padding: 3px 10px; border-radius: 8px; }
+        .result-disclaimer { text-align: center; color: #333; font-size: 11px; margin-top: 40px; padding-bottom: 40px; font-weight: 600; }
+
+        /* Analyzing View Styles */
+        .analyzing-preview-card {
+          position: relative;
+          width: 100%;
+          border-radius: 28px;
+          overflow: hidden;
+          background: #111;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+          border: 1px solid rgba(255,255,255,0.05);
+          margin-bottom: 30px;
+        }
+        .analyzing-img {
+          width: 100%;
+          height: auto;
+          display: block;
+          filter: brightness(0.6) contrast(1.1);
+        }
+        .scanning-line {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100px;
+          background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.1), transparent);
+          border-top: 2px solid #10B981;
+          box-shadow: 0 -5px 15px rgba(16, 185, 129, 0.4);
+          z-index: 10;
+          animation: scanDown 2.5s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @keyframes scanDown {
+          0% { top: -20%; }
+          100% { top: 100%; }
+        }
+
+        /* Robot Interaction Styles */
+        .robot-loader-card {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 4px;
+          gap: 20px;
+          padding: 20px 0;
         }
-        .macro-num { font-size: 18px; font-weight: 900; color: white; }
-        .macro-label { font-size: 11px; color: #666; font-weight: 700; text-transform: uppercase; }
-
-        .divider-line { 
-          height: 1px; background: rgba(255,255,255,0.05); 
-          margin: 0 -20px 24px; 
-        }
-
-        .ai-advice-section { margin-bottom: 32px; }
-        .advice-text { 
-          font-size: 15px; line-height: 1.6; color: #ccc; 
-          font-weight: 500;
-          background: rgba(16,185,129,0.03);
-          padding: 16px; border-radius: 16px;
-          border-left: 3px solid #10B981;
-        }
-
-        .section-title { 
-          font-size: 16px; font-weight: 800; color: white; 
-          margin-bottom: 16px; 
-        }
-        .ingredient-cards { display: grid; gap: 12px; }
-        .ingredient-card {
-          background: #151516;
-          border-radius: 16px;
-          padding: 16px;
-          border: 1px solid rgba(255,255,255,0.05);
-        }
-        .ing-card-main {
-          display: flex; justify-content: space-between; align-items: flex-start;
-          margin-bottom: 12px;
-        }
-        .ing-name-box { display: flex; flex-direction: column; gap: 2px; }
-        .ing-title { font-size: 16px; font-weight: 800; color: #eee; }
-        .ing-subtitle { font-size: 11px; color: #555; }
-        .ing-cal-box { font-size: 16px; font-weight: 900; color: #10B981; }
-        .ing-macros-row {
-          display: flex; gap: 12px;
-          font-size: 11px; color: #666; font-weight: 700;
-        }
-        .ing-macros-row span {
-          background: rgba(255,255,255,0.02);
-          padding: 2px 8px; border-radius: 6px;
-        }
-
-        .result-disclaimer {
-          text-align: center; color: #444; font-size: 11px;
-          margin-top: 40px; padding-bottom: 20px;
-        }
-
-        /* Landing Styles */
-        .photo-cal-landing {
-          height: 100vh;
-          width: 100%;
-          background: url('/images/photo-cal-bg.png') no-repeat center center;
-          background-size: cover;
+        .robot-wrap {
           position: relative;
+          width: 80px;
+          height: 80px;
           display: flex;
           flex-direction: column;
-          justify-content: flex-end;
-          padding-bottom: 60px;
+          align-items: center;
+          justify-content: center;
+          animation: floatRobot 3.5s ease-in-out infinite;
         }
-        .photo-cal-landing::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
-          z-index: 1;
+        @keyframes floatRobot {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
         }
-        .landing-back-btn {
-          position: absolute;
-          top: 20px; left: 20px;
-          z-index: 10;
-          width: 44px; height: 44px;
-          background: rgba(0,0,0,0.3);
-          backdrop-filter: blur(8px);
-          border-radius: 50%;
-          border: none;
-          display: flex; align-items: center; justify-content: center;
-        }
-        .landing-content {
-          position: relative;
-          z-index: 2;
-          padding: 0 30px;
-          display: flex;
-          flex-direction: column;
-          gap: 32px;
-        }
-        .landing-text-box { text-align: center; }
-        .landing-title { font-size: 28px; font-weight: 900; color: white; margin-bottom: 8px; }
-        .landing-subtitle { font-size: 15px; color: #ccc; font-weight: 600; }
-
-        .landing-actions {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-        .landing-btn {
-          width: 100%;
-          padding: 18px;
+        .robot-head {
+          width: 60px;
+          height: 48px;
+          background: linear-gradient(135deg, #1e1e1e, #0d1117);
+          border: 2px solid #10B981;
           border-radius: 18px;
-          font-size: 16px;
-          font-weight: 800;
+          position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 12px;
-          border: none;
-          transition: transform 0.2s;
+          box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
         }
-        .landing-btn:active { transform: scale(0.96); }
-        .landing-btn.primary {
-          background: var(--primary);
-          color: white;
-          box-shadow: 0 8px 24px rgba(255, 107, 0, 0.3);
-        }
-        .landing-btn.secondary {
-          background: rgba(255,255,255,0.1);
-          color: white;
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .analyzing-preview-card {
-          width: 100%;
-          height: 300px;
-          background: #151516;
-          border-radius: 24px;
-          overflow: hidden;
-          position: relative;
-          margin-bottom: 24px;
-          border: 1px solid #333;
-        }
-        .analyzing-img {
-          width: 100%; height: 100%; object-fit: cover; opacity: 0.6;
-        }
-        .scanning-line {
+        .shadow-bot::after {
+          content: '';
           position: absolute;
-          top: 0; left: 0; right: 0; height: 4px;
-          background: linear-gradient(to right, transparent, var(--primary), transparent);
-          box-shadow: 0 0 15px var(--primary);
-          animation: scan 2.5s infinite ease-in-out;
+          bottom: -20px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40px;
+          height: 6px;
+          background: rgba(0,0,0,0.5);
+          filter: blur(4px);
+          border-radius: 50%;
         }
-        @keyframes scan {
-          0% { top: 0; }
-          50% { top: 100%; }
-          100% { top: 0; }
+        .eye {
+          width: 8px;
+          height: 8px;
+          background: #10B981;
+          border-radius: 50%;
+          box-shadow: 0 0 10px #10B981;
+          animation: blink 4s infinite;
         }
+        @keyframes blink {
+          0%, 45%, 50%, 100% { transform: scaleY(1); }
+          47% { transform: scaleY(0.1); }
+        }
+        .robot-body-mini {
+          width: 34px;
+          height: 18px;
+          background: #1e1e1e;
+          border: 2px solid #10B981;
+          border-top: none;
+          border-radius: 0 0 10px 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: -2px;
+        }
+        .cpu-core.mini {
+          animation: pulseGreen 2s infinite;
+        }
+        @keyframes pulseGreen {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.9); }
+        }
+        .loader-content { text-align: center; }
+        .loader-title { font-size: 18px; font-weight: 900; color: white; margin-bottom: 8px; }
+        .loader-subtitle { font-size: 13px; color: #666; font-weight: 500; }
+        .logic-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+        .logic-dots span {
+          width: 6px;
+          height: 6px;
+          background: #10B981;
+          border-radius: 50%;
+          animation: dotUp 1s infinite alternate;
+        }
+        .logic-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .logic-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotUp { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-6px); opacity: 1; } }
       `}</style>
     </div>
   );
@@ -1758,7 +2024,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
   // 計算 BMI 作為身形比例依據
   const h_m = (height || 170) / 100;
   const bmi = (weight || 65) / (h_m * h_m);
-  
+
   // 身形動態計算
   const getBodyScale = () => {
     // 基準：身高 175 為 scaleY 1.0, BMI 22 為 scaleX 1.0
@@ -1789,7 +2055,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
     setIsAnalyzing(true);
     setResult(null);
 
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const apiKey = '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';
 
     try {
       // 深度獲取使用者資料 (優先使用 prop，失敗則試圖從 supabase session 抓取)
@@ -1809,7 +2075,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
               .select('*')
               .eq('email', session.user.email)
               .single();
-            
+
             userData = {
               name: profile?.name || session.user.email || '系統學員',
               email: session.user.email,
@@ -1876,7 +2142,8 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
         "disclaimer": "醫學免責聲明"
       }`;
 
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
+      const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
         body: JSON.stringify({
@@ -1890,6 +2157,9 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
       });
 
       const data = await response.json();
+      if (!response.ok || data.error) {
+        throw new Error(`OpenAI 錯誤: ${data.error?.message || response.statusText}`);
+      }
       setResult(JSON.parse(data.choices[0].message.content));
     } catch (err) {
       console.error(err);
@@ -1903,14 +2173,14 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
     <div className="tool-detail-page injury-assessment-page">
       <div className="tech-hud-overlay"></div>
       <div className="tech-scanline"></div>
-      
+
       <DetailHeader
         icon={<div className="icon-wrap red pulse-red-icon"><Brain size={22} color="white" /></div>}
         title="AI 傷害評估"
         subtitle="專業復健科技分析系統"
         onBack={onBack}
       />
-      
+
       <div className="detail-content tech-content">
         <div className="premium-form-container glass-tech-card">
           <div className="form-section-header">
@@ -1924,16 +2194,16 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
           <div className="form-card-v2 tech-card-inner">
             <div className="form-group-v2 tech-group">
               <label className="tech-label">
-                <Dna size={14} /> 
+                <Dna size={14} />
                 <span>AFFECTED AREA / 受傷部位</span>
               </label>
               <div className="tech-input-wrapper">
-                <input 
-                  type="text" 
-                  placeholder="例如：右膝蓋外側、下背部..." 
-                  className="modern-input tech-input" 
-                  value={target} 
-                  onChange={e => setTarget(e.target.value)} 
+                <input
+                  type="text"
+                  placeholder="例如：右膝蓋外側、下背部..."
+                  className="modern-input tech-input"
+                  value={target}
+                  onChange={e => setTarget(e.target.value)}
                 />
                 <div className="input-glow"></div>
               </div>
@@ -1941,14 +2211,14 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
 
             <div className="form-group-v2 tech-group">
               <label className="tech-label">
-                <Clock size={14} /> 
+                <Clock size={14} />
                 <span>CHRONOLOGICAL TIMING / 疼痛時段</span>
               </label>
               <div className="stack-btns-v2 tech-stacks">
                 {timingOptions.map(opt => (
-                  <div 
-                    key={opt} 
-                    className={`stack-btn-v2 tech-stack-btn ${timing === opt ? 'active red tech-glow' : ''}`} 
+                  <div
+                    key={opt}
+                    className={`stack-btn-v2 tech-stack-btn ${timing === opt ? 'active red tech-glow' : ''}`}
                     onClick={() => setTiming(opt)}
                   >
                     <span className="btn-label">{opt}</span>
@@ -1966,14 +2236,14 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                 </span>
               </label>
               <div className="slider-hud-wrap">
-                <input 
-                  type="range" 
-                  min="1" 
-                  max="10" 
-                  step="1" 
-                  className={`premium-slider red tech-slider ${intensity >= 8 ? 'neon-red-slider' : ''}`} 
-                  value={intensity} 
-                  onChange={e => setIntensity(Number(e.target.value))} 
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  className={`premium-slider red tech-slider ${intensity >= 8 ? 'neon-red-slider' : ''}`}
+                  value={intensity}
+                  onChange={e => setIntensity(Number(e.target.value))}
                 />
                 <div className="slider-ticks">
                   {[...Array(10)].map((_, i) => <div key={i} className={`tick ${intensity > i ? 'active' : ''}`}></div>)}
@@ -1987,14 +2257,14 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
 
             <div className="form-group-v2 tech-group">
               <label className="tech-label">
-                <Sparkles size={14} /> 
+                <Sparkles size={14} />
                 <span>SUPPLEMENTARY INTEL / 補充細節</span>
               </label>
               <div className="tech-textarea-wrapper">
-                <textarea 
-                  placeholder="請描述具體感受與動作受限情境..." 
-                  className="modern-textarea tech-textarea" 
-                  value={details} 
+                <textarea
+                  placeholder="請描述具體感受與動作受限情境..."
+                  className="modern-textarea tech-textarea"
+                  value={details}
                   onChange={e => setDetails(e.target.value)}
                 ></textarea>
                 <div className="input-glow"></div>
@@ -2043,7 +2313,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   </div>
                 ))}
               </div>
-              
+
               <div className="result-header-box">
                 <div className="header-glitch">DIAGNOSIS REPORT</div>
                 <h3 className="injury-title tech-title">{result.injuryName}</h3>
@@ -2054,7 +2324,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   <div className="row-label"><Activity size={14} /> POSSIBLE CAUSE / 可能原因</div>
                   <div className="row-value">{result.reasons}</div>
                 </div>
-                
+
                 <div className="table-row">
                   <div className="row-label"><ShieldAlert size={14} /> PREVENTION / 預防建議</div>
                   <div className="row-value">{result.prevention}</div>
@@ -2069,7 +2339,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
               {result.detailAnalysis && (
                 <div className="tech-log-box">
                   <div className="log-header">
-                    <Search size={14} /> 
+                    <Search size={14} />
                     <span>SYSTEM LOG: DETAIL ANALYSIS / 線索分析</span>
                   </div>
                   <div className="log-content">
@@ -2366,6 +2636,42 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
   );
 };
 
+const ExerciseDbDetail = ({ onBack }) => (
+  <div className="tool-detail-page">
+    <DetailHeader
+      icon={<div className="icon-wrap purple"><Cpu size={22} color="white" /></div>}
+      title="動作資料庫"
+      subtitle="專業訓練計劃建議"
+      onBack={onBack}
+    />
+    <div className="detail-content">
+      <div className="result-placeholder">
+        <div className="pulse-circle-db"></div>
+        <Search size={44} color="#8b5cf6" />
+        <p className="placeholder-text-v2">
+          <span className="glow-text">動作資料庫更新中</span><br />
+          正在為超過 500+ 個動態建模與分析組數建議
+        </p>
+      </div>
+    </div>
+    <DetailStyles />
+    <style>{`
+      .pulse-circle-db {
+        width: 80px; height: 80px;
+        background: rgba(139, 92, 246, 0.1);
+        border-radius: 50%;
+        position: absolute;
+        animation: dbPulse 2s infinite;
+      }
+      @keyframes dbPulse { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
+      .placeholder-text-v2 { 
+        margin-top: 24px; color: #888; font-size: 15px; font-weight: 500; line-height: 1.6; 
+      }
+      .glow-text { color: #8b5cf6; font-weight: 800; text-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
+    `}</style>
+  </div>
+);
+
 const AutoPlannerDetail = ({ onBack }) => (
   <div className="tool-detail-page">
     <DetailHeader
@@ -2392,53 +2698,159 @@ const SupportBot = ({ onOpenChat }) => {
       </div>
       <div className="robot-wrapper" onClick={onOpenChat}>
         <div className="robot-body-anim">
-          <div className="robot-head">
-            <div className="robot-eyes">
-              <div className="eye"></div>
-              <div className="eye"></div>
+          {/* Head */}
+          <div className="robot-head-v2">
+            <div className="visor-v2">
+              <div className="robot-eyes-v2">
+                <div className="eye-v2"></div>
+                <div className="eye-v2"></div>
+              </div>
+            </div>
+            <div className="ear-glow-left"></div>
+            <div className="ear-glow-right"></div>
+          </div>
+
+          {/* Neck Ring */}
+          <div className="neck-ring"></div>
+
+          {/* Torso & Shoulders */}
+          <div className="body-container">
+            <div className="shoulder-v2 left"></div>
+            <div className="shoulder-v2 right"></div>
+            <div className="robot-torso-v2">
+              <div className="torso-detail"></div>
             </div>
           </div>
-          <div className="robot-torso">
-            <Zap size={12} color="#10B981" />
-          </div>
         </div>
-        <div className="robot-platform"></div>
+        <div className="robot-platform-v2"></div>
       </div>
 
       <style>{`
-        .support-bot-container {
-          position: fixed;
-          bottom: 100px;
-          right: 20px;
-          z-index: 2000;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          cursor: pointer;
+        .support-bot-container { 
+          position: fixed; bottom: 120px; right: 28px; z-index: 1500; display: flex; flex-direction: column; align-items: flex-end; gap: 14px; pointer-events: none; 
         }
-        .bot-speech-bubble {
-          background: white;
-          color: #333;
-          padding: 12px 16px;
-          border-radius: 20px 20px 4px 20px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-          margin-bottom: 12px;
-          max-width: 200px;
-          animation: float 3s ease-in-out infinite;
-        }
-        .bot-speech-bubble p { font-size: 13px; font-weight: 700; line-height: 1.4; color: #111; }
+        .support-bot-container * { pointer-events: auto; }
         
-        .robot-wrapper { display: flex; flex-direction: column; align-items: center; }
-        .robot-body-anim { width: 44px; height: 50px; display: flex; flex-direction: column; align-items: center; animation: hover 2s ease-in-out infinite; }
-        .robot-head { width: 34px; height: 26px; background: #222; border-radius: 9px; border: 2.5px solid #10B981; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
-        .robot-eyes { display: flex; gap: 6px; }
-        .eye { width: 4px; height: 4px; background: #10B981; border-radius: 50%; animation: blink 3s infinite; }
-        .robot-torso { width: 26px; height: 18px; background: #222; border-radius: 6px; border: 2.5px solid #10B981; display: flex; align-items: center; justify-content: center; }
-        .robot-platform { width: 34px; height: 4px; background: rgba(16, 185, 129, 0.4); border-radius: 50%; filter: blur(2px); margin-top: 4px; animation: shadowPulse 2s ease-in-out infinite; }
+        .bot-speech-bubble { 
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
+          border-radius: 20px 20px 6px 20px; 
+          padding: 14px 18px; 
+          width: 210px; 
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 20px rgba(0, 242, 255, 0.1); 
+          position: relative; 
+          transform-origin: bottom right; 
+          animation: bounceInBot 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+          cursor: pointer;
+          border: 1px solid rgba(0, 242, 255, 0.2);
+          margin-bottom: 8px;
+        }
+        .bot-speech-bubble p { font-size: 14px; font-weight: 700; line-height: 1.5; color: #1a202c; margin: 0; }
+        .bot-speech-bubble::after {
+          content: '🤖'; position: absolute; right: -8px; top: -12px; font-size: 18px;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .robot-wrapper { display: flex; flex-direction: column; align-items: center; position: relative; }
+        .robot-body-anim { width: 80px; height: 100px; display: flex; flex-direction: column; align-items: center; animation: hoverV2 4s ease-in-out infinite; }
+        
+        /* Head Structure */
+        .robot-head-v2 { 
+          width: 54px; height: 50px; 
+          background: radial-gradient(circle at 30% 30%, #fff 0%, #eef2f3 100%); 
+          border-radius: 50% 50% 45% 45%; 
+          position: relative; 
+          display: flex; align-items: center; justify-content: center; 
+          box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset -2px -2px 5px rgba(0,0,0,0.05);
+          z-index: 10;
+        }
+        .visor-v2 {
+          width: 38px; height: 20px;
+          background: #0a0a0a;
+          border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 0 15px rgba(0,0,0,0.5);
+          margin-top: 2px;
+        }
+        .robot-eyes-v2 { display: flex; gap: 10px; }
+        .eye-v2 { 
+          width: 7px; height: 7px; 
+          background: #00f2ff; 
+          border-radius: 50%; 
+          animation: blink 5s infinite; 
+          box-shadow: 0 0 10px #00f2ff, 0 0 20px rgba(0,242,255,0.4);
+        }
+        .ear-glow-left, .ear-glow-right {
+          position: absolute;
+          width: 6px; height: 14px;
+          background: rgba(0, 242, 255, 0.4);
+          border-radius: 50%;
+          top: 35%;
+          filter: blur(2px);
+        }
+        .ear-glow-left { left: -2px; }
+        .ear-glow-right { right: -2px; }
 
-        @keyframes hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-        @keyframes shadowPulse { 0%, 100% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(0.8); opacity: 0.1; } }
+        /* Neck Ring */
+        .neck-ring {
+          width: 22px; height: 4px;
+          background: #00f2ff;
+          border-radius: 4px;
+          margin-top: -2px;
+          box-shadow: 0 0 10px #00f2ff;
+          z-index: 8;
+          animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        /* Body Structure */
+        .body-container {
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          margin-top: -1px;
+          position: relative;
+        }
+        .robot-torso-v2 { 
+          width: 44px; height: 42px; 
+          background: radial-gradient(circle at 40% 40%, #fff 0%, #dae1e7 100%); 
+          border-radius: 20px 20px 30px 30px; 
+          position: relative;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+          z-index: 5;
+        }
+        .torso-detail {
+          position: absolute;
+          bottom: 8px; left: 50%;
+          transform: translateX(-50%);
+          width: 14px; height: 2px;
+          background: #dae1e7;
+          border-radius: 2px;
+        }
+
+        .shoulder-v2 {
+          width: 18px; height: 20px;
+          background: #7f8c8d; /* Metallic Silver/Grey */
+          border-radius: 10px;
+          position: absolute;
+          top: 2px;
+          box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), 0 2px 5px rgba(0,0,0,0.3);
+          z-index: 4;
+        }
+        .shoulder-v2.left { left: -14px; transform: rotate(-15deg); }
+        .shoulder-v2.right { right: -14px; transform: rotate(15deg); }
+
+        .robot-platform-v2 { 
+          width: 50px; height: 6px; 
+          background: rgba(0, 242, 255, 0.2); 
+          border-radius: 50%; 
+          filter: blur(4px); 
+          margin-top: 5px; 
+          animation: shadowPulseV2 4s ease-in-out infinite; 
+        }
+
+        @keyframes glowPulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        @keyframes hoverV2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes shadowPulseV2 { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(0.6); opacity: 0.05; } }
         @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
       `}</style>
     </div>
@@ -2459,10 +2871,11 @@ const ChatBotDetail = ({ onBack }) => {
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setIsTyping(true);
 
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const apiKey = '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';
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
+      const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2473,8 +2886,15 @@ const ChatBotDetail = ({ onBack }) => {
           messages: [
             {
               role: 'system',
-              content: `你是一位 JENZiQ FITNESS APP 的智慧型客服導覽機器人。
-              APP 主要功能包含：
+              content: `你是一位 JENZiQ FITNESS APP 的「首席 AI 運動營養師」。
+              你的職責是根據使用者的飲食紀錄、健身目標提供專業且精確的營養建議。
+              
+              你的專業背景：
+              1. 擅長分析各種食材的宏觀營養素（蛋白質、碳水、脂肪）。
+              2. 能夠針對「減脂、增肌、維持」提供不同比例的飲食對策。
+              3. 熟悉運動補劑（如乳清蛋白）的使用時機。
+              
+              目前的 APP 功能包含：
               1. AI 營養師：計算熱量需求 (TDEE) 並生成智能菜單。
               2. AI 傷害評估：分析運動傷害嚴重程度並給予建議。
               3. 自動排課系統：根據目標自動安排訓練動作。
@@ -2500,44 +2920,137 @@ const ChatBotDetail = ({ onBack }) => {
 
   return (
     <div className="chat-detail-page">
-      <DetailHeader
-        icon={<div className="icon-wrap green"><Bot size={22} color="white" /></div>}
-        title="JENZiQ 線上客服"
-        subtitle="功能教學與諮詢"
-        onBack={onBack}
-      />
+      <header className="chat-detail-header">
+        <button className="back-btn" onClick={onBack}><ChevronLeft size={24} color="#00f2ff" /></button>
+        <div className="header-robot-info">
+          <div className="mini-robot-head">
+            <div className="robot-head-v2" style={{ width: '32px', height: '30px', boxShadow: 'none' }}>
+              <div className="visor-v2" style={{ width: '22px', height: '12px' }}>
+                <div className="robot-eyes-v2" style={{ gap: '4px' }}>
+                  <span className="eye-v2" style={{ width: '4px', height: '4px' }}></span>
+                  <span className="eye-v2" style={{ width: '4px', height: '4px' }}></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="header-text-group">
+            <h3 className="chat-main-title">JENZiQ AI 智慧客服</h3>
+            <p className="chat-status-text">系統狀態：運作正常 (AI Mode)</p>
+          </div>
+        </div>
+      </header>
       <div className="chat-messages">
         {messages.map((m, i) => (
           <div key={i} className={`chat-bubble-wrap ${m.role === 'bot' ? 'bot' : 'user'}`}>
             <div className="chat-bubble">{m.content}</div>
           </div>
         ))}
-        {isTyping && <div className="typing-indicator">對方正在輸入中...</div>}
+        {isTyping && (
+          <div className="typing-indicator">
+            <span className="dot"></span>
+            <span className="dot"></span>
+            <span className="dot"></span>
+            AI 思考中
+          </div>
+        )}
       </div>
       <div className="chat-input-row">
         <input
           type="text"
-          placeholder="輸入您的問題..."
+          placeholder="請輸入您的問題..."
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyPress={e => e.key === 'Enter' && handleSend()}
         />
-        <button onClick={handleSend}><Zap size={18} color="white" /></button>
+        <button onClick={handleSend} className="chat-send-pulse"><Zap size={20} color="white" fill="white" /></button>
       </div>
 
       <style>{`
-        .chat-detail-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--background); z-index: 1200; display: flex; flex-direction: column; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; margin-bottom: 80px; }
+        .chat-detail-page { 
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+          background: #0d1117; 
+          background-image: radial-gradient(circle at top right, rgba(0, 242, 255, 0.05), transparent 40%);
+          z-index: 1200; display: flex; flex-direction: column; 
+          font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        .chat-detail-header {
+          padding: 20px 24px;
+          background: rgba(13, 17, 23, 0.8);
+          backdrop-filter: blur(20px);
+          border-bottom: 2px solid rgba(0, 242, 255, 0.1);
+          display: flex; align-items: center; gap: 16px;
+        }
+        .header-robot-info { display: flex; align-items: center; gap: 12px; }
+        .mini-robot-head {
+          width: 44px; height: 44px;
+          background: #000;
+          border-radius: 12px;
+          border: 1px solid rgba(0, 242, 255, 0.3);
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+        .header-text-group { display: flex; flex-direction: column; gap: 2px; }
+        .chat-main-title { font-size: 16px; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        .chat-status-text { font-size: 10px; color: #00f2ff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
+
+        .chat-messages { 
+          flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; 
+          padding-bottom: 100px;
+          scrollbar-width: thin; scrollbar-color: rgba(0, 242, 255, 0.2) transparent;
+        }
         .chat-bubble-wrap { display: flex; width: 100%; }
         .chat-bubble-wrap.bot { justify-content: flex-start; }
         .chat-bubble-wrap.user { justify-content: flex-end; }
-        .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 14px; font-weight: 600; line-height: 1.5; }
-        .bot .chat-bubble { background: #1e1e20; color: #ccc; border-radius: 18px 18px 18px 4px; }
-        .user .chat-bubble { background: #10B981; color: white; border-radius: 18px 18px 4px 18px; }
-        .typing-indicator { font-size: 12px; color: #555; font-style: italic; }
-        .chat-input-row { position: fixed; bottom: 0; left: 0; width: 100%; background: #0a0a0b; padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 12px; }
-        .chat-input-row input { flex: 1; background: #151516; border: 1px solid #333; border-radius: 12px; padding: 12px 16px; color: white; outline: none; }
-        .chat-input-row button { width: 48px; height: 48px; background: #10B981; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .chat-bubble { max-width: 85%; padding: 14px 18px; font-size: 15px; font-weight: 600; line-height: 1.6; }
+        
+        .bot .chat-bubble { 
+          background: rgba(255, 255, 255, 0.03); 
+          color: #e2e8f0; 
+          border-radius: 20px 20px 20px 4px; 
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .user .chat-bubble { 
+          background: linear-gradient(135deg, #0066cc 0%, #004499 100%); 
+          color: white; 
+          border-radius: 20px 20px 4px 20px; 
+          border: 1px solid rgba(0, 242, 255, 0.3);
+          box-shadow: 0 8px 20px rgba(0, 71, 171, 0.3);
+        }
+
+        .typing-indicator { 
+          font-size: 12px; color: #00f2ff; font-weight: 700; 
+          display: flex; align-items: center; gap: 6px; 
+          opacity: 0.8; margin-top: 4px;
+        }
+        .dot { width: 4px; height: 4px; background: #00f2ff; border-radius: 50%; animation: blinkDots 1.4s infinite; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blinkDots { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        .chat-input-row { 
+          position: fixed; bottom: 0; left: 0; width: 100%; 
+          background: rgba(13, 17, 23, 0.9); 
+          backdrop-filter: blur(20px);
+          padding: 24px; 
+          border-top: 2px solid rgba(0, 242, 255, 0.1); 
+          display: flex; gap: 14px; align-items: center;
+        }
+        .chat-input-row input { 
+          flex: 1; background: rgba(0,0,0,0.4); border: 1px solid rgba(0, 242, 255, 0.2); 
+          border-radius: 16px; padding: 14px 20px; color: #fff; font-size: 15px; outline: none; transition: 0.3s;
+        }
+        .chat-input-row input:focus { border-color: #00f2ff; box-shadow: 0 0 15px rgba(0, 242, 255, 0.1); }
+        .chat-send-pulse { 
+          width: 52px; height: 52px; 
+          background: linear-gradient(135deg, #00f2ff 0%, #0066cc 100%); 
+          border: none; border-radius: 16px; 
+          display: flex; align-items: center; justify-content: center; 
+          cursor: pointer; box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+          transition: 0.3s;
+        }
+        .chat-send-pulse:active { transform: scale(0.9); }
       `}</style>
     </div>
   );

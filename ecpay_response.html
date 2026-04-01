@@ -1,0 +1,1052 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- InstanceBegin template="/Templates/seller_template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+    <!-- SiteMap -->
+    <meta name="google-site-verification" content="g1tlroYW-dChyLSinXJxV7BeP_T8nsDP1HpFSwORDgE" />
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="zh-TW">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0, user-scalable=yes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <title>選擇支付方式|綠界科技</title>
+
+    <!-- FB share 用 請填入相關資訊 -->
+    <meta property="og:url" content="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5" />
+    <meta property="og:title" content="綠界科技 ECPay" />
+    <meta property="og:description" content="綠界科技 ECPay 提供信用卡刷卡、超商代收及取貨付款、ATM轉帳...等多種金流收款服務，會員可於綠界網站建立收款網址或使用API程式串接，應用彈性，收款隔日起即撥款。支付找綠界，買賣無國界。" />
+    <meta property="og:site_name" content="綠界科技 ECPay" />
+    <meta property="og:image" content="https://www.ecpay.com.tw/Content/themes/WebStyle20131201/images/service/ecpay_fb.png" />
+    <meta property="og:image:secure_url" content="https://www.ecpay.com.tw/Content/themes/WebStyle20131201/images/service/ecpay_fb.png" />
+    <meta property="og:type" content="website" /><!-- 網頁用website -->
+    <!-- G+ share 用 請填入相關資訊 -->
+    <meta itemprop="name" content="綠界科技 ECPay">
+    <meta itemprop="image" content="https://www.ecpay.com.tw/Content/themes/WebStyle20131201/images/service/ecpay_fb.png">
+    <meta itemprop="description" content="綠界科技 ECPay 提供信用卡刷卡、超商代收及取貨付款、ATM轉帳...等多種金流收款服務，會員可於綠界網站建立收款網址或使用API程式串接，應用彈性，收款隔日起即撥款。支付找綠界，買賣無國界。"><!-- G+用的網頁描述 -->
+    <link rel="canonical" href="" />
+    <link rel="shortcut icon" href="/Content/themes/WebStyle201401/images/favicon.ico" />
+    <title>選擇支付方式|綠界科技</title>
+    <!-- CSS -->
+    <link href="/Content/themes/WebStylePayment/css/payment.css?t=20260401030446" rel="stylesheet" />
+    <link href="/Content/themes/WebStylePayment/css/pm_en.css" rel="stylesheet" />
+    <link href="/Frontend/src/plugin/simplert.css" rel="stylesheet" />
+    <!-- Google Tag Manager -->
+    <script id="gtmScript" nonce="ecpaya18cfbc7659d42d88315867b41c68ea6">
+        (function (w, d, s, l, i) {
+            var nonce = 'ecpaya18cfbc7659d42d88315867b41c68ea6';
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl; 
+            j.setAttribute('nonce', 'ecpaya18cfbc7659d42d88315867b41c68ea6'); f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PF5GL94');</script>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PF5GL94"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- site-body start -->
+    <div class="site-body">
+        
+
+
+<div class="site-content-wrapper">
+    <div class="site-content">
+        <div class="order-info-box">
+            <h3 class="oib-title">訂單資訊</h3>
+            <div class="oib-detail">
+                <div class="obd-box ob-01">
+                    <dl>
+                        <dt>訂單編號</dt>
+                            <dd>JZ1774983886274</dd>
+                    </dl>
+                    <dl>
+                        <dt>商店名稱</dt>
+                        <dd>綠界STAGE測試股份有限公司</dd>
+                    </dl>
+                </div>
+
+                <div class="obd-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="otb-l">商品明細</th>
+                                <th class="otb-r">小計</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 商品清單 start -->
+                            <tr>
+                                        <td>MembershipPlan</td>
+                                <td class="otb-r">1,600</td>
+                            </tr>
+                            <!-- 商品清單 end -->
+                        </tbody>
+                    </table>
+                    <table id="ECPay" class="otb-sum">
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="oib-sum">
+                <dd id="showPaymentAMTName" class="obs-title">實際付款金額</dd>
+                <dd id="TradeTotalAMT" class="obs-price">NT$1,600</dd>
+            </div>
+        </div>
+    </div>
+
+    <simplert :use-radius="true"
+              :use-icon="true"
+              ref="simplert">
+    </simplert>
+</div>
+
+
+
+<div class="site-content-wrapper scw-gray member-pay-wrap">
+
+    <div class="site-content">
+            <div id="ECTab" class="member-pay">
+                <h3 class="content-title">付款方式</h3>
+                <div class="pay-tab-wrapper ptw-no-op">
+                    <div class="pay-tab-menu">
+                        <ul class="pay-tab-list">
+                                <li title="Credit" id="liCredit" class="ptl-card">
+                                    <div class="ptl-ic"></div>
+                                    信用卡
+                                </li>
+                                                                                                                                                                                                                                                                                                                                                                                <li title="GWPay" id="liGWPay" class="ptl-gwpay">
+                                    <div class="ptl-ic"></div>
+                                    綠界Pay
+                                </li>
+                                                    </ul>
+                    </div>
+                    <div class="pay-tab-content">
+
+                        <!-- 信用卡 -->
+
+
+
+<script type="text/javascript" nonce="ecpaya18cfbc7659d42d88315867b41c68ea6">
+    // Credit 靽∠?∩?甈曄????(靘?CreditPayment.vue 雿輻)
+    window._CreditData = {"UnionPay":0,"unionPayList":[],"aePayList":[],"creditPayList":[{"PaymentTypeID":10000,"PaymentSubTypeID":2003,"PaymentTypeName":"Credit","PaymentSubTypeName":"Credit","PaymentID":"ALL","PaymentNotes":"信用卡","Notes":"信用卡_MasterCard_JCB_VISA","SystemBankName":"Credit","LowerLimitAMT":0,"UpperLimitAMT":0,"BankCode":null},{"PaymentTypeID":10000,"PaymentSubTypeID":2006,"PaymentTypeName":"Credit","PaymentSubTypeName":"Credit","PaymentID":"ALL","PaymentNotes":"信用卡","Notes":"信用卡_MasterCard_JCB_VISA","SystemBankName":"Credit","LowerLimitAMT":0,"UpperLimitAMT":0,"BankCode":null},{"PaymentTypeID":10000,"PaymentSubTypeID":2014,"PaymentTypeName":"Credit","PaymentSubTypeName":"Credit","PaymentID":"ALL","PaymentNotes":"信用卡","Notes":"信用卡_MasterCard_JCB_VISA","SystemBankName":"Credit","LowerLimitAMT":0,"UpperLimitAMT":0,"BankCode":null}],"isOnlyAE":false,"BuyerTradeInstmt":0,"BuyerInstallmentAmount":0,"CreditPayType":"Visa/Master/JCB","defaultCard":0,"defaultCard4No":"****","defaultCard6No":"******","defaultCardBankName":null,"defaultCardBinCode":null,"memberCreditCardInfo":{"CName":"","CellPhone":null,"StateCode":null},"BidingCard":0,"IsValidLastBindYYMM":false,"TradeInstmt":0,"Installment":0,"InstallmentAmount":0,"CreditInstallments":[],"IsCardAvailableInstallmentsURL":null,"InstallmentsList":null,"RealMerchantID":2000132,"RedeemCount":0,"redeemInfoTW":null,"creditBonusUrl":null,"creditPay3D":false,"Taiwan3D":false,"Foreign3D":false,"isNotNeedCardHolder":0,"limitTaiwanCredit":"0","needOTPForAIO":1,"setMonth":4,"setYear":2026,"IsShowCellPhone":true,"isNotNeedCardHolderMail":1,"QuickPayID":0,"Email":null,"CountryCodeList":[{"CountryCode":"158","CountryName":"(TW) 台灣Taiwan"},{"CountryCode":"004","CountryName":"(AF) 阿富汗Afghanistan"},{"CountryCode":"248","CountryName":"(AX) 奧蘭Åland Islands"},{"CountryCode":"008","CountryName":"(AL) 阿爾巴尼亞Albania"},{"CountryCode":"012","CountryName":"(DZ) 阿爾及利亞Algeria"},{"CountryCode":"016","CountryName":"(AS) 美屬薩摩亞American Samoa"},{"CountryCode":"020","CountryName":"(AD) 安道爾Andorra"},{"CountryCode":"024","CountryName":"(AO) 安哥拉Angola"},{"CountryCode":"660","CountryName":"(AI) 安圭拉Anguilla"},{"CountryCode":"010","CountryName":"(AQ) 南極洲Antarctica"},{"CountryCode":"028","CountryName":"(AG) 安地卡及巴布達Antigua and Barbuda"},{"CountryCode":"032","CountryName":"(AR) 阿根廷Argentina"},{"CountryCode":"051","CountryName":"(AM) 亞美尼亞Armenia"},{"CountryCode":"533","CountryName":"(AW) 阿魯巴Aruba"},{"CountryCode":"036","CountryName":"(AU) 澳大利亞Australia"},{"CountryCode":"040","CountryName":"(AT) 奧地利Austria"},{"CountryCode":"031","CountryName":"(AZ) 亞塞拜然Azerbaijan"},{"CountryCode":"044","CountryName":"(BS) 巴哈馬Bahamas"},{"CountryCode":"048","CountryName":"(BH) 巴林Bahrain"},{"CountryCode":"050","CountryName":"(BD) 孟加拉國Bangladesh"},{"CountryCode":"052","CountryName":"(BB) 巴貝多Barbados"},{"CountryCode":"112","CountryName":"(BY) 白俄羅斯Belarus"},{"CountryCode":"056","CountryName":"(BE) 比利時Belgium"},{"CountryCode":"084","CountryName":"(BZ) 貝里斯Belize"},{"CountryCode":"204","CountryName":"(BJ) 貝南Benin"},{"CountryCode":"060","CountryName":"(BM) 百慕達Bermuda"},{"CountryCode":"064","CountryName":"(BT) 不丹Bhutan"},{"CountryCode":"068","CountryName":"(BO) 玻利維亞Bolivia"},{"CountryCode":"535","CountryName":"(BQ) 荷蘭加勒比區Bonaire, Sint Eustatius and Saba"},{"CountryCode":"070","CountryName":"(BA) 波赫Bosnia and Herzegovina"},{"CountryCode":"072","CountryName":"(BW) 波札那Botswana"},{"CountryCode":"074","CountryName":"(BV) 布韋島Bouvet Island"},{"CountryCode":"076","CountryName":"(BR) 巴西Brazil"},{"CountryCode":"086","CountryName":"(IO) 英屬印度洋領地British Indian Ocean Territory"},{"CountryCode":"096","CountryName":"(BN) 汶萊Brunei Darussalam"},{"CountryCode":"100","CountryName":"(BG) 保加利亞Bulgaria"},{"CountryCode":"854","CountryName":"(BF) 布吉納法索Burkina Faso"},{"CountryCode":"108","CountryName":"(BI) 蒲隆地Burundi"},{"CountryCode":"132","CountryName":"(CV) 維德角Cabo Verde"},{"CountryCode":"116","CountryName":"(KH) 柬埔寨Cambodia"},{"CountryCode":"120","CountryName":"(CM) 喀麥隆Cameroon"},{"CountryCode":"124","CountryName":"(CA) 加拿大Canada"},{"CountryCode":"136","CountryName":"(KY) 開曼群島Cayman Islands"},{"CountryCode":"140","CountryName":"(CF) 中非Central African Republic"},{"CountryCode":"148","CountryName":"(TD) 查德Chad"},{"CountryCode":"152","CountryName":"(CL) 智利Chile"},{"CountryCode":"156","CountryName":"(CN) 中國China"},{"CountryCode":"162","CountryName":"(CX) 聖誕島Christmas Island"},{"CountryCode":"166","CountryName":"(CC) 科科斯（基林）群島Cocos (Keeling) Islands"},{"CountryCode":"170","CountryName":"(CO) 哥倫比亞Colombia"},{"CountryCode":"174","CountryName":"(KM) 葛摩Comoros"},{"CountryCode":"178","CountryName":"(CG) 剛果Congo"},{"CountryCode":"180","CountryName":"(CD) 民主剛果Congo (Democratic Republic of the)"},{"CountryCode":"184","CountryName":"(CK) 庫克群島Cook Islands"},{"CountryCode":"188","CountryName":"(CR) 哥斯大黎加Costa Rica"},{"CountryCode":"384","CountryName":"(CI) 象牙海岸Côte d\u0027Ivoire"},{"CountryCode":"191","CountryName":"(HR) 克羅埃西亞Croatia"},{"CountryCode":"192","CountryName":"(CU) 古巴Cuba"},{"CountryCode":"531","CountryName":"(CW) 庫拉索Curaçao"},{"CountryCode":"196","CountryName":"(CY) 賽普勒斯Cyprus"},{"CountryCode":"203","CountryName":"(CZ) 捷克Czechia"},{"CountryCode":"208","CountryName":"(DK) 丹麥Denmark"},{"CountryCode":"262","CountryName":"(DJ) 吉布地Djibouti"},{"CountryCode":"212","CountryName":"(DM) 多米尼克Dominica"},{"CountryCode":"214","CountryName":"(DO) 多明尼加Dominican Republic"},{"CountryCode":"218","CountryName":"(EC) 厄瓜多Ecuador"},{"CountryCode":"818","CountryName":"(EG) 埃及Egypt"},{"CountryCode":"222","CountryName":"(SV) 薩爾瓦多El Salvador"},{"CountryCode":"226","CountryName":"(GQ) 赤道幾內亞Equatorial Guinea"},{"CountryCode":"232","CountryName":"(ER) 厄利垂亞Eritrea"},{"CountryCode":"233","CountryName":"(EE) 愛沙尼亞Estonia"},{"CountryCode":"748","CountryName":"(SZ) 史瓦帝尼Eswatini"},{"CountryCode":"231","CountryName":"(ET) 衣索比亞Ethiopia"},{"CountryCode":"238","CountryName":"(FK) 福克蘭群島Falkland Islands (Malvinas)"},{"CountryCode":"234","CountryName":"(FO) 法羅群島Faroe Islands"},{"CountryCode":"242","CountryName":"(FJ) 斐濟Fiji"},{"CountryCode":"246","CountryName":"(FI) 芬蘭Finland"},{"CountryCode":"250","CountryName":"(FR) 法國France"},{"CountryCode":"254","CountryName":"(GF) 法屬圭亞那French Guiana"},{"CountryCode":"258","CountryName":"(PF) 法屬玻里尼西亞French Polynesia"},{"CountryCode":"260","CountryName":"(TF) 法屬南方和南極洲領地French Southern Territories"},{"CountryCode":"266","CountryName":"(GA) 加彭Gabon"},{"CountryCode":"270","CountryName":"(GM) 甘比亞Gambia"},{"CountryCode":"268","CountryName":"(GE) 喬治亞Georgia"},{"CountryCode":"276","CountryName":"(DE) 德國Germany"},{"CountryCode":"288","CountryName":"(GH) 加納Ghana"},{"CountryCode":"292","CountryName":"(GI) 直布羅陀Gibraltar"},{"CountryCode":"300","CountryName":"(GR) 希臘Greece"},{"CountryCode":"304","CountryName":"(GL) 格陵蘭Greenland"},{"CountryCode":"308","CountryName":"(GD) 格瑞那達Grenada"},{"CountryCode":"312","CountryName":"(GP) 瓜德羅普Guadeloupe"},{"CountryCode":"316","CountryName":"(GU) 關島Guam"},{"CountryCode":"320","CountryName":"(GT) 瓜地馬拉Guatemala"},{"CountryCode":"831","CountryName":"(GG) 根西Guernsey"},{"CountryCode":"324","CountryName":"(GN) 幾內亞Guinea"},{"CountryCode":"624","CountryName":"(GW) 幾內亞比索Guinea-Bissau"},{"CountryCode":"328","CountryName":"(GY) 蓋亞那Guyana"},{"CountryCode":"332","CountryName":"(HT) 海地Haiti"},{"CountryCode":"334","CountryName":"(HM) 赫德島和麥克唐納群島Heard Island and McDonald Islands"},{"CountryCode":"336","CountryName":"(VA) 梵蒂岡Holy See"},{"CountryCode":"340","CountryName":"(HN) 宏都拉斯Honduras"},{"CountryCode":"344","CountryName":"(HK) 香港Hong Kong"},{"CountryCode":"348","CountryName":"(HU) 匈牙利Hungary"},{"CountryCode":"352","CountryName":"(IS) 冰島Iceland"},{"CountryCode":"356","CountryName":"(IN) 印度India"},{"CountryCode":"360","CountryName":"(ID) 印尼Indonesia"},{"CountryCode":"364","CountryName":"(IR) 伊朗Iran (Islamic Republic of)"},{"CountryCode":"368","CountryName":"(IQ) 伊拉克Iraq"},{"CountryCode":"372","CountryName":"(IE) 愛爾蘭Ireland"},{"CountryCode":"833","CountryName":"(IM) 曼島Isle of Man"},{"CountryCode":"376","CountryName":"(IL) 以色列Israel"},{"CountryCode":"380","CountryName":"(IT) 義大利Italy"},{"CountryCode":"388","CountryName":"(JM) 牙買加Jamaica"},{"CountryCode":"392","CountryName":"(JP) 日本Japan"},{"CountryCode":"832","CountryName":"(JE) 澤西Jersey"},{"CountryCode":"400","CountryName":"(JO) 約旦Jordan"},{"CountryCode":"398","CountryName":"(KZ) 哈薩克Kazakhstan"},{"CountryCode":"404","CountryName":"(KE) 肯亞Kenya"},{"CountryCode":"296","CountryName":"(KI) 吉里巴斯Kiribati"},{"CountryCode":"408","CountryName":"(KP) 北韓Korea (Democratic People\u0027s Republic of)"},{"CountryCode":"410","CountryName":"(KR) 韓國Korea (Republic of)"},{"CountryCode":"414","CountryName":"(KW) 科威特Kuwait"},{"CountryCode":"417","CountryName":"(KG) 吉爾吉斯Kyrgyzstan"},{"CountryCode":"418","CountryName":"(LA) 寮國Lao People\u0027s Democratic Republic"},{"CountryCode":"428","CountryName":"(LV) 拉脫維亞Latvia"},{"CountryCode":"422","CountryName":"(LB) 黎巴嫩Lebanon"},{"CountryCode":"426","CountryName":"(LS) 賴索托Lesotho"},{"CountryCode":"430","CountryName":"(LR) 賴比瑞亞Liberia"},{"CountryCode":"434","CountryName":"(LY) 利比亞Libya"},{"CountryCode":"438","CountryName":"(LI) 列支敦斯登Liechtenstein"},{"CountryCode":"440","CountryName":"(LT) 立陶宛Lithuania"},{"CountryCode":"442","CountryName":"(LU) 盧森堡Luxembourg"},{"CountryCode":"446","CountryName":"(MO) 澳門Macao"},{"CountryCode":"450","CountryName":"(MG) 馬達加斯加Madagascar"},{"CountryCode":"454","CountryName":"(MW) 馬拉威Malawi"},{"CountryCode":"458","CountryName":"(MY) 馬來西亞Malaysia"},{"CountryCode":"462","CountryName":"(MV) 馬爾地夫Maldives"},{"CountryCode":"466","CountryName":"(ML) 馬利Mali"},{"CountryCode":"470","CountryName":"(MT) 馬爾他Malta"},{"CountryCode":"584","CountryName":"(MH) 馬紹爾群島Marshall Islands"},{"CountryCode":"474","CountryName":"(MQ) 馬提尼克Martinique"},{"CountryCode":"478","CountryName":"(MR) 茅利塔尼亞Mauritania"},{"CountryCode":"480","CountryName":"(MU) 模里西斯Mauritius"},{"CountryCode":"175","CountryName":"(YT) 馬約特Mayotte"},{"CountryCode":"484","CountryName":"(MX) 墨西哥Mexico"},{"CountryCode":"583","CountryName":"(FM) 密克羅尼西亞聯邦Micronesia (Federated States of)"},{"CountryCode":"498","CountryName":"(MD) 摩爾多瓦Moldova (Republic of)"},{"CountryCode":"492","CountryName":"(MC) 摩納哥Monaco"},{"CountryCode":"496","CountryName":"(MN) 蒙古國Mongolia"},{"CountryCode":"499","CountryName":"(ME) 蒙特內哥羅Montenegro"},{"CountryCode":"500","CountryName":"(MS) 蒙特塞拉特Montserrat"},{"CountryCode":"504","CountryName":"(MA) 摩洛哥Morocco"},{"CountryCode":"508","CountryName":"(MZ) 莫三比克Mozambique"},{"CountryCode":"104","CountryName":"(MM) 緬甸Myanmar"},{"CountryCode":"516","CountryName":"(NA) 納米比亞Namibia"},{"CountryCode":"520","CountryName":"(NR) 諾魯Nauru"},{"CountryCode":"524","CountryName":"(NP) 尼泊爾Nepal"},{"CountryCode":"528","CountryName":"(NL) 荷蘭Netherlands"},{"CountryCode":"540","CountryName":"(NC) 新喀里多尼亞New Caledonia"},{"CountryCode":"554","CountryName":"(NZ) 紐西蘭New Zealand"},{"CountryCode":"558","CountryName":"(NI) 尼加拉瓜Nicaragua"},{"CountryCode":"562","CountryName":"(NE) 尼日Niger"},{"CountryCode":"566","CountryName":"(NG) 奈及利亞Nigeria"},{"CountryCode":"570","CountryName":"(NU) 紐埃Niue"},{"CountryCode":"574","CountryName":"(NF) 諾福克島Norfolk Island"},{"CountryCode":"807","CountryName":"(MK) 北馬其頓North Macedonia"},{"CountryCode":"580","CountryName":"(MP) 北馬里亞納群島Northern Mariana Islands"},{"CountryCode":"578","CountryName":"(NO) 挪威Norway"},{"CountryCode":"512","CountryName":"(OM) 阿曼Oman"},{"CountryCode":"586","CountryName":"(PK) 巴基斯坦Pakistan"},{"CountryCode":"585","CountryName":"(PW) 帛琉Palau"},{"CountryCode":"275","CountryName":"(PS) 巴勒斯坦Palestine, State of"},{"CountryCode":"591","CountryName":"(PA) 巴拿馬Panama"},{"CountryCode":"598","CountryName":"(PG) 巴布亞紐幾內亞Papua New Guinea"},{"CountryCode":"600","CountryName":"(PY) 巴拉圭Paraguay"},{"CountryCode":"604","CountryName":"(PE) 秘魯Peru"},{"CountryCode":"608","CountryName":"(PH) 菲律賓Philippines"},{"CountryCode":"612","CountryName":"(PN) 皮特肯群島Pitcairn"},{"CountryCode":"616","CountryName":"(PL) 波蘭Poland"},{"CountryCode":"620","CountryName":"(PT) 葡萄牙Portugal"},{"CountryCode":"630","CountryName":"(PR) 波多黎各Puerto Rico"},{"CountryCode":"634","CountryName":"(QA) 卡達Qatar"},{"CountryCode":"638","CountryName":"(RE) 留尼旺Réunion"},{"CountryCode":"642","CountryName":"(RO) 羅馬尼亞Romania"},{"CountryCode":"643","CountryName":"(RU) 俄羅斯Russian Federation"},{"CountryCode":"646","CountryName":"(RW) 盧安達Rwanda"},{"CountryCode":"652","CountryName":"(BL) 聖巴泰勒米Saint Barthélemy"},{"CountryCode":"654","CountryName":"(SH) 聖赫倫那、阿森松和特里斯坦-達庫尼亞Saint Helena, Ascension and Tristan da Cunha"},{"CountryCode":"659","CountryName":"(KN) 聖克里斯多福及尼維斯Saint Kitts and Nevis"},{"CountryCode":"662","CountryName":"(LC) 聖露西亞Saint Lucia"},{"CountryCode":"663","CountryName":"(MF) 法屬聖馬丁Saint Martin (French part)"},{"CountryCode":"666","CountryName":"(PM) 聖皮埃爾和密克隆Saint Pierre and Miquelon"},{"CountryCode":"670","CountryName":"(VC) 聖文森及格瑞那丁Saint Vincent and the Grenadines"},{"CountryCode":"882","CountryName":"(WS) 薩摩亞Samoa"},{"CountryCode":"674","CountryName":"(SM) 聖馬利諾San Marino"},{"CountryCode":"678","CountryName":"(ST) 聖多美普林西比Sao Tome and Principe"},{"CountryCode":"682","CountryName":"(SA) 沙烏地阿拉伯Saudi Arabia"},{"CountryCode":"686","CountryName":"(SN) 塞內加爾Senegal"},{"CountryCode":"688","CountryName":"(RS) 塞爾維亞Serbia"},{"CountryCode":"690","CountryName":"(SC) 塞席爾Seychelles"},{"CountryCode":"694","CountryName":"(SL) 獅子山Sierra Leone"},{"CountryCode":"702","CountryName":"(SG) 新加坡Singapore"},{"CountryCode":"534","CountryName":"(SX) 荷屬聖馬丁Sint Maarten (Dutch part)"},{"CountryCode":"703","CountryName":"(SK) 斯洛伐克Slovakia"},{"CountryCode":"705","CountryName":"(SI) 斯洛維尼亞Slovenia"},{"CountryCode":"090","CountryName":"(SB) 索羅門群島Solomon Islands"},{"CountryCode":"706","CountryName":"(SO) 索馬利亞Somalia"},{"CountryCode":"710","CountryName":"(ZA) 南非South Africa"},{"CountryCode":"239","CountryName":"(GS) 南喬治亞和南桑威奇群島South Georgia and the South Sandwich Islands"},{"CountryCode":"728","CountryName":"(SS) 南蘇丹South Sudan"},{"CountryCode":"724","CountryName":"(ES) 西班牙Spain"},{"CountryCode":"144","CountryName":"(LK) 斯里蘭卡Sri Lanka"},{"CountryCode":"729","CountryName":"(SD) 蘇丹Sudan"},{"CountryCode":"740","CountryName":"(SR) 蘇利南Suriname"},{"CountryCode":"744","CountryName":"(SJ) 斯瓦爾巴和揚馬延Svalbard and Jan Mayen"},{"CountryCode":"752","CountryName":"(SE) 瑞典Sweden"},{"CountryCode":"756","CountryName":"(CH) 瑞士Switzerland"},{"CountryCode":"760","CountryName":"(SY) 敘利亞Syrian Arab Republic"},{"CountryCode":"762","CountryName":"(TJ) 塔吉克Tajikistan"},{"CountryCode":"834","CountryName":"(TZ) 坦尚尼亞Tanzania, United Republic of"},{"CountryCode":"764","CountryName":"(TH) 泰國Thailand"},{"CountryCode":"626","CountryName":"(TL) 東帝汶Timor-Leste"},{"CountryCode":"768","CountryName":"(TG) 多哥Togo"},{"CountryCode":"772","CountryName":"(TK) 托克勞Tokelau"},{"CountryCode":"776","CountryName":"(TO) 東加Tonga"},{"CountryCode":"780","CountryName":"(TT) 千里達及托巴哥Trinidad and Tobago"},{"CountryCode":"788","CountryName":"(TN) 突尼西亞Tunisia"},{"CountryCode":"792","CountryName":"(TR) 土耳其Turkey"},{"CountryCode":"795","CountryName":"(TM) 土庫曼Turkmenistan"},{"CountryCode":"796","CountryName":"(TC) 特克斯與凱科斯群島Turks and Caicos Islands"},{"CountryCode":"798","CountryName":"(TV) 吐瓦魯Tuvalu"},{"CountryCode":"800","CountryName":"(UG) 烏干達Uganda"},{"CountryCode":"804","CountryName":"(UA) 烏克蘭Ukraine"},{"CountryCode":"784","CountryName":"(AE) 阿聯United Arab Emirates"},{"CountryCode":"826","CountryName":"(GB) 英國United Kingdom"},{"CountryCode":"840","CountryName":"(US) 美國United States"},{"CountryCode":"581","CountryName":"(UM) 美國本土外小島嶼United States Minor Outlying Islands"},{"CountryCode":"858","CountryName":"(UY) 烏拉圭Uruguay"},{"CountryCode":"860","CountryName":"(UZ) 烏茲別克Uzbekistan"},{"CountryCode":"548","CountryName":"(VU) 萬那杜Vanuatu"},{"CountryCode":"862","CountryName":"(VE) 委內瑞拉Venezuela (Bolivarian Republic of)"},{"CountryCode":"704","CountryName":"(VN) 越南Viet Nam"},{"CountryCode":"092","CountryName":"(VG) 英屬維京群島Virgin Islands (British)"},{"CountryCode":"850","CountryName":"(VI) 美屬維京群島Virgin Islands (U.S.)"},{"CountryCode":"876","CountryName":"(WF) 瓦利斯和富圖納Wallis and Futuna"},{"CountryCode":"732","CountryName":"(EH) 撒拉威阿拉伯民主共和國Western Sahara"},{"CountryCode":"887","CountryName":"(YE) 葉門Yemen"},{"CountryCode":"894","CountryName":"(ZM) 尚比亞Zambia"},{"CountryCode":"716","CountryName":"(ZW) 辛巴威Zimbabwe"}],"AreaList":null,"TownList":null,"CountryCode":null,"AreaID":null,"TownID":null,"ZipCode":null,"Address":null,"PreAddress":"","PreEmail":null,"PreStateCode":"","isNotNeedCardHolderAddress":1,"AsymmetryInstallmentsList":null,"CheckAsymmetryInstallmentsURL":null,"DreamInstallmentUrl":null,"BuyerInstallmentsList":[],"IsBuyerCardAvailableInstallmentsURL":null,"IsAml":false,"IsBindCardDebit":false};
+
+    // ?憿??????
+    window._viewPageType = 'CreditPeriod';
+    window._isBuyerInstallments = 0;
+
+    // 靽∠?⊥暑??
+    window._hasCreditEvent = 0;
+    window._creditEvent = null;
+
+    // QRCode ?賊?
+    window._creditIsUseAppQRCode = 1;
+    window._creditQRcodeURL = 'https://app-stage.ecpay.com.tw/qr/code?d=zQzglUztbqTKysDqndFHig==';
+    window._buyInstallmentQRCode = '';
+    window._creditIsAioMock = '1';
+    window._creditMockPaid = 'https://payment-stage.ecpay.com.tw/MockScanCodePay/MockScanCodePayPaid?data=zQzglUztbqTKysDqndFHig==';
+    window._mockBuyerInstallmentsPaid = '';
+
+    // ?芾祥??隤芣????
+    window._buyerInsUrl = 'https://support.ecpay.com.tw/5018/';
+
+    // 摰?摰??膩 (CreditPeriod)
+    window._periodDescription = '每 \u003cspan class=\"red-tip\"\u003e1\u003c/span\u003e 個月扣 1 次。每次扣款金額:\u003cspan class=\"red-tip\"\u003e1,600\u003c/span\u003e元(新台幣/NTD)';
+
+    // Banner HTML 雿摮葡?喳 Vue 蝯辣
+    window._creditBannerHtml = '';
+</script>
+
+<!-- Credit Vue Component - 摰?梢?蝺刻陌??Vue 蝯辣?批 -->
+<div id="Credit"></div>
+
+                        <!-- Apple Pay -->
+
+                        <!-- TWQR -->
+
+                        <!-- 微信支付 -->
+
+                        <!-- 一卡通支付 -->
+                        <!-- 街口支付 -->
+                        <!-- 網路ATM -->
+
+
+
+                        <!-- 超商條碼 -->
+
+                        <!-- 超商代碼 -->
+
+                        <!-- 全家條碼立即儲 -->
+
+                        <!-- Google Pay -->
+
+                        <!--GWPay-->
+
+
+<!-- 綠界Pay -->
+<div id="GWPay" class="pay-tab11">
+    <div class="events-box-list">
+    </div>
+	<div class="gwpay-qr-box">
+		<div class="pqb-title">
+			<img src="/Content/themes/GWPay/images/img_gwpay_logo@2x.png" alt="">
+		</div>
+		<div class="pqb-qr" id="qrcodeGwpay">
+			<img id="gwpayIco" src="/Content/themes/WebStylePayment/images/frame/activity-logo.png" style="position: absolute;width: 63px; height: 62px; margin: 82px;display:none;" />
+		</div>
+		<input type="hidden" id="gwpayqrcodeurl" name="gwpayqrcodeurl" value="https://app-stage.ecpay.com.tw/qr/code?d=+QpzRJLMPO3yx3ycY847oA==" />
+		<div class="pqb-info">
+			掃碼快速付款或下載綠界Pay<br />
+			<b>(交易完成前請勿關閉瀏覽器)</b>
+		</div>
+			<div class="payway-list-box">
+				<ul class="payway-list">
+					<li>
+						<a href="https://payment-stage.ecpay.com.tw/MockScanCodePay/MockScanCodePayPaid?data=+QpzRJLMPO3yx3ycY847oA==" id="aGWPay" class="pwl-link" target="_blank" style="background-color: chocolate;">
+							測試付款請點此
+						</a>
+					</li>
+				</ul>
+			</div>
+	</div>
+	<div class="webatm-operate-intro">
+		<div class="woi-title">操作說明</div>
+		<ul class="woi-list">
+			<li>
+				<div class="wl-img">
+					<img src="/Content/themes/GWPay/images/img_gwpay_01@2x.png">
+				</div>
+				<div class="wl-txt">1. 登入綠界Pay</div>
+			</li>
+			<li>
+				<div class="wl-img">
+					<img src="/Content/themes/GWPay/images/img_gwpay_02@2x.png">
+				</div>
+				<div class="wl-txt">2. 掃描付款碼</div>
+			</li>
+			<li>
+				<div class="wl-img">
+					<img src="/Content/themes/GWPay/images/img_gwpay_03@2x.png">
+				</div>
+				<div class="wl-txt">3. 選擇付款方式</div>
+			</li>
+			<li>
+				<div class="wl-img">
+					<img src="/Content/themes/GWPay/images/img_gwpay_04@2x.png">
+				</div>
+				<div class="wl-txt">4. 交易成功，方便查詢</div>
+			</li>
+		</ul>
+	</div>
+	<div class="gwpay-btn scw-btn-block">
+		<div class="text">享受前所未有的支付體驗，查詢訂單更方便</div>
+		<a id="GotoMBAPP" class="btn" title="開啟綠界Pay付款">開啟APP付款</a>
+	</div>
+	<simplert :use-radius="true"
+			  :use-icon="true"
+			  ref="simplert">
+	</simplert>
+</div>
+<script type="text/javascript" nonce="ecpaya18cfbc7659d42d88315867b41c68ea6">
+		document.getElementById('GotoMBAPP').addEventListener('click', function () {
+			openAppOrStore_M();
+		});
+
+			window.openAppOrStore_M = function () {
+
+			function detectDevice() {
+				const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+				if (/android/i.test(userAgent)) {
+					return 'Android';
+				}
+				if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+					return 'iOS';
+				}
+				return 'desktop';
+			}
+
+			function openAppOrStore(scheme_url, download_url, deviceType) {
+				if (deviceType) {
+					deviceType = deviceType.toLowerCase(); // 轉換為小寫
+				}
+                if (deviceType === "ios") {
+
+					window.location.href = scheme_url;
+
+				} else if (deviceType === "android") {
+					setTimeout(function () {
+						window.location.href = scheme_url;
+						var t = setTimeout(function () {
+							window.open(download_url);
+
+						}, 1000);
+						window.onblur = function () {
+							clearTimeout(t);
+						}
+					}, 100);
+
+				}
+
+			}
+
+			var scheme_url = 'gwpay-stage://aiolink/?q=%2bQpzRJLMPO3yx3ycY847oA%3d%3d';
+
+			var deviceType = detectDevice()
+			switch (deviceType) {
+				case 'Android':
+					var url = 'https://play.google.com/store/apps/details?id=tw.com.ecpay.app.gwpay';
+					openAppOrStore(scheme_url, url, deviceType)
+					break;
+				case 'iOS':
+					var url = 'https://apps.apple.com/tw/app/%E7%B6%A0%E7%95%8Cpay/id6476751523';
+					openAppOrStore(scheme_url, url, deviceType)
+					break;
+				default:
+					var url = 'https://play.google.com/store/apps/details?id=tw.com.ecpay.app.gwpay';
+					openAppOrStore(scheme_url, url, deviceType)
+					break;
+
+			}
+		}
+
+</script>
+
+
+                        <!-- BNPL -->
+
+
+
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+
+
+<div id="idverify">
+	<!-- 持卡人身分驗證 -->
+	<div id="id-verify-popup" class="id-verify-popup mg-popup mfp-with-anim mfp-hide no-login-qr">
+		<div class="ivp-box">
+			<h3 class="content-title"><div class="ctt-txt">持卡人身分驗證</div></h3>
+
+			<div class="ivp-txt">
+				依「第三方支付服務業防制洗錢及打擊資恐辦法」之規定，當信用卡單筆付款金額達新台幣20萬元(含)以上者，需進行買方(即持卡人)身分驗證。
+			</div>
+
+			<p class="scw-tip">
+				請於  前完成身分驗證及付款。
+			</p>
+
+			<dl>
+				<dt>
+					姓名<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<input type="text" id="CName" name="CName" placeholder="請輸入持卡人身分證上的中文姓名" />
+					<div id="errEmptyCName" class="input-error-txt input_err" style="display:none;">請輸入持卡人身分證上的中文姓名</div>
+					<div id="errCName" class="input-error-txt input_err" style="display:none;">請輸入中文</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					手機號碼<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<input id="Phone" type="tel" name="Phone" placeholder="請輸入手機號碼" maxlength="20" />
+					<div id="errEmptyPhone" class="input-error-txt input_err" style="display:none;">請輸入手機號碼</div>
+					<div id="errPhone" class="input-error-txt input_err" style="display:none;">手機號碼格式輸入錯誤</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					電子信箱<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<input id="Email" type="text" name="Email" placeholder="請輸入電子信箱" />
+					<div id="errEmptyEmail" class="input-error-txt input_err" style="display:none;">請輸入電子信箱</div>
+					<div id="errEmail" class="input-error-txt input_err" style="display:none;">電子信箱格式輸入錯誤</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					身分證字號<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<input id="IDNo" type="text" name="IDNo" placeholder="請輸入中華民國國民身分證字號" />
+					<div id="errEmptyId" class="input-error-txt input_err" style="display:none;">請輸入您的身分證字號</div>
+					<div id="errId" class="input-error-txt input_err" style="display:none;">身分證字號格式錯誤</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					出生日期<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<div class="ivp-birthday">
+						<span class="ipb-txt">民國</span>
+						<label class="pp-select" id="lblBirYear">
+							<select id="BirYear" name="BirYear"><option value="2011">100 (西元 2011)</option>
+<option value="2010">99 (西元 2010)</option>
+<option value="2009">98 (西元 2009)</option>
+<option value="2008">97 (西元 2008)</option>
+<option value="2007">96 (西元 2007)</option>
+<option value="2006">95 (西元 2006)</option>
+<option value="2005">94 (西元 2005)</option>
+<option value="2004">93 (西元 2004)</option>
+<option value="2003">92 (西元 2003)</option>
+<option value="2002">91 (西元 2002)</option>
+<option value="2001">90 (西元 2001)</option>
+<option value="2000">89 (西元 2000)</option>
+<option value="1999">88 (西元 1999)</option>
+<option value="1998">87 (西元 1998)</option>
+<option value="1997">86 (西元 1997)</option>
+<option value="1996">85 (西元 1996)</option>
+<option value="1995">84 (西元 1995)</option>
+<option value="1994">83 (西元 1994)</option>
+<option value="1993">82 (西元 1993)</option>
+<option value="1992">81 (西元 1992)</option>
+<option value="1991">80 (西元 1991)</option>
+<option value="1990">79 (西元 1990)</option>
+<option value="1989">78 (西元 1989)</option>
+<option value="1988">77 (西元 1988)</option>
+<option value="1987">76 (西元 1987)</option>
+<option value="1986">75 (西元 1986)</option>
+<option value="1985">74 (西元 1985)</option>
+<option value="1984">73 (西元 1984)</option>
+<option value="1983">72 (西元 1983)</option>
+<option value="1982">71 (西元 1982)</option>
+<option value="1981">70 (西元 1981)</option>
+<option value="1980">69 (西元 1980)</option>
+<option value="1979">68 (西元 1979)</option>
+<option value="1978">67 (西元 1978)</option>
+<option value="1977">66 (西元 1977)</option>
+<option value="1976">65 (西元 1976)</option>
+<option value="1975">64 (西元 1975)</option>
+<option value="1974">63 (西元 1974)</option>
+<option value="1973">62 (西元 1973)</option>
+<option value="1972">61 (西元 1972)</option>
+<option value="1971">60 (西元 1971)</option>
+<option value="1970">59 (西元 1970)</option>
+<option value="1969">58 (西元 1969)</option>
+<option value="1968">57 (西元 1968)</option>
+<option value="1967">56 (西元 1967)</option>
+<option value="1966">55 (西元 1966)</option>
+<option value="1965">54 (西元 1965)</option>
+<option value="1964">53 (西元 1964)</option>
+<option value="1963">52 (西元 1963)</option>
+<option value="1962">51 (西元 1962)</option>
+<option value="1961">50 (西元 1961)</option>
+<option value="1960">49 (西元 1960)</option>
+<option value="1959">48 (西元 1959)</option>
+<option value="1958">47 (西元 1958)</option>
+<option value="1957">46 (西元 1957)</option>
+<option value="1956">45 (西元 1956)</option>
+<option value="1955">44 (西元 1955)</option>
+<option value="1954">43 (西元 1954)</option>
+<option value="1953">42 (西元 1953)</option>
+<option value="1952">41 (西元 1952)</option>
+<option value="1951">40 (西元 1951)</option>
+<option value="1950">39 (西元 1950)</option>
+<option value="1949">38 (西元 1949)</option>
+<option value="1948">37 (西元 1948)</option>
+<option value="1947">36 (西元 1947)</option>
+<option value="1946">35 (西元 1946)</option>
+<option value="1945">34 (西元 1945)</option>
+<option value="1944">33 (西元 1944)</option>
+<option value="1943">32 (西元 1943)</option>
+<option value="1942">31 (西元 1942)</option>
+<option value="1941">30 (西元 1941)</option>
+<option value="1940">29 (西元 1940)</option>
+<option value="1939">28 (西元 1939)</option>
+<option value="1938">27 (西元 1938)</option>
+<option value="1937">26 (西元 1937)</option>
+<option value="1936">25 (西元 1936)</option>
+<option value="1935">24 (西元 1935)</option>
+<option value="1934">23 (西元 1934)</option>
+<option value="1933">22 (西元 1933)</option>
+<option value="1932">21 (西元 1932)</option>
+<option value="1931">20 (西元 1931)</option>
+</select>
+						</label>
+						<label class="pp-select" id="lblBirMonth">
+							<select id="BirMonth" name="BirMonth"><option value="1">01</option>
+<option value="2">02</option>
+<option value="3">03</option>
+<option value="4">04</option>
+<option value="5">05</option>
+<option value="6">06</option>
+<option value="7">07</option>
+<option value="8">08</option>
+<option value="9">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+						</label>
+						<label class="pp-select" id="lblBirDay">
+							<select id="BirDay" name="BirDay"><option value="1">01</option>
+<option value="2">02</option>
+<option value="3">03</option>
+<option value="4">04</option>
+<option value="5">05</option>
+<option value="6">06</option>
+<option value="7">07</option>
+<option value="8">08</option>
+<option value="9">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+<option value="13">13</option>
+<option value="14">14</option>
+<option value="15">15</option>
+<option value="16">16</option>
+<option value="17">17</option>
+<option value="18">18</option>
+<option value="19">19</option>
+<option value="20">20</option>
+<option value="21">21</option>
+<option value="22">22</option>
+<option value="23">23</option>
+<option value="24">24</option>
+<option value="25">25</option>
+<option value="26">26</option>
+<option value="27">27</option>
+<option value="28">28</option>
+<option value="29">29</option>
+<option value="30">30</option>
+<option value="31">31</option>
+</select>
+						</label>
+					</div>
+
+					<div id="errBirth" class="input-error-txt input_err" style="display:none;">請選擇您的出生日期</div>
+					<div id="errValidateBirth" class="input-error-txt input_err" style="display:none;">持卡人年齡不得低於15歲，請確認選擇日期。</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					發證日期<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<div class="ivp-birthday">
+						<span class="ipb-txt">民國</span>
+						<label class="pp-select" id="lblIssueYear">
+							<select id="IssueYear" name="IssueYear"><option value="2026">115</option>
+<option value="2025">114</option>
+<option value="2024">113</option>
+<option value="2023">112</option>
+<option value="2022">111</option>
+<option value="2021">110</option>
+<option value="2020">109</option>
+<option value="2019">108</option>
+<option value="2018">107</option>
+<option value="2017">106</option>
+<option value="2016">105</option>
+<option value="2015">104</option>
+<option value="2014">103</option>
+<option value="2013">102</option>
+<option value="2012">101</option>
+<option value="2011">100</option>
+<option value="2010">99</option>
+<option value="2009">98</option>
+<option value="2008">97</option>
+<option value="2007">96</option>
+<option value="2006">95</option>
+<option value="2005">94</option>
+<option value="2004">93</option>
+<option value="2003">92</option>
+<option value="2002">91</option>
+<option value="2001">90</option>
+<option value="2000">89</option>
+<option value="1999">88</option>
+<option value="1998">87</option>
+<option value="1997">86</option>
+<option value="1996">85</option>
+<option value="1995">84</option>
+<option value="1994">83</option>
+<option value="1993">82</option>
+<option value="1992">81</option>
+<option value="1991">80</option>
+<option value="1990">79</option>
+<option value="1989">78</option>
+<option value="1988">77</option>
+<option value="1987">76</option>
+<option value="1986">75</option>
+<option value="1985">74</option>
+<option value="1984">73</option>
+<option value="1983">72</option>
+<option value="1982">71</option>
+<option value="1981">70</option>
+<option value="1980">69</option>
+<option value="1979">68</option>
+<option value="1978">67</option>
+<option value="1977">66</option>
+<option value="1976">65</option>
+<option value="1975">64</option>
+<option value="1974">63</option>
+<option value="1973">62</option>
+<option value="1972">61</option>
+<option value="1971">60</option>
+<option value="1970">59</option>
+<option value="1969">58</option>
+<option value="1968">57</option>
+<option value="1967">56</option>
+<option value="1966">55</option>
+<option value="1965">54</option>
+<option value="1964">53</option>
+<option value="1963">52</option>
+<option value="1962">51</option>
+<option value="1961">50</option>
+<option value="1960">49</option>
+<option value="1959">48</option>
+<option value="1958">47</option>
+<option value="1957">46</option>
+<option value="1956">45</option>
+<option value="1955">44</option>
+<option value="1954">43</option>
+<option value="1953">42</option>
+<option value="1952">41</option>
+<option value="1951">40</option>
+<option value="1950">39</option>
+<option value="1949">38</option>
+<option value="1948">37</option>
+<option value="1947">36</option>
+<option value="1946">35</option>
+<option value="1945">34</option>
+<option value="1944">33</option>
+<option value="1943">32</option>
+<option value="1942">31</option>
+<option value="1941">30</option>
+<option value="1940">29</option>
+<option value="1939">28</option>
+<option value="1938">27</option>
+<option value="1937">26</option>
+<option value="1936">25</option>
+<option value="1935">24</option>
+<option value="1934">23</option>
+<option value="1933">22</option>
+<option value="1932">21</option>
+<option value="1931">20</option>
+</select>
+						</label>
+						<label class="pp-select" id="lblIssueMonth">
+							<select id="IssueMonth" name="IssueMonth"><option value="1">01</option>
+<option value="2">02</option>
+<option value="3">03</option>
+<option value="4">04</option>
+<option value="5">05</option>
+<option value="6">06</option>
+<option value="7">07</option>
+<option value="8">08</option>
+<option value="9">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+						</label>
+						<label class="pp-select" id="lblIssueDay">
+							<select id="IssueDay" name="IssueDay"><option value="1">01</option>
+<option value="2">02</option>
+<option value="3">03</option>
+<option value="4">04</option>
+<option value="5">05</option>
+<option value="6">06</option>
+<option value="7">07</option>
+<option value="8">08</option>
+<option value="9">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+<option value="13">13</option>
+<option value="14">14</option>
+<option value="15">15</option>
+<option value="16">16</option>
+<option value="17">17</option>
+<option value="18">18</option>
+<option value="19">19</option>
+<option value="20">20</option>
+<option value="21">21</option>
+<option value="22">22</option>
+<option value="23">23</option>
+<option value="24">24</option>
+<option value="25">25</option>
+<option value="26">26</option>
+<option value="27">27</option>
+<option value="28">28</option>
+<option value="29">29</option>
+<option value="30">30</option>
+<option value="31">31</option>
+</select>
+						</label>
+					</div>
+
+					<div id="errDate" class="input-error-txt input_err" style="display:none;">請選擇您的發證日期</div>
+					<div id="errValidateDate" class="input-error-txt input_err" style="display:none;">發證日期需大於出生日期，請確認選擇日期。</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					發證地點<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<label class="pp-select ps-w" id="lblCountryCode">
+						<select id="CountryCode" name="CountryCode"><option value="63000">北市</option>
+<option value="65000">新北市</option>
+<option value="10001">北縣</option>
+<option value="10002">宜縣</option>
+<option value="10003">桃縣</option>
+<option value="10004">竹縣</option>
+<option value="10005">苗縣</option>
+<option value="10006">中縣</option>
+<option value="10007">彰縣</option>
+<option value="10008">投縣</option>
+<option value="10009">雲縣</option>
+<option value="10010">嘉縣</option>
+<option value="10011">南縣</option>
+<option value="10012">高縣</option>
+<option value="10013">屏縣</option>
+<option value="10014">東縣</option>
+<option value="10015">花縣</option>
+<option value="10016">澎縣</option>
+<option value="10017">基市</option>
+<option value="10018">竹市</option>
+<option value="10020">嘉市</option>
+<option value="09007">連江</option>
+<option value="09020">金門</option>
+<option value="64000">高市</option>
+<option value="66000">中市</option>
+<option value="67000">南市</option>
+<option value="68000">桃市</option>
+</select>
+					</label>
+					<div id="errPlace" class="input-error-txt input_err" style="display:none;">請選擇您的發證地點</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					領/補/換類別<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<label class="pp-select ps-w" id="lblObtainType">
+						<select id="ObtainType" name="ObtainType"><option value="1">初發</option>
+<option value="2">補發</option>
+<option value="3">換發</option>
+</select>
+					</label>
+					<div id="errIdType" class="input-error-txt input_err" style="display:none;">請選擇您的補/領/換類別</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					身分證正反面圖片<sup class="inp-required">*</sup>
+				</dt>
+				<dd>
+					<div class="def-upload-box" data-max-files="2">
+						<input type="file" style="display: none;" multiple>
+						<div class="drop-area">
+							<div class="dub-info-box add-file-btn">
+								<div class="dub-info">
+									拖放或搜尋檔案
+								</div>
+								<div class="btn dib-btn">選擇檔案</div>
+							</div>
+							<div class="preview-area"></div>
+							<div class="dub-tip">
+								單一檔案限 5MB 以內（支援檔案格式：JPG / JPEG / PNG / GIF/HEIF/HEIC/AVIF）。
+							</div>
+						</div>
+					</div>
+					<div id="errImage" class="input-error-txt input_err" style="display:none;">請上傳您的身分證正反面圖片</div>
+				</dd>
+			</dl>
+
+			<div class="pp-check">
+				<input type="checkbox" value="" id="add_cc" name="">
+				<label for="add_cc" class="checkbox" id="lblAddcc">
+					請確認上述資料與身分證件內容相符，且均為本人(即持卡人)填寫上傳，如有不實或假冒他人填寫 等之情形，本人(即持卡人)願自負其責，綠界科技股份有限公司將依「第三方支付服務業防制洗錢 及打擊資恐辦法」之規定，拒絕本次付款交易。
+				</label>
+
+				<div id="errChkId" class="input-error-txt input_err" style="display:none;">請勾選並確認資料是否相符</div>
+			</div>
+
+
+			<p class="scw-tip2" id="errMsg" style="display:none;">
+				身分驗證失敗，請重新確認您輸入的資訊。
+			</p>
+
+
+			<div class="mp-btn-block">
+				<a href="#" class="btn" id="btnSubmit">進行驗證</a>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="MerchantID" name="MerchantID" />
+	<input type="hidden" id="AllpayTradeID" name="AllpayTradeID" />
+</div>
+
+
+
+<!-- 持卡人身分驗證 驗證資料傳輸中 -->
+<div id="idv-bridge-popup" class="idv-bridge-popup mg-popup mfp-with-anim mfp-hide no-login-qr">
+	<form>
+		<div class="ibp-bridge-box">
+			<h3 class="content-title"><div class="ctt-txt">持卡人身分驗證<span class="ct-en">Cardholder Identity Verification</span></div></h3>
+
+			<div class="ivp-txt">
+				依「第三方支付服務業防制洗錢及打擊資恐辦法」之規定，當信用卡單筆付款金額達新台幣20萬元(含)以上者，需進行買方(即持卡人)身分驗證。<span class="ivt-en">In accordance with the "Regulations Governing Anti-Money Laundering and Countering the Financing of Terrorism for the ThirdParty Payment Enterprises", when a single credit card payment amount reaches NT$200,000 or more, the identity of the buyer (i.e., cardholder) must be verified.</span>
+			</div>
+
+			<div class="ibb-bridge-block">
+				<img class="ibg-pic1" src="/Content/themes/WebStylePayment/images/frame/loading_allpay.png" alt="loading">
+				<img class="ibg-pic2" src="/Content/themes/WebStylePayment/images/frame/loading.gif" alt="loading">
+			</div>
+			<div class="ibb-txt-box">
+				驗證資料傳輸中，請勿關閉視窗。<br>Please do not close the window while the verification data is being transmitted.
+			</div>
+		</div>
+	</form>
+</div>
+
+<form action="/PaymentRule/ScanPayCodePaymentInfoResult" id="ScanCodePayForm" method="post"><input id="RMerchantID" name="RMerchantID" type="hidden" value="2000132" />    <input type="hidden" name="RedirectToPageUrl" id="RedirectToPageUrl" value="ERROR" />
+    <input type="hidden" name="dataCrypt" id="dataCrypt" value="" />
+</form>
+<!-- PayForm 容器，由 Vue render 函數動態生成 -->
+<div id="PayForm"></div>
+
+<script type="text/javascript" nonce="ecpaya18cfbc7659d42d88315867b41c68ea6">
+    // 提供表單數據給 Vue 組件
+    window._formData = {
+        TradeAmount: '1600',
+        timeStamp: '1774983885',
+        merchantId: '2000132',
+        merchantTradeNo: 'JZ1774983886274',
+        tradeType: 'aio',
+        mid: '73cdcf780bcfb473e9078278d570c012',
+        allPayTradeID: '5161891',
+        macValue: '862ee92cfe36627fdd90100690612b94',
+        PayerName: '',
+        PayerCellPhone: '',
+        TradeTotalAMT: '1600',
+        Redeem: '0',
+        ChoosePayment: 'CREDIT',
+        PlatformID: '',
+        AllPayID: '',
+        AccountID: '',
+        IngronAuth: '',
+        EnableMobileServerCall: '',
+        EnableWebServerCall: '',
+        Language: 't',
+        BinCode: '',
+        ParentPaymentType: '',
+        ParentInstallment: '',
+        FeeType: '0'
+    };
+</script>
+
+
+
+    </div>
+    <!-- site-body 內容  end -->
+    <!-- footer start -->
+<footer class="footer2">
+	<div class="footer-content">
+		<div class="footer-logo">
+			<a href="https://www.ecpay.com.tw/" title="綠界科技 ECPay">
+				<img src="/Content/themes/WebStylePayment/images/frame/eclogo_w.svg" alt="綠界科技 ECPay" />
+			</a>
+		</div>
+        <p class="footer-txt">
+            綠界科技提供SSL安全加密金流
+        </p>
+        <div class="copyright">
+            <p>Copyright © 1996-2026 Green World FinTech Service Co., Ltd. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- footer end -->
+
+    <div class="white-overlay"></div><!-- 白色遮罩 -->
+    <!-- 回頂部 -->
+    
+    <!--JS-->
+    <!-- 綠界 APP 付款 -->
+        <div class="pay-ecpay-app">
+            <div class="pea-box">
+                <div class="peb-content">
+                    <div class="pbc-logo">
+                        <img src="/Content/themes/WebStylePayment/images/frame/activity-logo.png" alt="綠界 ecpay">
+                    </div>
+                    <div class="pbc-txt">下載綠界Pay 快速付款</div>
+                </div>
+
+                <div class="peb-btn-box">
+                    <a class="peb-btn" id="GotoAPP">前往</a>
+                </div>
+            </div>
+        </div>
+
+    <script src="https://gpayment-stage.ecpay.com.tw/Scripts/jquery-1.10.2.js?v=sha256-tffN0xHLbiV4xOivQdVCNf0497KQ/6XZmen6YjmRm20=" integrity="sha256-tffN0xHLbiV4xOivQdVCNf0497KQ/6XZmen6YjmRm20=" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="/Scripts/AioPayment/common.function.js?v=sha256-sFyQLGkDZjr+4yJX1Bo7UcD5y0bgzN2gBSd87r25bKQ=" integrity="sha256-sFyQLGkDZjr+4yJX1Bo7UcD5y0bgzN2gBSd87r25bKQ=" crossorigin="anonymous"></script>
+<script src="/Scripts/ECPayScripts/paymentUtility.js?v=sha256-bC4GV1Xrw9DXO8EGqAG9JxlTYnSmEWY/flaC4H7iiSo=" integrity="sha256-bC4GV1Xrw9DXO8EGqAG9JxlTYnSmEWY/flaC4H7iiSo=" crossorigin="anonymous"></script>
+
+
+
+    
+    
+    <!--共用資料-->
+
+    <script id="ECPayData" type="application/json">
+		{"TradeTotalAMT":1600,"CurrentDomain":"https://payment-stage.ecpay.com.tw","isStage":true,"isLogin":"N","IsGwBuyer":true,"BarcodeChargeFee":0,"CVSChargeFee":0,"IsMobileAgent":false,"Language":"t"}
+    </script>
+    <script id="LangData" type="application/json">{"\u524D\u5F80":"\u524D\u5F80","\u7ACB\u5373\u4ED8\u6B3E":"\u7ACB\u5373\u4ED8\u6B3E","\u5176\u4ED6\u91D1\u878D\u6A5F\u69CB":"\u5176\u4ED6\u91D1\u878D\u6A5F\u69CB","\u63D0\u9192\u60A8\u82E5\u60A8\u4F7F\u7528\u5176\u4ED6\u91D1\u878D\u6A5F\u69CB\u9032\u884C\u8F49\u5E33\u53EF\u81F3\u4EFB\u4E00\u9280\u884C\u4E4B\u6AC3\u54E1\u6A5F\u64CD\u4F5C\u53E6\u9808\u652F\u4ED8\u8DE8\u884C\u624B\u7E8C\u8CBB15\u5143":"\u63D0\u9192\u60A8\uFF01\u82E5\u60A8\u4F7F\u7528\u5176\u4ED6\u91D1\u878D\u6A5F\u69CB\u9032\u884C\u8F49\u5E33\uFF0C\u53EF\u81F3\u4EFB\u4E00\u9280\u884C\u4E4B\u6AC3\u54E1\u6A5F\u64CD\u4F5C\uFF0C\u53E6\u9808\u652F\u4ED8\u8DE8\u884C\u624B\u7E8C\u8CBB 15 \u5143\u3002","\u8ACB\u9078\u53D6ATM\u9280\u884C":"\u8ACB\u9078\u53D6ATM\u9280\u884C\u3002","\u8ACB\u9078\u53D6WebATM\u9280\u884C":"\u8ACB\u9078\u53D6WebATM\u9280\u884C\u3002","\u672C\u516C\u53F8\u4E0D\u63A5\u53D7\u570B\u5916\u4FE1\u7528\u5361\u4EA4\u6613\u8ACB\u91CD\u65B0\u8F38\u5165\u975E\u570B\u5916\u5361\u7684\u4FE1\u7528\u5361\u5361\u865F":"\u672C\u516C\u53F8\u4E0D\u63A5\u53D7\u975E\u53F0\u7063\u767C\u884C\u4E4B\u4FE1\u7528\u5361\u4EA4\u6613\uFF0C\u8ACB\u91CD\u65B0\u8F38\u5165\u53F0\u7063\u767C\u884C\u4E4B\u4FE1\u7528\u5361\u5361\u5361\u865F\u3002","\u53F0\u7063\u624B\u6A5F\u865F\u78BC\u8ACB\u76F4\u63A5\u8F38\u5165\u624B\u6A5F\u5340\u78BC09\u4F8B\u59820937123456\u8B1D\u8B1D":"\u53F0\u7063\u624B\u6A5F\u865F\u78BC\u8ACB\u76F4\u63A5\u8F38\u5165\u624B\u6A5F\u5340\u78BC\u300C09\u300D\u4F8B\u5982\uFF1A0937123456\uFF0C\u8B1D\u8B1D","\u95DC\u9589":"\u95DC\u9589","\u5982\u6B32\u6E05\u9664\u7559\u5B58\u5361\u865F\u8CC7\u6599\u9700\u5B8C\u6210\u6B64\u7B46\u8A02\u55AE\u4EA4\u6613\u5F8C\u4E0B\u6B21\u9032\u5165\u4ED8\u6B3E\u9801\u5C07\u4E0D\u518D\u986F\u793A\u5361\u865F\u8CC7\u6599":"\u5982\u6B32\u6E05\u9664\u7559\u5B58\u5361\u865F\u8CC7\u6599\uFF0C\u9700\u5B8C\u6210\u6B64\u7B46\u8A02\u55AE\u4EA4\u6613\u5F8C\uFF0C\u4E0B\u6B21\u9032\u5165\u4ED8\u6B3E\u9801\u5C07\u4E0D\u518D\u986F\u793A\u5361\u865F\u8CC7\u6599","\u60A8\u76EE\u524D\u6B63\u5728\u4F7F\u7528\u7684\u662F\u7DA0\u754C\u79D1\u6280\u7684\u4ED8\u6B3E\u6E2C\u8A66\u74B0\u5883\u8ACB\u6D88\u8CBB\u8005\u52FF\u9032\u884C\u76F8\u95DC\u7684\u4ED8\u6B3E\u52D5\u4F5C\u4EE5\u514D\u5F71\u97FF\u6B0A\u76CA":"\u60A8\u76EE\u524D\u6B63\u5728\u4F7F\u7528\u7684\u662F\u7DA0\u754C\u79D1\u6280\u7684\u4ED8\u6B3E\u6E2C\u8A66\u74B0\u5883\uFF0C\u8ACB\u6D88\u8CBB\u8005\u52FF\u9032\u884C\u76F8\u95DC\u7684\u4ED8\u6B3E\u52D5\u4F5C\uFF0C\u4EE5\u514D\u5F71\u97FF\u6B0A\u76CA\uFF01","\u60A8\u78BA\u5B9A\u4F7F\u7528\u4FE1\u7528\u5361\u652F\u4ED8\u6B64\u7B46\u8A02\u55AE\u91D1\u984D\u65B0\u53F0\u5E63":"\u60A8\u78BA\u5B9A\u4F7F\u7528\u4FE1\u7528\u5361\uFF0C\u652F\u4ED8\u6B64\u7B46\u8A02\u55AE\u91D1\u984D(\u65B0\u53F0\u5E63)","\u62B1\u6B49\u60A8\u7684\u700F\u89BD\u5668\u4E0D\u652F\u63F4GooglePay\u4ED8\u6B3E":"\u62B1\u6B49\uFF0C\u60A8\u7684\u700F\u89BD\u5668\u4E0D\u652F\u63F4GooglePay\u4ED8\u6B3E!","\u8ACB\u4F7F\u7528GooglePay\u7D81\u5B9A\u4FE1\u7528\u5361":"\u8ACB\u4F7F\u7528Google Pay\u7D81\u5B9A\u4FE1\u7528\u5361","\u7DA0\u754C\u79D1\u6280\u8CBC\u5FC3\u63D0\u9192\u60A8\u5C07\u8DF3\u8F49\u81F3\u9280\u884C\u9801\u9762\u9032\u884C\u5F8C\u7E8C\u4ED8\u6B3E":"\u7DA0\u754C\u79D1\u6280\u8CBC\u5FC3\u63D0\u9192\u60A8\uFF0C\u5C07\u8DF3\u8F49\u81F3\u9280\u884C\u9801\u9762\u9032\u884C\u5F8C\u7E8C\u4ED8\u6B3E!","\u53D6\u6D88":"\u53D6\u6D88","\u78BA\u5B9A":"\u78BA\u5B9A","\u4FE1\u7528\u5361\u5361\u7247\u6709\u6548\u671F\u9650\u932F\u8AA4\u6216\u5DF2\u904E\u671F":"\u4FE1\u7528\u5361\u5361\u7247\u6709\u6548\u671F\u9650\u932F\u8AA4\u6216\u5DF2\u904E\u671F\uFF0C\u8ACB\u9EDE\u9078\u8B8A\u66F4\u5361\u865F\u91CD\u65B0\u7DE8\u8F2F\u5F8C\u518D\u4ED8\u6B3E\u3002","\u66F4\u591A":"\u66F4\u591A","\u6536\u5408":"\u6536\u5408","\u6301\u5361\u4EBA\u8CC7\u6599\u6709\u8AA4\u8ACB\u9EDE\u9078\u8B8A\u66F4\u5361\u865F\u91CD\u65B0\u7DE8\u8F2F\u5F8C\u518D\u4ED8\u6B3E":"\u6301\u5361\u4EBA\u8CC7\u6599\u6709\u8AA4\uFF0C\u8ACB\u9EDE\u9078\u8B8A\u66F4\u5361\u865F\u91CD\u65B0\u7DE8\u8F2F\u5F8C\u518D\u4ED8\u6B3E\u3002","\u9078\u586B":"\u9078\u586B","\u8ACB\u8F38\u5165\u8207\u767C\u5361\u9280\u884C\u8CC7\u6599\u76F8\u540C\u7684\u624B\u6A5F\u865F\u78BC\u4EE5\u907F\u514D\u4EA4\u6613\u5931\u6557":"\u8ACB\u8F38\u5165\u8207\u767C\u5361\u9280\u884C\u8CC7\u6599\u76F8\u540C\u7684\u624B\u6A5F\u865F\u78BC\uFF0C\u4EE5\u907F\u514D\u4EA4\u6613\u5931\u6557","\u82E5\u5237\u5361\u9A57\u8B49\u63A1\u7C21\u8A0A\u9A57\u8B49\u7CFB\u7D71\u5C07\u767C\u9001OTP\u5BC6\u78BC\u81F3\u60A8\u586B\u5BEB\u7684\u624B\u6A5F\u865F\u78BC":"\u82E5\u5237\u5361\u9A57\u8B49\u63A1\u7C21\u8A0A\u9A57\u8B49\uFF0C\u7CFB\u7D71\u5C07\u767C\u9001OTP\u5BC6\u78BC\u81F3\u60A8\u586B\u5BEB\u7684\u624B\u6A5F\u865F\u78BC","\u50C5\u4F9B\u7DA0\u754C\u79D1\u6280\u5099\u67E5\u53CA\u4EA4\u6613\u7CFE\u7D1B\u722D\u8B70\u4F7F\u7528\u975E\u53F0\u7063\u624B\u6A5F\u865F\u78BC\u8ACB\u52A0\u570B\u78BC":"\u6B64\u624B\u6A5F\u865F\u78BC\u4F9B\u7DA0\u754C\u79D1\u6280\u5099\u67E5\u53CA\u767C\u5361\u884C\u8EAB\u5206\u9A57\u8B49\u6216\u4EA4\u6613\u7CFE\u7D1B\u722D\u8B70\u4F7F\u7528\uFF0C\u975E\u53F0\u7063\u624B\u6A5F\u865F\u78BC\u8ACB\u52A0\u570B\u865F(\u5982\u9999\u6E2F\u70BA+852 \u8ACB\u8F38\u5165 85212345678)","\u5982\u6B32\u63A5\u6536\u6B64\u7B46\u4EA4\u6613\u4ED8\u6B3E\u901A\u77E5\u8ACB\u8F38\u5165\u96FB\u5B50\u4FE1\u7BB1":"\u5982\u60A8\u6709\u8F38\u5165\u96FB\u5B50\u4FE1\u7BB1\uFF0C\u5F8C\u7E8C\u5C07\u4F9D\u64DA\u5546\u5E97\u8A2D\u5B9A\u767C\u9001\u4EA4\u6613\u4ED8\u6B3E\u901A\u77E5\u3002","\u5EFA\u8B70\u586B\u5BEB\u5E33\u55AE\u5730\u5740\u4EE5\u52A0\u901F\u4EA4\u6613\u9A57\u8B49\u6D41\u7A0B":"\u5EFA\u8B70\u586B\u5BEB\u5E33\u55AE\u5730\u5740\u4EE5\u52A0\u901F\u4EA4\u6613\u9A57\u8B49\u6D41\u7A0B","\u4EE5\u4E0A\u70BA\u7BC4\u4F8B\u8AAA\u660E\u50C5\u4F9B\u53C3\u8003\u5BE6\u969B\u7E73\u6B3E\u91D1\u984D\u6089\u4F9D\u6C38\u8C50\u9280\u884C\u4E4B\u4FE1\u7528\u5361\u5C0D\u5E33\u55AE\u70BA\u6E96":"\u203B\u4EE5\u4E0A\u70BA\u7BC4\u4F8B\u8AAA\u660E\u50C5\u4F9B\u53C3\u8003\u3002\u5BE6\u969B\u7E73\u6B3E\u91D1\u984D\u6089\u4F9D\u5546\u5E97\u5546\u696D\u5546\u8B70\u689D\u4EF6\u53CA\u6C38\u8C50\u9280\u884C\u4E4B\u4FE1\u7528\u5361\u5C0D\u5E33\u55AE\u70BA\u6E96\u3002","\u5713\u5922\u7BC4\u4F8B":"\u5C0F\u660E\u5728ECShop\u8CFC\u8CB7\u4E00\u96BB30,000\u5143\u7684\u624B\u6A5F\uFF0C\u4E26\u4F7F\u7528\u6C38\u8C50 30 \u671F\u4ED8\u6B3E\uFF0C\u5247\u5C0F\u660E\u524D1~10\u671F\u6BCF\u671F\u9700\u652F\u4ED8300 \u5143\uFF0C\u5F8C20\u671F\uFF0C\u6BCF\u671F\u9700\u652F\u4ED81,350\u5143\u3002","\u8ACB\u52FE\u9078\u540C\u610F\u4F7F\u7528\u6D88\u8CBB\u81EA\u8CBB\u5206\u671F\u670D\u52D9\u8AAA\u660E":"\u8ACB\u52FE\u9078\u540C\u610F\u4F7F\u7528\u6D88\u8CBB\u8005\u81EA\u8CBB\u5206\u671F\u670D\u52D9\u8AAA\u660E","\u8EAB\u5206\u9A57\u8B49\u5931\u6557\u8ACB\u91CD\u65B0\u78BA\u8A8D\u60A8\u8F38\u5165\u7684\u8CC7\u8A0A":"\u8EAB\u5206\u9A57\u8B49\u5931\u6557\uFF0C\u8ACB\u91CD\u65B0\u78BA\u8A8D\u60A8\u8F38\u5165\u7684\u8CC7\u8A0A\u3002","\u8ACB\u9078\u64C7\u671F\u6578":"\u8ACB\u9078\u64C7\u671F\u6578","\u8ACB\u95B1\u8B80\u6CE8\u610F\u4E8B\u9805\u4E26\u540C\u610F":"\u8ACB\u95B1\u8B80\u6CE8\u610F\u4E8B\u9805\uFF0C\u4E26\u540C\u610F\u3002","\u500B\u4EBA\u8CC7\u6599\u8490\u96C6\u8072\u660E":"\u003ch3 class=\"content-title\"\u003e\u500B\u4EBA\u8CC7\u6599\u904B\u7528\u8072\u660E\u003c/h3\u003e\r\n\u003cdiv class=\"qpp-content\"\u003e\r\n1. \u7DA0\u754C\u79D1\u6280\u80A1\u4EFD\u6709\u9650\u516C\u53F8\u53CA\u5B50\u516C\u53F8(\u4EE5\u4E0B\u5408\u7A31\u300C\u672C\u516C\u53F8\u300D)\u8207\u63D0\u4F9B\u672C\u6B21\u5546\u54C1\u4EA4\u6613\u4E4B\u8CE3\u5BB6\u5171\u540C\u8490\u96C6\u60A8\u7684\u59D3\u540D\u3001\u96FB\u8A71\u865F\u78BC\u3001\u5730\u5740\u3001\u96FB\u5B50\u90F5\u4EF6\u53CA\u4FE1\u7528\u5361\u76F8\u95DC\u8CC7\u6599\uFF0C\u4E26\u65BC\u672C\u516C\u53F8\u71DF\u904B\u671F\u9593\u4E4B\u696D\u52D9\u6240\u5728\u5730\u5340\u6216\u63D0\u4F9B\u670D\u52D9\u5730\u5340\uFF0C\u5C07\u5C0D\u60A8\u8490\u96C6\u4E4B\u500B\u4EBA\u8CC7\u6599\u9032\u884C\u5206\u6790\u4E26\u5229\u7528\u65BC\u78BA\u8A8D\u8EAB\u4EFD\u66A8\u5B8C\u6210\u60A8\u6240\u59D4\u8A17\u4E4B\u4EE3\u6536\u4EE3\u4ED8\u4EA4\u6613\u53CA\u5C65\u7D04\u4FDD\u8B49\u670D\u52D9\uFF0C\u4EE5\u53CA\u5C0D\u60A8\u9032\u884C\u884C\u92B7\u3001\u63A8\u5EE3\u5546\u54C1\u3001\u63D0\u4F9B\u670D\u52D9\u6216\u7522\u54C1\u8CC7\u8A0A\u3002\u524D\u8FF0\u500B\u4EBA\u8CC7\u6599\u4E4B\u4F7F\u7528\u5C0D\u8C61\uFF0C\u53EF\u80FD\u5305\u62EC\u672C\u516C\u53F8\u6216\u8207\u672C\u516C\u53F8\u56E0\u696D\u52D9\u9700\u8981\u8A02\u6709\u5951\u7D04\u95DC\u4FC2\u6216\u6709\u5408\u4F5C\u95DC\u4FC2\u4E4B\u7D44\u7E54\u6216\u6A5F\u69CB\u3002\u60A8\u5F97\u4F9D\u6CD5\u8ACB\u6C42\u67E5\u95B1\u3001\u66F4\u6B63\u3001\u522A\u9664\u500B\u4EBA\u8CC7\u6599\u6216\u884C\u4F7F\u5176\u4ED6\u500B\u8CC7\u6CD5\u7B2C3\u689D\u7684\u6B0A\u5229\uFF0C \u8ACB\u6D3D\u670D\u52D9\u96FB\u8A71\uFF1A02-2655-1775\u3002\u82E5\u60A8\u6240\u586B\u5BEB\u4E4B\u6536\u4EF6\u4EBA\u70BA\u7B2C\u4E09\u4EBA\uFF0C \u8ACB\u64D4\u4FDD\u60A8\u6709\u5408\u6CD5\u63D0\u4F9B\u4E4B\u6B0A\u5229\u3002\r\n\u003cbr/\u003e\r\n2. \u82E5\u60A8\u70BA\u5B9A\u671F\u5B9A\u984D\u4EA4\u6613\u4E4B\u5BA2\u6236\uFF0C\u70BA\u78BA\u4FDD\u4EA4\u6613\u9806\u5229\u9032\u884C\uFF0C\u82E5\u60A8\u7684\u4FE1\u7528\u5361\u5230\u671F\u6216\u56E0\u5176\u4ED6\u539F\u56E0\u9700\u8981\u66F4\u65B0\uFF0C\u672C\u516C\u53F8\u5C07\u900F\u904E Visa \u570B\u969B\u767C\u5361\u7D44\u7E54\u4E4B\u66F4\u65B0\u6A5F\u5236\uFF0C\u81EA\u52D5\u540C\u6B65\u60A8\u7684\u4FE1\u7528\u5361\u8CC7\u8A0A\u3002\u7576\u60A8\u9001\u51FA\u8CC7\u6599\uFF0C\u5373\u8868\u793A\u60A8\u5DF2\u95B1\u8B80\u3001\u7406\u89E3\u4E26\u540C\u610F\u555F\u7528\u6B64\u529F\u80FD\u3002\u003c/div\u003e","\u4FE1\u7528\u5361\u4EA4\u6613\u6CE8\u610F\u4E8B\u9805":"\u003ch3 class=\"content-title\"\u003e\u4FE1\u7528\u5361\u4EA4\u6613\u6CE8\u610F\u4E8B\u9805\u003c/h3\u003e\r\n\u003cdiv class=\"qpp-content\"\u003e\r\n\u003cli\u003e\u672C\u6B21\u4EA4\u6613\u63A1\u7528\u7DA0\u754C\u79D1\u6280\u91D1\u6D41\u6A5F\u5236\u9032\u884C\u4ED8\u6B3E\uFF0C\u6545\u4FE1\u7528\u5361\u4EA4\u6613\u5E33\u55AE\u5C07\u986F\u793A\u70BA\u7DA0\u754C\u79D1\u6280\u80A1\u4EFD\u6709\u9650\u516C\u53F8\u3002\u003c/li\u003e\r\n\u003cli\u003e\u70BA\u78BA\u4FDD\u7DB2\u8DEF\u4EA4\u6613\u5B89\u5168\uFF0C\u60A8\u540C\u610F\u672C\u516C\u53F8\u5F97\u5C31\u6B64\u7B46\u4EA4\u6613\u5411\u767C\u5361\u9280\u884C\u3001\u6536\u55AE\u9280\u884C\u53CA\u6301\u5361\u4EBA\u6838\u5C0D\u662F\u5426\u5C6C\u5BE6\u3002\u003c/li\u003e\r\n\u003cli\u003e\u4FE1\u7528\u5361\u6210\u529F\u4EA4\u6613\u5F8C\u5426\u8A8D\uFF0C\u5982\u7D93\u5224\u5B9A\u70BA\u672C\u4EBA\u6216\u6388\u6B0A\u5237\u5361\u7684\u884C\u70BA\uFF0C\u76F8\u95DC\u640D\u5931\u53CA\u8CBB\u7528\u9808\u81EA\u884C\u8CA0\u64D4\u3002\u003c/li\u003e\r\n\u003c/div\u003e","\u5BE6\u969B\u4ED8\u6B3E\u91D1\u984D":"\u5BE6\u969B\u4ED8\u6B3E\u91D1\u984D","\u5546\u54C1\u91D1\u984D":"\u5546\u54C1\u91D1\u984D","\u5357\u6E2F\u5340\u6210\u529F\u8DEF\u4E00\u6BB558\u865F5\u6A13":"\u5357\u6E2F\u5340\u6210\u529F\u8DEF\u4E00\u6BB558\u865F5\u6A13","\u8ACB\u8F38\u5165\u60A8\u65BC\u767C\u5361\u9280\u884C\u7559\u5B58\u7684\u96FB\u5B50\u4FE1\u7BB1":"\u8ACB\u8F38\u5165\u60A8\u65BC\u767C\u5361\u9280\u884C\u7559\u5B58\u7684\u96FB\u5B50\u4FE1\u7BB1","\u8ACB\u8F38\u5165\u60A8\u65BC\u767C\u5361\u9280\u884C\u7559\u5B58\u7684\u5730\u5740":"\u8ACB\u8F38\u5165\u60A8\u65BC\u767C\u5361\u9280\u884C\u7559\u5B58\u7684\u5730\u5740","ATM\u4ED8\u6B3E\u8AAA\u660E\u6587\u5B57":"\u9078\u64C7\u9280\u884C\u4E26\u53D6\u5F97\u865B\u64EC\u5E33\u865F\u5F8C\uFF0C\u518D\u900F\u904E\u7DB2\u8DEF\u9280\u884C\u3001\u9280\u884CAPP\u6216\u81F3\u5BE6\u9AD4ATM\u8F49\u5E33\u5B8C\u6210\u4ED8\u6B3E","\u9078\u64C7\u9280\u884C":"\u9078\u64C7\u9280\u884C","\u8ACB\u9078\u64C7\u9280\u884C":"\u8ACB\u9078\u64C7\u9280\u884C","\u8ACB\u9078\u64C7\u9280\u884C\u932F\u8AA4":"\u8ACB\u9078\u64C7\u9280\u884C","\u7B2C\u4E00\u9280\u884C\u63D0\u793A":"\u9078\u64C7\u300C\u7B2C\u4E00\u9280\u884C\u300D\uFF0C\u4F7F\u7528ATM\u6AC3\u54E1\u6A5F\u6642\u9808\u9EDE\u9078\u300C\u7E73\u8CBB\u300D\u529F\u80FD\u6309\u9215\u3002","\u677F\u4FE1\u9280\u884C\u63D0\u793A":"\u677F\u4FE1\u9280\u884C\u7E73\u8CBB\u5E33\u865F\uFF0C\u4F7F\u7528ATM\u6AC3\u54E1\u6A5F\u6642\u9700\u9EDE\u9078\u300C\u8F49\u5E33/\u8F49\u51FA\u300D\u6309\u9215\u3002","\u6CE8\u610F\u4E8B\u9805":"\u6CE8\u610F\u4E8B\u9805","\u8DE8\u884C\u624B\u7E8C\u8CBB\u63D0\u793A":"\u91D1\u878D\u5361\u767C\u5361\u9280\u884C\u8207ATM\u6240\u5C6C\u9280\u884C\u4E0D\u540C\u6642\uFF0C\u9280\u884C\u53EF\u80FD\u6536\u53D6\u003cspan class=\"red\"\u003e\u8DE8\u884C\u8F49\u5E33\u624B\u7E8C\u8CBB\u003c/span\u003e\uFF0C\u5BE6\u969B\u6536\u53D6\u91D1\u984D\u4F9D\u5404\u9280\u884C\u516C\u544A\u70BA\u4E3B\u3002","ATM\u9650\u5236\u8AAA\u660E":"\u6B64\u4ED8\u6B3E\u65B9\u5F0F\u4E0D\u652F\u63F4ATM\u6AC3\u54E1\u6A5F\u7121\u5361\u5B58\u6B3E\u529F\u80FD\u53CA\u9280\u884C\u81E8\u6AC3\u7E73\u8CBB(\u542B\u7121\u647A\u5B58\u6B3E)\u3002","\u53D6\u5F97\u7E73\u8CBB\u5E33\u865F":"\u53D6\u5F97\u7E73\u8CBB\u5E33\u865F","\u7DA0\u754CPay\u6383\u63CF\u4ED8\u6B3E":"\u7DA0\u754CPay\u6383\u63CF\u4ED8\u6B3E","\u6383\u78BC\u5FEB\u901F\u4ED8\u6B3E\u6216\u4E0B\u8F09\u7DA0\u754CPay":"\u6383\u78BC\u5FEB\u901F\u4ED8\u6B3E\u6216\u4E0B\u8F09\u7DA0\u754CPay","WebATM\u4ED8\u6B3E\u8AAA\u660E\u6587\u5B57":"\u900F\u904E\u60A8\u7684\u6676\u7247\u5361\u53CA\u8B80\u5361\u6A5F\uFF0C\u767B\u5165\u9280\u884C\u7684\u7DB2\u8DEFATM\u9032\u884C\u7E73\u8CBB","WebATM\u4ED8\u6B3E\u8AAA\u660E":"\u4ED8\u6B3E\u8AAA\u660E","\u9078\u64C7\u4ED8\u6B3E\u9280\u884C":"1. \u9078\u64C7\u4ED8\u6B3E\u9280\u884C","\u9032\u5165\u9280\u884C\u7DB2\u8DEFATM\u9801\u9762":"2. \u9032\u5165\u9280\u884C\u7DB2\u8DEF ATM \u9801\u9762","\u63D2\u5165\u5361\u7247\u767B\u5165\u9032\u884C\u8F49\u5E33":"3. \u63D2\u5165\u5361\u7247\u767B\u5165\u9032\u884C\u8F49\u5E33","\u4ED8\u6B3E\u6210\u529F\u6B65\u9A5F":"4. \u4ED8\u6B3E\u6210\u529F","\u9808\u65BC\u9280\u884C\u756B\u9762\u5B8C\u6210\u4ED8\u6B3E\u52D5\u4F5C\u4E0D\u53EF\u81EA\u884C\u8F49\u5E33\u81F3\u92B7\u5E33\u7DE8\u865F":"\u9808\u65BC\u9280\u884C\u756B\u9762\u5B8C\u6210\u4ED8\u6B3E\u52D5\u4F5C\uFF0C\u4E0D\u53EF\u81EA\u884C\u8F49\u5E33\u81F3\u92B7\u5E33\u7DE8\u865F","\u4E26\u8ACB\u5148\u78BA\u5B9A":"\u4E26\u8ACB\u5148\u78BA\u5B9A","\u6BCF\u9593\u9280\u884C\u63D0\u4F9B\u5143\u4EF6\u5B89\u88DD\u65B9\u5F0F\u4E0D\u540C\u8ACB\u8207\u60A8\u7684\u767C\u5361\u9280\u884C\u78BA\u8A8D\u4EE5\u4E0B\u904E\u7A0B\u4E2D\u60A8\u56E0\u65B7\u7DDA\u7576\u6A5F\u6216\u5176\u4ED6\u4EFB\u4F55\u56E0\u7D20\u5C0E\u81F4\u4EA4\u6613\u672A\u5B8C\u6210\u6211\u5011\u4E0D\u6703\u6536\u53D6\u60A8\u4EFB\u4F55\u8CBB\u7528\u5C46\u6642\u60A8\u53EA\u8981\u91CD\u65B0\u8CFC\u8CB7\u5373\u53EF":"\u6BCF\u9593\u9280\u884C\u63D0\u4F9B\u5143\u4EF6\u5B89\u88DD\u65B9\u5F0F\u4E0D\u540C\uFF0C\u8ACB\u8207\u60A8\u7684\u767C\u5361\u9280\u884C\u78BA\u8A8D\u3002\u4EE5\u4E0B\u904E\u7A0B\u4E2D\uFF0C\u82E5\u60A8\u56E0\u65B7\u7DDA\u3001\u7576\u6A5F\u6216\u5176\u4ED6\u4EFB\u4F55\u56E0\u7D20\u5C0E\u81F4\u4EA4\u6613\u672A\u5B8C\u6210\uFF0C\u6211\u5011\u4E0D\u6703\u6536\u53D6\u60A8\u4EFB\u4F55\u8CBB\u7528\uFF0C\u5C46\u6642\u60A8\u53EA\u8981\u91CD\u65B0\u8CFC\u8CB7\u5373\u53EF\u3002","\u8ACB\u81F3\u8D85\u5546\u6A5F\u53F0\u8F38\u5165\u4EE3\u78BC\u7522\u751F\u7E73\u8CBB\u55AE\u5F8C\u524D\u5F80\u6AC3\u53F0\u7E73\u8CBB":"\u8ACB\u81F3\u8D85\u5546\u6A5F\u53F0\u8F38\u5165\u4EE3\u78BC\uFF0C\u7522\u751F\u7E73\u8CBB\u55AE\u5F8C\u524D\u5F80\u6AC3\u53F0\u7E73\u8CBB\u3002","\u672C\u8A02\u55AE\u8D85\u5546\u4EE3\u78BC\u7684\u7E73\u8CBB\u671F\u9650\u70BA\u5929\u8ACB\u52D9\u5FC5\u65BC\u671F\u9650\u5167\u9032\u884C\u7E73\u6B3E":"\u8ACB\u65BC\u003cspan class=\"red-tip\"\u003e {0}\u5167 \u003c/span\u003e \u81F3\u8D85\u5546\u5217\u5370\u7E73\u8CBB\u55AE\u4E26\u5B8C\u6210\u7E73\u8CBB\u3002","\u4F8B0801\u76842015\u5206\u8CFC\u8CB7\u5546\u54C1\u7E73\u8CBB\u671F\u9650\u70BA7\u5929\u8868\u793A808\u76842015\u5206\u524D\u60A8\u5FC5\u9808\u524D\u5F80\u7E73\u8CBB":"\u4F8B\uFF1A08 / 01\u768420: 15\u5206\u8CFC\u8CB7\u5546\u54C1\uFF0C\u7E73\u8CBB\u671F\u9650\u70BA7\u5929\uFF0C\u8868\u793A8 / 08\u768420: 15\u5206\u524D\u60A8\u5FC5\u9808\u524D\u5F80\u7E73\u8CBB\u3002","\u8D85\u5546\u689D\u78BC\u4ED8\u6B3E\u8AAA\u660E\u6587\u5B57":"\u8ACB\u5C07\u689D\u78BC\u81EA\u884C\u5217\u5370\u6216\u6301\u884C\u52D5\u88DD\u7F6E\u5C55\u793A\u7D66\u8D85\u5546\u6AC3\u53F0\u4EE5\u5B8C\u6210\u7E73\u8CBB","\u9078\u64C7\u6B64\u4ED8\u6B3E\u65B9\u5F0F\u9700\u8CA0\u64D4\u624B\u7E8C\u8CBB":"\u9078\u64C7\u6B64\u4ED8\u6B3E\u65B9\u5F0F\uFF0C\u9700\u8CA0\u64D4\u624B\u7E8C\u8CBB","\u4ED8\u6B3E\u6210\u529F\u5F8C\u7CFB\u7D71\u5C07\u65BC1\u81F35\u500B\u5DE5\u4F5C\u65E5\u767C\u9001\u7E73\u6B3E\u6210\u529F\u8A0A\u606F":"\u4ED8\u6B3E\u6210\u529F\u5F8C\uFF0C\u7CFB\u7D71\u5C07\u65BC1\u81F35\u500B\u5DE5\u4F5C\u65E5\uFF0C\u767C\u9001\u7E73\u6B3E\u6210\u529F\u8A0A\u606F\u3002","\u53D6\u5F97\u7E73\u8CBB\u689D\u78BC":"\u53D6\u5F97\u7E73\u8CBB\u689D\u78BC","\u6383\u78BC\u5FEB\u901F\u4ED8\u6B3E\u6216\u4E0B\u8F09\u7DA0\u754CPay":"\u6383\u78BC\u5FEB\u901F\u4ED8\u6B3E\u6216\u4E0B\u8F09\u7DA0\u754CPay","\u6301\u884C\u52D5\u88DD\u7F6E\u6216\u5217\u5370\u689D\u78BC\u5F8C\u81F3\u5168\u5BB6\u8D85\u5546\u6AC3\u53F0\u7E73\u8CBB":"\u6301\u884C\u52D5\u88DD\u7F6E\u6216\u5217\u5370\u689D\u78BC\u5F8C\uFF0C\u81F3\u5168\u5BB6\u8D85\u5546\u6AC3\u53F0\u7E73\u8CBB\u3002","\u5168\u5BB6\u689D\u78BC\u7ACB\u5373\u5132\u7684\u7E73\u8CBB\u671F\u9650\u70BA\u5C0F\u6642\u8ACB\u52D9\u5FC5\u65BC\u671F\u9650\u5167\u81F3\u5168\u5BB6\u8D85\u5546\u9032\u884C\u7E73\u6B3E":"\u5168\u5BB6\u689D\u78BC\u7ACB\u5373\u5132\u7684\u003cspan class=\"red-tip\"\u003e\u7E73\u8CBB\u671F\u9650\u70BA 3 \u5C0F\u6642\u003c/span\u003e\uFF0C\u8ACB\u52D9\u5FC5\u65BC\u671F\u9650\u5167\u81F3\u5168\u5BB6\u8D85\u5546\u9032\u884C\u7E73\u6B3E\u3002","\u4F8B0815\u76842015\u5206\u8CFC\u8CB7\u5546\u54C1\u7E73\u8CBB\u671F\u9650\u70BA3\u5C0F\u6642\u8868\u793A0815\u76842315\u5206\u524D\u60A8\u5FC5\u9808\u524D\u5F80\u7E73\u8CBB":"\u4F8B\uFF1A08/15 \u7684 20:15 \u5206\u8CFC\u8CB7\u5546\u54C1\uFF0C\u7E73\u8CBB\u671F\u9650\u70BA 3 \u5C0F\u6642\uFF0C\u8868\u793A 08/15 \u7684 23:15 \u5206\u524D\u60A8\u5FC5\u9808\u524D\u5F80\u7E73\u8CBB\u3002","\u53D6\u5F97\u7E73\u8CBB\u4EE3\u78BC":"\u53D6\u5F97\u7E73\u8CBB\u4EE3\u78BC","\u672C\u7B46\u8A02\u55AE\u9700\u4ED8\u6B3E\u91D1\u984D":"\u672C\u7B46\u8A02\u55AE\u9700\u4ED8\u6B3E\u91D1\u984D NT$ 100","\u4E0D\u652F\u63F4Android8\u4EE5\u4E0A\u7248\u672C\u4F7F\u7528":"\u4E0D\u652F\u63F4Android 8.0\u4EE5\u4E0A\u7248\u672C\u4F7F\u7528","\u78BA\u8A8D\u9001\u51FA":"\u78BA\u8A8D\u9001\u51FA","\u56E0\u4ED8\u6B3E\u65B9\u5F0F\u4E0D\u652F\u63F4\u684C\u6A5F\u7248\u64CD\u4F5C\u672C\u6B21\u4EA4\u6613\u672A\u63D0\u4F9BGooglePay\u4ED8\u6B3E":"\u56E0\u4ED8\u6B3E\u65B9\u5F0F\u4E0D\u652F\u63F4\u684C\u6A5F\u7248\u64CD\u4F5C\uFF0C\u672C\u6B21\u4EA4\u6613\u672A\u63D0\u4F9BGoogle Pay\u4ED8\u6B3E\u3002","\u8FD4\u56DE\u5546\u5E97":"\u8FD4\u56DE\u5546\u5E97","canPay_elctronicWallet_bankAccount_App":"\u53EF\u7528\u96FB\u5B50\u652F\u4ED8\u3001\u53F0\u7063 Pay\u4ED8\u6B3E","supportApp":"\u652F\u63F4APP","jieKouPay":"\u8857\u53E3\u652F\u4ED8","iPass":"\u4E00\u5361\u901A","taiwanPayAPP":"\u53F0\u7063 Pay","pxPay":"\u5168\u652F\u4ED8","easyWallet":"\u60A0\u904A\u4ED8","ezPay":"\u5168\u76C8+PAY","icashPay":"icash Pay","allPay":"\u6B50\u4ED8\u5BF6","gamaPay":"\u6A58\u5B50\u652F\u4ED8","simplePay":"\u7C21\u55AE\u4ED8","andMore":"\u7B49","viewSupport":"\u67E5\u770B","TWQR_hint":"\u9EDE\u9078\u4E0B\u65B9\u78BA\u8A8D\u6309\u9215\u5F8C\uFF0C\u5C07\u7121\u6CD5\u66F4\u63DB\u5176\u4ED6\u4ED8\u6B3E\u65B9\u5F0F\u3002","TWQR_refund_hint":"\u8A02\u55AE\u5982\u6709\u9000\u6B3E\u6216\u9000\u8CA8\u9700\u6C42\uFF0C\u8ACB\u8207\u5546\u5E97\u806F\u7E6B\uFF0C\u7531\u5546\u5E97\u9032\u884C\u8655\u7406\u3002","TWQR_serviceBy_Allpay_Fisc":"\u300A\u6B50\u4ED8\u5BF6TWQR\u884C\u52D5\u652F\u4ED8\u300B\u670D\u52D9\u7531\u6B50\u4ED8\u5BF6\u96FB\u5B50\u652F\u4ED8\u53CA\u8CA1\u91D1\u516C\u53F8\u63D0\u4F9B\u3002","goPayment":"\u524D\u5F80\u4ED8\u6B3E","mobilePay_supportApp":"TWQR\u884C\u52D5\u652F\u4ED8\u652F\u63F4 APP","canPay_creditCard_elctronicWallet_bankAccount":"\u53EF\u7528\u4FE1\u7528\u5361\u96FB\u5B50\u9322\u5305\u9280\u884C\u5E33\u6236\u4ED8\u6B3E","canPay_taiwanPay":"\u53EF\u7528\u53F0\u7063 Pay\u4ED8\u6B3E","piPay":"Pi\u62CD\u9322\u5305","plusPay":"\u5168\u806FPXPay+","eSunWallet":"\u7389\u5C71 Wallet","SKBank":"\u65B0\u5149\u9280\u884C","MegaBank":"\u5146\u8C50\u9280\u884C","HNCB":"\u83EF\u5357\u9280\u884C","LandBank":"\u571F\u5730\u9280\u884C","TCBBank":"\u5408\u4F5C\u91D1\u5EAB","FirstBank":"\u7B2C\u4E00\u9280\u884C","CTBCBank":"\u4E2D\u570B\u4FE1\u8A17","CathayBank":"\u570B\u6CF0\u4E16\u83EF","TaipeiFubon":"\u53F0\u5317\u5BCC\u90A6","ESunBank":"\u7389\u5C71\u9280\u884C","YuantaBank":"\u5143\u5927\u9280\u884C","SCBank":"\u6E23\u6253\u9280\u884C","UBot":"\u806F\u90A6\u9280\u884C","FarEasternBank":"\u9060\u6771\u9280\u884C","EntieBank":"\u5B89\u6CF0\u9280\u884C","TBBBank":"\u81FA\u7063\u4F01\u9280","SCSB":"\u4E0A\u6D77\u5546\u9280","JihSunBank":"\u65E5\u76DB\u9280\u884C","DBS":"\u661F\u5C55\u9280\u884C","BOK":"\u4EAC\u57CE\u9280\u884C","KGIBank":"\u51F1\u57FA\u9280\u884C","BotaBank":"\u53F0\u7063\u9280\u884C","SKHBank":"\u65B0\u5149\u9280\u884C\u884C\u52D5","CHBBank":"\u5F70\u5316\u9280\u884C","SinoPacBank":"\u6C38\u8C50\u9280\u884C","BOP":"\u9AD8\u96C4\u9280\u884C","OBank":"\u738B\u9053\u9280\u884C","Cota":"\u4E09\u4FE1\u5546\u9280","TCCB":"\u81FA\u4E2D\u5546\u9280","SunnyBank":"\u967D\u4FE1\u9280\u884C","HwaTaiBank":"\u83EF\u6CF0\u9280\u884C","FEIB":"\u9060\u6771\u5546\u9280","TaichungBank":"\u81FA\u4E2D\u9280\u884C","KBStar":"\u570B\u6C11\u9280\u884C","BBKPay":"\u677F\u4FE1\u5546\u9280","FICBank":"\u7B2C\u4E00\u91D1\u63A7","TWFHCBank":"\u81FA\u7063\u91D1\u63A7","Rakuten":"\u6A02\u5929\u9280\u884C","serviceBy":"\u670D\u52D9\u7531","provide":"\u63D0\u4F9B","allPayAPP":"\u6B50\u4ED8\u5BF6","taiwanMobilePay":"\u53F0\u7063\u884C\u52D5\u652F\u4ED8 APP","twBankPay":"\u81FA\u9280\u96A8\u8EAB Pay","sanxinPlus":"\u4E09\u4FE1\u884C\u52D5 Plus","yuantaBankApp":"\u5143\u5927\u9280\u884C","iLEO":"iLEO","sunnyBankApp":"\u967D\u4FE1\u9280\u884C","firstEMobile":"\u7B2C e \u884C\u52D5","changhuaMobile":"\u5F70\u9280\u884C\u52D5\u7DB2","tbbMobile":"\u81FA\u4F01\u9280\u884C\u52D5\u9280\u884C","hncbPlus":"\u83EF\u5357\u9280\u884C+","tcbApp":"\u5408\u4F5C\u91D1\u5EAB","daCard":"\u5927\u5496 DACARD","landBankMobile":"\u571F\u5730\u884C\u52D5\u9280\u884C","megaBankApp":"\u5146\u8C50\u9280\u884C","twBankPlus":"\u81FA\u9280\u884C\u52D5 +","ApplePay\u50C5\u652F\u63F4\u4E00\u6B21\u4ED8\u6E05\u6B3E\u9805":"Apple Pay \u003cfont color=\"#f85766\"\u003e\u50C5\u652F\u63F4\u4E00\u6B21\u4ED8\u6E05\u4ED8\u6B3E\u003c/font\u003e","\u672C\u4EA4\u6613\u4E0D\u63A5\u53D7\u975E\u53F0\u7063\u767C\u884C\u4FE1\u7528\u5361\u4ED8\u6B3E":"\u672C\u4EA4\u6613\u4E0D\u63A5\u53D7\u975E\u53F0\u7063\u767C\u884C\u4FE1\u7528\u5361\u4ED8\u6B3E","\u8ACB\u9EDE\u64CA\u4E0B\u65B9\u6309\u9215\u5B8C\u6210\u4EA4\u6613":"\u8ACB\u9EDE\u64CA\u4E0B\u65B9\u6309\u9215\u5B8C\u6210\u4EA4\u6613","\u7528":"\u7528","\u4ED8\u6B3E_ApplePay":"\u4ED8\u6B3E","\u56E0\u700F\u89BD\u5668\u4E0D\u652F\u63F4\u6B64\u4ED8\u6B3E\u65B9\u5F0F\u672C\u6B21\u4EA4\u6613\u672A\u63D0\u4F9BApplePay\u4ED8\u6B3E":"\u56E0\u700F\u89BD\u5668\u6216\u88DD\u7F6E\u4E0D\u652F\u63F4\u6B64\u4ED8\u6B3E\u65B9\u5F0F\uFF0C\u672C\u6B21\u4EA4\u6613\u672A\u63D0\u4F9B Apple Pay \u4ED8\u6B3E","\u6253\u958B\u5FAE\u4FE1\u6383\u4E00\u6383\u6383\u63CFQRCode\u4ED8\u6B3E":"\u6253\u958B\u5FAE\u4FE1\u6383\u4E00\u6383\uFF0C\u6383\u63CFQR Code\u4ED8\u6B3E\u3002","\u958B\u555F\u5FAE\u4FE1\u5BA2\u6236\u7AEF\u6216\u4F7F\u7528\u5176\u4ED6\u88DD\u7F6E\u6383\u63CF\u4E8C\u7DAD\u78BC\u4ED8\u6B3E":"\u958B\u555F\u5FAE\u4FE1APP\u6216\u4F7F\u7528\u5176\u4ED6\u88DD\u7F6E\u6383\u63CFQR Code\u3002","\u4F9D\u5FAE\u4FE1\u652F\u4ED8\u898F\u5B9A\u50C5\u958B\u653E\u4EE5\u4E2D\u570B\u5927\u9678\u8EAB\u5206\u8B49\u9A57\u8B49\u7684\u7528\u6236\u652F\u4ED8\u6B64\u8A02\u55AE":"\u4F9D\u5FAE\u4FE1\u652F\u4ED8\u898F\u5B9A\uFF0C\u50C5\u958B\u653E\u4EE5\u4E2D\u570B\u5927\u9678\u8EAB\u5206\u8B49\u9A57\u8B49\u7684\u7528\u6236\u652F\u4ED8\u6B64\u8A02\u55AE\u3002","\u532F\u7387\u8F49\u63DB\u4F9D\u5FAE\u4FE1\u652F\u4ED8\u986F\u793A\u4E4B\u4ED8\u6B3E\u91D1\u984D\u70BA\u6E96":"\u532F\u7387\u8F49\u63DB\u4F9D\u5FAE\u4FE1\u652F\u4ED8\u986F\u793A\u4E4B\u4ED8\u6B3E\u91D1\u984D\u70BA\u6E96","\u672C\u670D\u52D9\u4E0D\u652F\u63F4\u4FE1\u7528\u5361\u6216\u7C3D\u5E33\u91D1\u878D\u5361\u4ED8\u6B3E":"\u672C\u670D\u52D9\u4E0D\u652F\u63F4\u4FE1\u7528\u5361\u6216\u7C3D\u5E33\u91D1\u878D\u5361\u4ED8\u6B3E\u3002","\u9EDE\u9078\u4E0B\u65B9\u6309\u9215\u5F8C\u5C07\u7121\u6CD5\u66F4\u63DB\u5176\u4ED6\u4ED8\u6B3E\u65B9\u5F0F":"\u9EDE\u9078\u4E0B\u65B9\u6309\u9215\u5F8C\uFF0C\u5C07\u7121\u6CD5\u66F4\u63DB\u5176\u4ED6\u4ED8\u6B3E\u65B9\u5F0F\u3002","\u5FAE\u4FE1\u652F\u4ED8\u670D\u52D9\u7531\u6B50\u4ED8\u5BF6\u96FB\u5B50\u652F\u4ED8\u63D0\u4F9B":"\u300A\u5FAE\u4FE1\u652F\u4ED8\u300B\u670D\u52D9\u7531\u6B50\u4ED8\u5BF6\u96FB\u5B50\u652F\u4ED8\u63D0\u4F9B\u3002","\u958B\u555F\u5FAE\u4FE1APP\u4ED8\u6B3E":"\u958B\u555F\u5FAE\u4FE1 APP \u4ED8\u6B3E","\u986F\u793AQRCode":"\u986F\u793AQR Code","\u63D0\u9192\u60A8\u7DA0\u754C\u79D1\u6280\u4E0D\u627F\u4F5C\u6295\u8CC7\u8CED\u535A\u865B\u64EC\u8CA8\u5E63\u7B49\u5546\u54C1\u4EA4\u6613\u4EE3\u7406\u6536\u4ED8\u4ED8\u6B3E\u524D\u8ACB\u78BA\u8A8D\u5546\u54C1\u5167\u5BB9\u662F\u5426\u6D89\u53CA\u4E0A\u8FF0\u5546\u54C1\u985E\u578B\u4EE5\u907F\u514D\u906D\u53D7\u8A50\u9A19":"\u7DA0\u754C\u79D1\u6280\u4E0D\u627F\u4F5C\u6295\u8CC7\u3001\u8CED\u535A\u3001\u865B\u64EC\u8CA8\u5E63\u7B49\u4EA4\u6613\u4EE3\u7406\u6536\u4ED8\uFF0C\u52FF\u807D\u5F9E\u4ED6\u4EBA\u6307\u793A\u4ED8\u6B3E\uFF0C\u6709\u7591\u616E\u8ACB\u64A5\u6253 165 \u6216 110","\u53EF\u4F7F\u7528iPASSMONEYAPP\u9032\u884C\u4ED8\u6B3E":"\u53EF\u4F7F\u7528 iPASS MONEY APP\u9032\u884C\u4ED8\u6B3E\u3002","\u9EDE\u64CA\u524D\u5F80\u4ED8\u6B3E\u5F8C\u8ACB\u65BC20\u5206\u9418\u5167\u5B8C\u6210\u4ED8\u6B3E\u903E\u6642\u8ACB\u91CD\u65B0\u9032\u884C\u8CFC\u8CB7\u6D41\u7A0B":"\u9EDE\u64CA\u524D\u5F80\u4ED8\u6B3E\u5F8C\uFF0C\u8ACB\u65BC20\u5206\u9418\u5167\u5B8C\u6210\u4ED8\u6B3E\uFF0C\u903E\u6642\u8ACB\u91CD\u65B0\u9032\u884C\u8CFC\u8CB7\u6D41\u7A0B\u3002","\u55AE\u7B46\u91D1\u984D\u4E0D\u53EF\u8D85\u904E5\u842C\u5143\u5982\u6709\u7591\u554F\u8ACB\u6D3D\u4E00\u5361\u901A\u5BA2\u670D":"\u55AE\u7B46\u91D1\u984D\u4E0D\u53EF\u8D85\u904E5\u842C\u5143\uFF0C\u5982\u6709\u7591\u554F\u8ACB\u806F\u7E6BiPASS MONEY\u5BA2\u670D\u3002","\u8A02\u55AE\u9001\u51FA\u5F8C\u5C07\u7121\u6CD5\u66F4\u63DB\u5176\u4ED6\u4ED8\u6B3E\u65B9\u5F0F":"\u8A02\u55AE\u9001\u51FA\u5F8C\u5C07\u7121\u6CD5\u66F4\u63DB\u5176\u4ED6\u4ED8\u6B3E\u65B9\u5F0F\u3002","\u8A02\u55AE\u5982\u6709\u9000\u6B3E\u6216\u9000\u8CA8\u9700\u6C42\u8ACB\u806F\u7E6B\u5546\u5E97\u8655\u7406":"\u8A02\u55AE\u5982\u6709\u9000\u6B3E\u6216\u9000\u8CA8\u9700\u6C42\uFF0C\u8ACB\u806F\u7E6B\u5546\u5E97\u8655\u7406\u3002","\u524D\u5F80\u4ED8\u6B3E":"\u524D\u5F80\u4ED8\u6B3E","\u4F7F\u7528\u8857\u53E3\u652F\u4ED8\u4ED8\u6B3E":"\u53EF\u4F7F\u7528\u8857\u53E3\u652F\u4ED8APP\u9032\u884C\u4ED8\u6B3E\u3002","\u8857\u53E3\u652F\u4ED8\u4ED8\u6B3E\u671F\u9650":"\u9EDE\u64CA\u524D\u5F80\u4ED8\u6B3E\u5F8C\uFF0C\u8ACB\u65BC20\u5206\u9418\u5167\u5B8C\u6210\u4ED8\u6B3E\uFF0C\u903E\u6642\u8ACB\u91CD\u65B0\u9032\u884C\u8CFC\u8CB7\u6D41\u7A0B\u3002","\u8857\u53E3\u652F\u4ED8\u5E33\u6236\u9918\u984D\u4ED8\u6B3E":"\u8857\u53E3\u5E33\u6236\u9918\u984D\u4ED8\u6B3E\u4E0D\u53EF\u8D85\u904E5\u842C\u5143\uFF0C\u5982\u6709\u7591\u554F\u8ACB\u6D3D\u8857\u53E3\u5BA2\u670D\u3002","\u8857\u53E3\u652F\u4ED8\u8A02\u55AE\u9001\u51FA\u5F8C":"\u8A02\u55AE\u9001\u51FA\u5F8C\u5C07\u7121\u6CD5\u66F4\u63DB\u5176\u4ED6\u4ED8\u6B3E\u65B9\u5F0F\u3002","\u8857\u53E3\u652F\u4ED8\u9000\u6B3E\u9700\u6C42":"\u8A02\u55AE\u5982\u6709\u9000\u6B3E\u6216\u9000\u8CA8\u9700\u6C42\uFF0C\u8ACB\u806F\u7E6B\u5546\u5E97\u8655\u7406\u3002","\u4ED8\u6B3E\u8AAA\u660E":"\u4ED8\u6B3E\u8AAA\u660E","\u78BA\u8A8D\u6CE8\u610F\u4E8B\u9805":"1. \u78BA\u8A8D\u6CE8\u610F\u4E8B\u9805","\u9078\u64C7\u671F\u6578\u524D\u5F80\u7D50\u5E33":"2. \u9078\u64C7\u671F\u6578\u524D\u5F80\u7D50\u5E33","\u586B\u5BEB\u7533\u8FA6\u8CC7\u6599":"3. \u586B\u5BEB\u7533\u8FA6\u8CC7\u6599","\u96FB\u8A71\u7167\u6703":"4. \u96FB\u8A71\u7167\u6703 / \u901A\u77E5\u7D50\u679C","\u9078\u64C7\u7121\u5361\u5206\u671F\u671F\u6578":"\u9078\u64C7\u7121\u5361\u5206\u671F\u671F\u6578","BNPL_3\u671F":"3\u671F","BNPL_6\u671F":"6\u671F","BNPL_9\u671F":"9\u671F","BNPL_12\u671F":"12\u671F","BNPL_18\u671F":"18\u671F","BNPL_24\u671F":"24\u671F","\u9EDE\u9078\u4E0B\u65B9\u524D\u5F80\u88D5\u5BCC\u6578\u4F4D\u7D50\u5E33\u5F8C":"\u672C\u670D\u52D9\u63D0\u4F9B\u8005\u7531\u88D5\u5BCC\u6578\u4F4D\uFF08\u4E0B\u7A31\u88D5\u5BCC\uFF09 \u63D0\u4F9B\uFF0C\u9EDE\u9078\u300C\u524D\u5F80\u88D5\u5BCC\u6578\u4F4D\u7D50\u5E33\u300D\u5F8C\uFF0C\u5C07\u7121\u6CD5\u66F4\u63DB\u5176\u4ED6\u4ED8\u6B3E\u65B9\u5F0F\u3002","\u4EA4\u6613\u9700\u7D93\u88D5\u5BCC\u6578\u4F4D\u5BE9\u6838":"\u7533\u8ACB\u689D\u4EF6\uFF1A\u6D88\u8CBB\u8005\u9808\u7B26\u5408\u4EE5\u4E0B\u8CC7\u683C\uFF0C\u5426\u5247\u4EA4\u6613\u7121\u6CD5\u6210\u7ACB\uFF1A\u003cbr\u003e\r\n(1) \u5E74\u9F61\u9650\u5236\uFF1A\u5E74\u6EFF 18 \u6B72 \u4E14\u672A\u6EFF 70 \u6B72\u3002\u003cbr\u003e\r\n(2) \u8EAB\u4EFD\u8981\u6C42\uFF1A\u9808\u6301\u6709 \u4E2D\u83EF\u6C11\u570B\u570B\u6C11\u8EAB\u5206\u8B49\u3002\u003cbr\u003e\r\n(3) \u624B\u6A5F\u9580\u865F\uFF1A\u9808\u4F7F\u7528\u500B\u4EBA\u540D\u4E0B\u4E4B\u6708\u79DF\u578B\u624B\u6A5F\uFF08\u9650 \u4E2D\u83EF\u96FB\u4FE1\u3001\u53F0\u7063\u5927\u54E5\u5927\u3001\u9060\u50B3\u96FB\u4FE1\uFF09\u3002\u4E0D\u9069\u7528\uFF1A\u9810\u4ED8\u5361\u3001\u89AA\u5B50\u5361\u3001\u4F01\u696D\u5361\u3001\u7121\u6846\u884C\u52D5\u7B49\u9580\u865F\u985E\u578B\u7121\u6CD5\u4F7F\u7528\u3002","\u5206\u671F\u5229\u606F\u8AAA\u660E":"\u5206\u671F\u671F\u6578\uFF1A\u63D0\u4F9B 3\uFF5E24 \u671F \u9078\u64C7\uFF0C\u6700\u7D42\u6838\u5B9A\u671F\u6578\u4EE5\u88D5\u5BCC\u5BE9\u6838\u7D50\u679C\u70BA\u6E96\u3002","\u5206\u671F\u5229\u606F\u8CBB\u7528":"\u5229\u606F\u8CBB\u7528\uFF1A\u8ACB\u53C3\u8003\u671F\u6578\u9078\u9805\u7684\u8CBB\u7387\u6A19\u793A\uFF0C\u5BE6\u969B\u8CBB\u7387\u4F9D\u88D5\u5BCC\u516C\u544A\u70BA\u6E96\u3002\u90E8\u5206\u5546\u5BB6\u63D0\u4F9B\u300C\u96F6\u5229\u7387\u300D\uFF0C\u82E5\u9078\u64C7\u8A72\u65B9\u6848\uFF0C\u6D88\u8CBB\u8005\u50C5\u9808\u652F\u4ED8\u672C\u91D1\u3002","\u9EDE\u9078\u4E0B\u65B9\u524D\u5F80\u88D5\u5BCC\u6578\u4F4D\u7D50\u5E33\u4E26\u5B8C\u6210\u7533\u8FA6\u5F8C":"\u7533\u8ACB\u6D41\u7A0B\u8207\u6642\u9650\uFF1A\u003cbr\u003e\r\n(1) \u9EDE\u9078\u300C\u524D\u5F80\u88D5\u5BCC\u6578\u4F4D\u7D50\u5E33\u300D\u5F8C\uFF0C\u8ACB\u65BC 30 \u5206\u9418\u5167\u5B8C\u6210\u7533\u8ACB\uFF0C\u5426\u5247\u4EA4\u6613\u5C07\u5931\u6557\u3002\u003cbr\u003e\r\n(2) \u7533\u8ACB\u6210\u529F\u5F8C\uFF0C\u88D5\u5BCC\u5C07\u65BC 24 \u5C0F\u6642\u5167 \u7531\u5C08\u4EBA\u806F\u7E6B\uFF0C\u4E26\u767C\u9001 TWCA \u96FB\u5B50\u7C3D\u7AE0\u8EAB\u5206\u9A57\u8B49\u7C21\u8A0A\u901A\u77E5\u3002\u003cbr\u003e\r\n(3) \u5BE9\u6838\u7D50\u679C\u5C07\u4EE5\u7C21\u8A0A\u901A\u77E5\uFF0C\u8ACB\u4FDD\u6301\u624B\u6A5F\u66A2\u901A\u3002\r\n","\u5DF2\u95B1\u8B80\u4EE5\u4E0A\u6CE8\u610F\u4E8B\u9805\u4E26\u540C\u610F":"\u5DF2\u95B1\u8B80\u4EE5\u4E0A\u6CE8\u610F\u4E8B\u9805\uFF0C\u4E26\u540C\u610F\u3002","\u8ACB\u52FE\u9078\u540C\u610F":"\u8ACB\u52FE\u9078\u540C\u610F","\u524D\u5F80\u88D5\u5BCC\u6578\u4F4D\u7D50\u5E33":"\u524D\u5F80\u88D5\u5BCC\u6578\u4F4D\u7D50\u5E33","\u9078\u64C7\u4E2D\u79DFzingala\u9280\u89D2\u96F6\u5361\u671F\u6578":"\u9078\u64C7\u4E2D\u79DF zingala \u9280\u89D2\u96F6\u5361\u671F\u6578","BNPL_Zingala_1\u671F":"1\u671F","BNPL_Zingala_\u4E00\u6B21\u4ED8\u6E05":"( \u4E00\u6B21\u4ED8\u6E05 )","BNPL_Zingala_3\u671F":"3\u671F","BNPL_Zingala_6\u671F":"6\u671F","BNPL_Zingala_9\u671F":"9\u671F","BNPL_Zingala_12\u671F":"12\u671F","BNPL_Zingala_18\u671F":"18\u671F","BNPL_Zingala_24\u671F":"24\u671F","BNPL_Zingala_30\u671F":"30\u671F","BNPL_Zingala_36\u671F":"36\u671F","\u6BCF\u671F\u9810\u8A08\u7E73\u8CBB\u91D1\u984D":"\u6BCF\u671F\u9810\u8A08\u7E73\u8CBB\u91D1\u984D\uFF1A","\u4E2D\u79DF\u6CE8\u610F\u4E8B\u98051":"\u4E2D\u79DF zingala \u9280\u89D2\u96F6\u5361\u5206\u671F\u63D0\u4F9B\u4EE5\u4E0B\u5206\u671F\u671F\u6578\u8207\u5C0D\u61C9\u624B\u7E8C\u8CBB\u7387\uFF1A1\u671F 0%\u30013\u671F 2.6%\u30016\u671F 4.5%\u30019\u671F 5.5%\u300112\u671F 7.5%\u300118\u671F 10.5%\u300124\u671F 12.5%\u300130\u671F 16%\u300136\u671F 20%\u3002\u8ACB\u4F7F\u7528\u8005\u8A73\u95B1\u4E26\u78BA\u8A8D\u6240\u9078\u671F\u6578\u6240\u9069\u7528\u4E4B\u8CBB\u7387\u53CA\u6BCF\u671F\u61C9\u7E73\u91D1\u984D\u3002","\u4E2D\u79DF\u6CE8\u610F\u4E8B\u98052":"\u9EDE\u9078\u300C\u524D\u5F80\u4E2D\u79DF zingala \u9280\u89D2\u96F6\u5361\u7D50\u5E33\u300D\u5373\u8996\u70BA\u540C\u610F\u63A1\u7528\u8A72\u4ED8\u6B3E\u65B9\u5F0F\uFF0C\u4ED8\u6B3E\u65B9\u5F0F\u5C07\u7121\u6CD5\u8B8A\u66F4\uFF0C\u4E14\u8A02\u55AE\u8CC7\u6599\u5C07\u63D0\u4F9B\u4E88\u4E2D\u79DF\u9280\u89D2\u96F6\u5361\u4F5C\u70BA\u500B\u4EBA\u8CC7\u6599\u4E4B\u8490\u96C6\u3001\u8655\u7406\u53CA\u5229\u7528\u3002","\u4E2D\u79DF\u6CE8\u610F\u4E8B\u98053":"\u70BA\u907F\u514D\u4EA4\u6613\u7570\u5E38\u72C0\u6CC1\uFF0C\u9032\u5165\u7D50\u5E33\u756B\u9762\u5F8C\uFF0C\u8ACB\u52FF\u57F7\u884C\u8FD4\u56DE\u4E0A\u4E00\u9801\u3002\u4E26\u8ACB\u7559\u610F\u7D50\u5E33\u6642\u6548\u50C5\u81F3\u9694\u65E523:59\uFF0C\u903E\u6642\u9808\u91CD\u65B0\u7D50\u5E33\u3002","\u4E2D\u79DF\u6CE8\u610F\u4E8B\u98054":"[\u5EE3\u544A]\u4E2D\u79DF\u9280\u89D2\u5238\u9650\u672A\u66FE\u7533\u8ACB\u6216\u4F7F\u7528 zingala \u9280\u89D2\u96F6\u5361\u4EFB\u4F55\u670D\u52D9\u4E4B\u7528\u6236\u4F7F\u7528\uFF0C\u8F38\u5165\u5E8F\u865F\u6642\u8ACB\u7559\u610F\u5927\u5C0F\u5BEB\u9808\u5B8C\u5168\u4E00\u81F4\uFF0C\u4E14\u4E0D\u5F97\u5305\u542B\u7A7A\u683C\u3002\u4E2D\u79DFCoin\u56DE\u994B\u8CC7\u683C\u9808\u540C\u6642\u7B26\u5408\u4EE5\u4E0B\u689D\u4EF6\uFF1A\u6210\u529F\u4F7F\u7528\u9280\u89D2\u5238\u6298\u62B5\uFF0C\u4E14\u8A72\u7B46\u8A02\u55AE\u7121\u9000\u8CA8\u6216\u63DB\u8CA8\u7D00\u9304\uFF0C\u65B9\u53EF\u7372\u5F97\u672C\u6D3B\u52D5\u56DE\u994B\u3002\u7B26\u5408\u8CC7\u683C\u8005\u4E4B\u56DE\u994B\uFF0C\u5C07\u7D71\u4E00\u65BC 2026 \u5E74 1 \u6708\u5E95\u524D \u767C\u653E\u3002\u53E6\uFF0C\u81EA 2026 \u5E74 1 \u6708 1 \u65E5 \u8D77\u4E4B\u65B0\u6D3B\u52D5\u5E8F\u865F\uFF0C\u5176\u56DE\u994B\u5C07\u65BC\u6D3B\u52D5\u7D50\u675F\u5F8C\uFF0C\u7D71\u4E00\u65BC 2026 \u5E74 4 \u6708\u5E95\u524D \u767C\u653E\u3002","\u670D\u52D9\u7531_Zingala":"\u670D\u52D9\u7531","\u63D0\u4F9B_Zingala":"\u63D0\u4F9B","\u524D\u5F80\u4E2D\u79DF\u7D50\u5E33":"\u524D\u5F80\u4E2D\u79DF zingala \u9280\u89D2\u96F6\u5361\u7D50\u5E33","\u4FE1\u7528\u5361\u4EA4\u6613\u8CC7\u8A0A":"\u4FE1\u7528\u5361\u4EA4\u6613\u8CC7\u8A0A","\u6301\u5361\u4EBA\u8CC7\u6599":"\u6301\u5361\u4EBA\u8CC7\u6599","\u8A18\u4F4F\u672C\u6B21\u4ED8\u6B3E\u4EBA\u8CC7\u8A0A":"\u8A18\u4F4F\u672C\u6B21\u4ED8\u6B3E\u4EBA\u8CC7\u8A0A","\u5237\u5361\u65B9\u5F0F":"\u5237\u5361\u65B9\u5F0F","\u5B9A\u671F\u5B9A\u984D":"\u5B9A\u671F\u5B9A\u984D","\u4E00\u6B21\u4ED8\u6E05":"\u4E00\u6B21\u4ED8\u6E05","\u5206\u671F":"\u5206\u671F","\u5713\u5922\u5F48\u6027\u5206\u671F":"\u6C38\u8C50 30 \u671F","\u50C5\u9650\u6C38\u8C50\u5361\u4EA4\u6613":"\u50C5\u9650\u6C38\u8C50\u5361\u4EA4\u6613","\u6D88\u8CBB\u81EA\u8CBB\u5206\u671F":"\u6D88\u8CBB\u8005\u81EA\u8CBB\u5206\u671F","\u4FE1\u7528\u5361\u985E\u578B":"\u4FE1\u7528\u5361\u985E\u578B","\u9280\u806F\u5361":"\u9280\u806F\u5361","\u9280\u806F\u5361\u50C5\u652F\u63F4\u4E00\u6B21\u4ED8\u6E05\u4ED8\u6B3E":"\u9280\u806F\u5361\u50C5\u652F\u63F4\u4E00\u6B21\u4ED8\u6E05\u4ED8\u6B3E","\u7D05\u5229\u6298\u62B5":"\u7D05\u5229\u6298\u62B5","\u7D05\u5229\u4E0D\u8DB3\u6642\u5C07\u81EA\u52D5\u6539\u70BA\u4E00\u6B21\u4ED8\u6E05\u4EA4\u6613\u90E8\u5206\u9280\u884C\u4FE1\u7528\u5361\u7D05\u5229\u4E0D\u8DB3\u5247\u4EA4\u6613\u5931\u6557\u5BE6\u969B\u7D50\u679C\u7531\u9280\u884C\u5224\u5B9A":"1. \u7D05\u5229\u4E0D\u8DB3\u6642\u5C07\u81EA\u52D5\u6539\u70BA\u4E00\u6B21\u4ED8\u6E05\u4EA4\u6613(\u90E8\u5206\u9280\u884C\u4FE1\u7528\u5361\u7D05\u5229\u4E0D\u8DB3\u5247\u4EA4\u6613\u5931\u6557\uFF0C\u5BE6\u969B\u7D50\u679C\u7531\u9280\u884C\u5224\u5B9A","\u5404\u9280\u884C\u7D05\u5229\u6298\u62B5\u898F\u5247\u8A73\u7D30\u8ACB\u898B":"2.\u5404\u9280\u884C\u7D05\u5229\u6298\u62B5\u898F\u5247\uFF0C\u8A73\u7D30\u8ACB\u898B\u003ca :href=\"{0}\" target=\"_blank\"\u003e\u7D05\u5229\u6298\u62B5\u8FA6\u6CD5\u003c/a\u003e","\u4FE1\u7528\u5361\u5361\u865F":"\u4FE1\u7528\u5361\u5361\u865F","\u8ACB\u8F38\u5165\u4FE1\u7528\u5361\u5361\u865F":"\u8ACB\u8F38\u5165\u4FE1\u7528\u5361\u5361\u865F","MasterCardVISAJCB\u4FE1\u7528\u5361\u7684\u5361\u865F\u683C\u5F0F\u6709\u8AA4":"MasterCard/VISA/JCB\u4FE1\u7528\u5361\u7684\u5361\u865F\u683C\u5F0F\u6709\u8AA4","\u672C\u4EA4\u6613\u4E0D\u63A5\u53D7\u570B\u5916\u4FE1\u7528\u5361":"\u672C\u4EA4\u6613\u4E0D\u63A5\u53D7\u975E\u53F0\u7063\u767C\u884C\u7684\u4FE1\u7528\u5361\u3002","\u672C\u4EA4\u6613\u9808\u901A\u904EVisaMasterCardJCB\u4FE1\u7528\u53613D\u9A57\u8B49":"\u672C\u4EA4\u6613\u9808\u901A\u904EVisa/MasterCard/JCB\u4FE1\u7528\u53613D\u9A57\u8B49","\u672C\u4EA4\u6613\u82E5\u4EE5\u53F0\u7063\u4FE1\u7528\u5361\u652F\u4ED8\u9808\u901A\u904EVisaMasterCardJCB\u4FE1\u7528\u53613D\u9A57\u8B49":"\u672C\u4EA4\u6613\u82E5\u4EE5\u53F0\u7063\u4FE1\u7528\u5361\u652F\u4ED8\uFF0C\u9808\u901A\u904EVisa/MasterCard/JCB\u4FE1\u7528\u53613D\u9A57\u8B49","\u672C\u4EA4\u6613\u82E5\u4EE5\u975E\u53F0\u7063\u4FE1\u7528\u5361\u652F\u4ED8\u9808\u901A\u904EVisaMasterCardJCB\u4FE1\u7528\u53613D\u9A57\u8B49":"\u672C\u4EA4\u6613\u82E5\u4EE5\u975E\u53F0\u7063\u4FE1\u7528\u5361\u652F\u4ED8\uFF0C\u9808\u901A\u904EVisa/MasterCard/JCB\u4FE1\u7528\u53613D\u9A57\u8B49","\u672C\u4EA4\u6613\u4E0D\u652F\u63F4\u7C3D\u5E33\u91D1\u878D\u5361":"\u672C\u4EA4\u6613\u4E0D\u652F\u63F4\u7C3D\u5E33\u91D1\u878D\u5361(Debit\u5361)","\u672B\u56DB\u78BC":"\u672B\u56DB\u78BC","\u8B8A\u66F4\u5361\u865F":"\u8B8A\u66F4\u5361\u865F","\u6E05\u9664\u8CC7\u6599":"\u6E05\u9664\u8CC7\u6599","\u5361\u7247\u6709\u6548\u671F\u9650":"\u5361\u7247\u6709\u6548\u671F\u9650","\u4FE1\u7528\u5361\u6709\u6548\u6708\u5E74\u671F\u9650\u932F\u8AA4":"\u4FE1\u7528\u5361[\u6709\u6548\u6708\u5E74]\u671F\u9650\u932F\u8AA4","\u80CC\u9762\u672B\u4E09\u78BC":"\u4FE1\u7528\u5361\u5B89\u5168\u78BC","MasterCardVISAJCB\u4FE1\u7528\u5361\u7684\u5361\u7247\u80CC\u5F8C\u672B3\u78BC\u683C\u5F0F\u6709\u8AA4":"MasterCard/VISA/JCB\u4FE1\u7528\u5361\u7684\u5361\u7247\u672B3\u78BC\u683C\u5F0F\u6709\u8AA4","\u7F8E\u570B\u904B\u901A\u5361\u7684\u5361\u7247\u80CC\u5F8C\u672B4\u78BC\u683C\u5F0F\u6709\u8AA4":"\u7F8E\u570B\u904B\u901A\u5361\u7684\u5361\u7247\u80CC\u5F8C\u672B4\u78BC\u683C\u5F0F\u6709\u8AA4","\u6301\u5361\u4EBA\u59D3\u540D":"\u6301\u5361\u4EBA\u59D3\u540D","\u8ACB\u8F38\u5165\u672C\u4EBA\u59D3\u540D":"\u8ACB\u8F38\u5165\u5361\u7247\u4E0A\u7684\u82F1\u6587\u59D3\u540D","\u8ACB\u8F38\u51652\u500B\u4EE5\u4E0A\u7684\u82F1\u6587\u5B57\u6BCD\u6216\u7B26\u865F":"\u8ACB\u8F38\u51652\u500B\u4EE5\u4E0A\u7684\u82F1\u6587\u5B57\u6BCD\u6216\u7B26\u865F\uFF08/ - \u0027 ,\uFF09\u3002","\u624B\u6A5F\u865F\u78BC":"\u624B\u6A5F\u865F\u78BC","\u9810\u8A2D\u624B\u6A5F":"\u9810\u8A2D\u624B\u6A5F","\u8ACB\u8F38\u5165\u65BC\u767C\u5361\u9280\u884C\u7559\u5B58\u7684\u624B\u6A5F":"\u8ACB\u8F38\u5165\u65BC\u767C\u5361\u9280\u884C\u7559\u5B58\u7684\u624B\u6A5F","\u624B\u6A5F\u865F\u78BC\u683C\u5F0F\u8F38\u5165\u932F\u8AA4":"\u624B\u6A5F\u865F\u78BC\u683C\u5F0F\u8F38\u5165\u932F\u8AA4","\u96FB\u5B50\u4FE1\u7BB1":"\u96FB\u5B50\u4FE1\u7BB1","\u96FB\u5B50\u4FE1\u7BB1\u4E0D\u53EF\u70BA\u7A7A":"\u96FB\u5B50\u4FE1\u7BB1\u4E0D\u53EF\u70BA\u7A7A","\u8ACB\u8F38\u5165\u6B63\u78BA\u7684Email\u683C\u5F0F":"\u8ACB\u8F38\u5165\u6B63\u78BA\u7684Email\u683C\u5F0F\u3002    ","\u5E33\u55AE\u5730\u5740":"\u5E33\u55AE\u5730\u5740","\u8ACB\u8F38\u5165\u5E33\u55AE\u5730\u5740":"\u8ACB\u8F38\u5165\u60A8\u7684\u4FE1\u7528\u5361\u5E33\u55AE\u5730\u5740","\u8ACB\u8F38\u5165\u6B63\u78BA\u7684\u5730\u5740\u683C\u5F0F":"\u8ACB\u8F38\u5165\u6B63\u78BA\u7684\u5730\u5740\u683C\u5F0F","\u8B8A\u66F4\u5730\u5740":"\u8B8A\u66F4\u5730\u5740","\u540C\u610F\u7533\u8ACB\u672C\u5546\u5E97\u4E4B\u5FEB\u6377\u652F\u4ED8\u4E0B\u6B21\u8CFC\u7269\u6642\u514D\u8F38\u5165\u5361\u865F":"\u540C\u610F\u7533\u8ACB\u672C\u5546\u5E97\u4E4B\u5FEB\u6377\u652F\u4ED8\uFF0C\u4E0B\u6B21\u8CFC\u7269\u6642\u514D\u8F38\u5165\u5361\u865F","\u5FEB\u901F\u7D50\u5E33\u8AAA\u660E":"\u5FEB\u901F\u7D50\u5E33\u8AAA\u660E","\u7533\u8ACB\u5FEB\u6377\u652F\u4ED8\u5361\u865F\u8CC7\u8A0A\u6703\u8A18\u9304\u65BC\u7DA0\u754C\u79D1\u6280\u7CFB\u7D71\u5167\u4E0D\u6703\u63D0\u4F9B\u7D66\u5E97\u5BB6\u53EF\u65BC\u4E0B\u6B21\u540C\u5E97\u6D88\u8CBB\u6642\u81EA\u52D5\u5E36\u51FA\u60A8\u7684\u5361\u865F\u8CC7\u8A0A\u5FEB\u901F\u7D50\u5E33":"\u7533\u8ACB\u5FEB\u6377\u652F\u4ED8\uFF0C\u5361\u865F\u8CC7\u8A0A\u6703\u8A18\u9304\u65BC\u7DA0\u754C\u79D1\u6280\u7CFB\u7D71\u5167\uFF0C\u4E0D\u6703\u63D0\u4F9B\u7D66\u5E97\u5BB6\u3002\u53EF\u65BC\u4E0B\u6B21\u540C\u5E97\u6D88\u8CBB\u6642\uFF0C\u81EA\u52D5\u5E36\u51FA\u60A8\u7684\u5361\u865F\u8CC7\u8A0A\u5FEB\u901F\u7D50\u5E33\u3002","\u5206\u671F\u4FE1\u7528\u5361\u5206\u671F\u4E0D\u63A5\u53D7Visa\u91D1\u878D\u5361\u842C\u4E8B\u9054Debit\u91D1\u878D\u5361\u53CAJCBDebit\u5361":"\u4FE1\u7528\u5361\u5206\u671F\u4E0D\u63A5\u53D7\u003cspan style=\"color: Red;\"\u003eVisa\u91D1\u878D\u5361\u3001\u842C\u4E8B\u9054Debit\u91D1\u878D\u5361\u003c/span\u003e\u53CA\u003cspan style=\"color: Red;\"\u003eJCB Debit\u5361\u003c/span\u003e\u3002","\u8ACB\u9078\u64C7\u5206\u671F\u671F\u6578":"\u8ACB\u9078\u64C7\u5206\u671F\u671F\u6578","\u671F":"\u671F","\u6B64\u4FE1\u7528\u5361\u5361\u865F\u7121\u6CD5\u4F7F\u7528\u6B64\u5206\u671F":"\u4E0D\u652F\u63F4\u6B64\u9280\u884C\u4FE1\u7528\u5361\u5206\u671F\u4EA4\u6613\uFF0C\u8ACB\u6539\u7528\u5176\u4ED6\u4FE1\u7528\u5361\u3002","\u672C\u4EA4\u6613\u4E0D\u652F\u63F4\u7C3D\u5E33\u91D1\u878D\u5361\u8ACB\u6539\u7528\u4FE1\u7528\u5361\u4EA4\u6613":"\u672C\u4EA4\u6613\u4E0D\u652F\u63F4\u7C3D\u5E33\u91D1\u878D\u5361(Debit\u5361)\uFF0C\u8ACB\u6539\u7528\u4FE1\u7528\u5361\u4EA4\u6613\u3002","\u9650\u6C38\u8C50\u4FE1\u7528\u5361":"\u9650\u6C38\u8C50\u4FE1\u7528\u5361","\u7576\u60A8\u4F7F\u7528\u975E\u6C38\u8C50\u4FE1\u7528\u5361\u6642\u5C07\u7121\u6CD5\u9032\u884C\u4EA4\u6613":"\u7576\u60A8\u4F7F\u7528\u975E\u6C38\u8C50\u4FE1\u7528\u5361\u6642\uFF0C\u5C07\u7121\u6CD5\u9032\u884C\u4EA4\u6613\u3002","\u5713\u5922\u5206\u671F\u8A73\u7D30\u8AAA\u660E":"\u6C38\u8C50 30 \u671F\u8A73\u7D30\u8AAA\u660E\uFF0C\u8ACB\u898B\u003ca href=\"{0}\" target=\"_blank\"\u003e\u670D\u52D9\u4ECB\u7D39\u9801\u003c/a\u003e\u3002","\u7BC4\u4F8B":"\u7BC4\u4F8B\u8AAA\u660E","\u9078\u64C7\u5206\u671F\u671F\u6578":"\u9078\u64C7\u5206\u671F\u671F\u6578","\u4F5C\u696D\u8655\u7406\u8CBB\u8CBB\u7387":"\u4F5C\u696D\u8655\u7406\u8CBB{0}%","\u4F5C\u696D\u8655\u7406\u8CBB":"\u6D88\u8CBB\u8005\u9700\u4E00\u6B21\u7D66\u4ED8\u4F5C\u696D\u8655\u7406\u8CBB","\u60A8\u5C07\u6536\u5230\u5169\u7B46\u4FE1\u7528\u5361\u4EA4\u6613":"\u60A8\u5C07\u6536\u5230\u5169\u7B46\u4FE1\u7528\u5361\u4EA4\u6613\uFF0C\u4E00\u7B46\u70BA\u6D88\u8CBB\u91D1\u984D\u3001\u4E00\u7B46\u70BA\u7531\u7DA0\u754C\u79D1\u6280\u63D0\u4F9B\u4E4B\u6D88\u8CBB\u8005\u81EA\u8CBB\u5206\u671F\u670D\u52D9\u4F5C\u696D\u8655\u7406\u8CBB\u91D1\u984D\uFF0C\u8ACB\u4EE5\u4FE1\u7528\u5361\u5E33\u55AE\u986F\u793A\u70BA\u4E3B\u3002","\u770B\u66F4\u591A":"\u770B\u66F4\u591A","\u4F5C\u696D\u8655\u7406\u8CBB\u767C\u7968":"\u4F5C\u696D\u8655\u7406\u8CBB\u767C\u7968","\u8ACB\u52D9\u5FC5\u78BA\u8A8D\u8CC7\u6599\u6B63\u78BA\u6027\u767C\u7968\u4E00\u7D93\u958B\u7ACB\u4E0D\u5F97\u8981\u6C42\u66F4\u6539":"\u8ACB\u52D9\u5FC5\u78BA\u8A8D\u8CC7\u6599\u6B63\u78BA\u6027\uFF0C\u767C\u7968\u4E00\u7D93\u958B\u7ACB\u4E0D\u5F97\u8981\u6C42\u66F4\u6539","\u958B\u7ACB\u985E\u578B":"\u958B\u7ACB\u985E\u578B","\u500B\u4EBA":"\u500B\u4EBA","\u516C\u53F8\u884C\u865F":"\u516C\u53F8\u884C\u865F","\u6350\u8D08":"\u6350\u8D08","\u9078\u64C7\u8F09\u5177":"\u9078\u64C7\u8F09\u5177","\u7DA0\u754C\u6703\u54E1\u8F09\u5177":"\u7DA0\u754C\u6703\u54E1\u8F09\u5177","\u81EA\u8CBB\u624B\u6A5F\u689D\u78BC\u8F09\u5177":"\u624B\u6A5F\u689D\u78BC\u8F09\u5177","\u81EA\u8CBB\u81EA\u7136\u4EBA\u6191\u8B49\u8F09\u5177":"\u81EA\u7136\u4EBA\u6191\u8B49\u8F09\u5177","\u4E0D\u4F7F\u7528\u8F09\u5177":"\u4E0D\u4F7F\u7528\u8F09\u5177","\u767C\u7968\u7D22\u53D6\u7D19\u672C":"\u7D22\u53D6\u7D19\u672C","\u8F09\u5177\u7DE8\u865F":"\u8F09\u5177\u7DE8\u865F","\u8ACB\u8F38\u5165\u8F09\u5177\u7DE8\u865F":"\u8ACB\u8F38\u5165\u8F09\u5177\u7DE8\u865F","\u683C\u5F0F\u6709\u8AA4\u8ACB\u91CD\u65B0\u8F38\u5165":"\u683C\u5F0F\u6709\u8AA4\uFF0C\u8ACB\u91CD\u65B0\u8F38\u5165","\u6350\u8D08\u78BC":"\u6350\u8D08\u78BC","\u9810\u8A2DOMG\u95DC\u61F7\u793E\u6703\u611B\u5FC3\u57FA\u91D1\u6703":"\u9810\u8A2D-OMG\u95DC\u61F7\u793E\u6703\u611B\u5FC3\u57FA\u91D1\u6703","\u8ACB\u8F38\u5165\u6350\u8D08\u78BC3\u81F37\u4F4D\u6578":"\u8ACB\u8F38\u5165\u6350\u8D08\u78BC3-7\u4F4D\u6578","\u6350\u8D08\u78BC\u67E5\u8A62":"\u6350\u8D08\u78BC\u67E5\u8A62","\u8ACB\u8F38\u5165\u6350\u8D08\u78BC":"\u8ACB\u8F38\u5165\u6350\u8D08\u78BC","\u767C\u7968\u62AC\u982D":"\u767C\u7968\u62AC\u982D","\u540C\u6301\u5361\u4EBA":"\u540C\u6301\u5361\u4EBA","\u8ACB\u8F38\u5165\u767C\u7968\u62AC\u982D":"\u8ACB\u8F38\u5165\u767C\u7968\u62AC\u982D","\u767C\u7968\u7D71\u4E00\u7DE8\u865F":"\u7D71\u4E00\u7DE8\u865F","\u767C\u7968\u8ACB\u8F38\u5165\u7D71\u4E00\u7DE8\u865F":"\u8ACB\u8F38\u5165\u7D71\u4E00\u7DE8\u865F","\u767C\u7968\u624B\u6A5F\u865F\u78BC":"\u767C\u7968\u624B\u6A5F\u865F\u78BC","\u540C\u6301\u5361\u4EBA\u624B\u6A5F":"\u540C\u6301\u5361\u4EBA\u624B\u6A5F","\u7DA0\u754C\u79D1\u6280\u5C07\u4F7F\u7528\u6301\u5361\u4EBA\u624B\u6A5F\u865F\u78BC\u70BA\u8F09\u5177\u70BA\u60A8\u81EA\u52D5\u5C0D\u734E":"\u7DA0\u754C\u79D1\u6280\u5C07\u4F7F\u7528\u767C\u7968\u624B\u6A5F\u865F\u78BC\u70BA\u8F09\u5177\uFF0C\u70BA\u60A8\u81EA\u52D5\u5C0D\u734E\u4E26\u767C\u9001\u4E2D\u734E\u901A\u77E5\u3002","\u8ACB\u8F38\u5165\u767C\u7968\u624B\u6A5F\u865F\u78BC":"\u8ACB\u8F38\u5165\u767C\u7968\u624B\u6A5F\u865F\u78BC","\u8ACB\u8F38\u5165\u6B63\u78BA\u7684\u624B\u6A5F\u865F\u78BC":"\u8ACB\u8F38\u5165\u6B63\u78BA\u7684\u624B\u6A5F\u865F\u78BC","\u767C\u7968\u96FB\u5B50\u4FE1\u7BB1":"\u767C\u7968\u96FB\u5B50\u4FE1\u7BB1","\u540C\u6301\u5361\u4EBA\u4FE1\u7BB1":"\u540C\u6301\u5361\u4EBA\u4FE1\u7BB1","\u8ACB\u8F38\u5165\u6B63\u78BA\u7684\u96FB\u5B50\u4FE1\u7BB1":"\u8ACB\u8F38\u5165\u6B63\u78BA\u7684\u96FB\u5B50\u4FE1\u7BB1","\u5BC4\u9001\u5730\u5740":"\u5BC4\u9001\u5730\u5740","\u540C\u5E33\u55AE\u5730\u5740":"\u540C\u5E33\u55AE\u5730\u5740","\u8ACB\u8F38\u5165\u5BC4\u9001\u5730\u5740":"\u8ACB\u8F38\u5165\u5BC4\u9001\u5730\u5740","\u81EA\u8CBB\u5206\u671F\u689D\u6B3E":"\u672C\u4EBA\u7533\u8ACB\u4F7F\u7528\u7531\u7DA0\u754C\u79D1\u6280\u63D0\u4F9B\u4E4B\u6D88\u8CBB\u8005\u81EA\u8CBB\u5206\u671F\u670D\u52D9(\u4E0B\u7C21\u7A31\u300C\u81EA\u8CBB\u5206\u671F\u670D\u52D9\u300D)\uFF0C\u4E26\u5DF2\u8A73\u95B1\u5373\u540C\u610F\u003ca href=\"{0}\" target=\"_blank\"\u003e\u672C\u670D\u52D9\u7D04\u5B9A\u689D\u6B3E\u003c/a\u003e\u6240\u8F09\u898F\u7BC4\u53CA\u4E0B\u5217\u4E8B\u9805\uFF1A","\u7DA0\u754C\u79D1\u6280\u5C07\u4E0D\u9000\u9084\u4F5C\u696D\u8655\u7406\u8CBB":"\u672C\u7B46\u8A02\u55AE\u4ED8\u6B3E\u5B8C\u6210\u65E5\u8D77\u7B9715\u65E5\u5167\uFF0C\u60A8\u5982\u8207\u5546\u5E97\u5B8C\u6210\u9000\u8CA8\u53CA\u9000\u6B3E\uFF0C\u7DA0\u754C\u79D1\u6280\u5C07\u4E0D\u4E88\u6536\u53D6\u81EA\u8CBB\u5206\u671F\u670D\u52D9\u4E4B\u4F5C\u696D\u8655\u7406\u8CBB\uFF1B\u5982\u8D85\u904E\u524D\u8FF0\u671F\u65E5\u4E4B\u9000\u8CA8\u9000\u6B3E\uFF0C\u672C\u7B46\u8A02\u55AE\u50C5\u5C31\u5546\u5BB6\u540C\u610F\u4E4B\u6D88\u8CBB\u91D1\u984D\u9000\u6B3E\uFF0C\u7DA0\u754C\u79D1\u6280\u5C07\u4E0D\u9000\u9084\u81EA\u8CBB\u5206\u671F\u670D\u52D9\u4F5C\u696D\u8655\u7406\u8CBB\u3002","\u540C\u610F\u6388\u6B0A\u7DA0\u754C\u79D1\u6280\u4EE3\u70BA\u8655\u7406\u4F5C\u696D\u8655\u7406\u8CBB":"\u5B8C\u6210\u9000\u8CA8\u4E8B\u5B9C\u5F8C\uFF0C\u540C\u610F\u6388\u6B0A\u7DA0\u754C\u79D1\u6280\u4EE3\u70BA\u8655\u7406\u4F5C\u696D\u8655\u7406\u8CBB\u96FB\u5B50\u767C\u7968\u4F5C\u5EE2\u53CA\u92B7\u8CA8\u9000\u56DE\u8B49\u660E\u55AE\uFF0C\u4EE5\u52A0\u901F\u9000\u6B3E\u4F5C\u696D\u3002","\u8ACB\u8F38\u5165\u7F8E\u570B\u904B\u901A\u5361\u865F":"\u8ACB\u8F38\u5165\u7F8E\u570B\u904B\u901A\u5361\u865F","\u7F8E\u570B\u904B\u901A\u5361\u7684\u5361\u865F\u683C\u5F0F\u6709\u8AA4":"\u7F8E\u570B\u904B\u901A\u5361\u7684\u5361\u865F\u683C\u5F0F\u6709\u8AA4","\u672C\u4EA4\u6613\u9808\u901A\u904E\u7F8E\u570B\u904B\u901A3D\u9A57\u8B49":"\u672C\u4EA4\u6613\u9808\u901A\u904E\u7F8E\u570B\u904B\u901A3D\u9A57\u8B49","\u672C\u4EA4\u6613\u82E5\u4EE5\u53F0\u7063\u4FE1\u7528\u5361\u652F\u4ED8\u9808\u901A\u904E\u7F8E\u570B\u904B\u901A3D\u9A57\u8B49":"\u672C\u4EA4\u6613\u82E5\u4EE5\u53F0\u7063\u4FE1\u7528\u5361\u652F\u4ED8\uFF0C\u9808\u901A\u904E\u7F8E\u570B\u904B\u901A3D\u9A57\u8B49","\u672C\u4EA4\u6613\u82E5\u4EE5\u975E\u53F0\u7063\u4FE1\u7528\u5361\u652F\u4ED8\u9808\u901A\u904E\u7F8E\u570B\u904B\u901A3D\u9A57\u8B49":"\u672C\u4EA4\u6613\u82E5\u4EE5\u975E\u53F0\u7063\u4FE1\u7528\u5361\u652F\u4ED8\uFF0C\u9808\u901A\u904E\u7F8E\u570B\u904B\u901A3D\u9A57\u8B49","\u6BCFXX\u6263\u4E00\u6B21\u6210\u529F\u6263\u6B3E\u6B21\u5F8C\u7D50\u675F\u6BCF\u6B21\u6263\u6B3E\u91D1\u984DOO\u6C92\u6709\u6210\u529F\u6263\u6B3E\u90A3\u53E5":"\u6BCF \u003cspan class=\"red-tip\"\u003e{0}\u003c/span\u003e {1}\u6263 1 \u6B21\u3002\u6BCF\u6B21\u6263\u6B3E\u91D1\u984D:\u003cspan class=\"red-tip\"\u003e{2}\u003c/span\u003e\u5143(\u65B0\u53F0\u5E63/NTD)","\u9001\u51FA\u8CC7\u6599\u540C\u610F\u7DA0\u754C\u4FE1\u7528\u5361\u4EA4\u6613\u6CE8\u610F\u4E8B\u9805\u53CA\u500B\u4EBA\u8CC7\u6599\u904B\u7528\u8072\u660E":"\u7576\u60A8\u9001\u51FA\u8CC7\u6599\u6642\uFF0C\u5373\u8868\u793A\u60A8\u5DF2\u95B1\u8B80\u3001\u4E86\u89E3\u4E26\u540C\u610F\u7DA0\u754C\u79D1\u6280\u003ca style=\"cursor: pointer;\" v-on:click.prevent=\"alertCreditNotice\"\u003e\u4FE1\u7528\u5361\u4EA4\u6613\u6CE8\u610F\u4E8B\u9805\u003c/a\u003e\u53CA\u003ca style=\"cursor: pointer;\" v-on:click.prevent=\"alertPersonalInfo\"\u003e\u500B\u4EBA\u8CC7\u6599\u904B\u7528\u8072\u660E\u003c/a\u003e","\u4FE1\u7528\u5361\u4EA4\u6613\u6CE8\u610F\u4E8B\u9805":"\u003ch3 class=\"content-title\"\u003e\u4FE1\u7528\u5361\u4EA4\u6613\u6CE8\u610F\u4E8B\u9805\u003c/h3\u003e\r\n\u003cdiv class=\"qpp-content\"\u003e\r\n\u003cli\u003e\u672C\u6B21\u4EA4\u6613\u63A1\u7528\u7DA0\u754C\u79D1\u6280\u91D1\u6D41\u6A5F\u5236\u9032\u884C\u4ED8\u6B3E\uFF0C\u6545\u4FE1\u7528\u5361\u4EA4\u6613\u5E33\u55AE\u5C07\u986F\u793A\u70BA\u7DA0\u754C\u79D1\u6280\u80A1\u4EFD\u6709\u9650\u516C\u53F8\u3002\u003c/li\u003e\r\n\u003cli\u003e\u70BA\u78BA\u4FDD\u7DB2\u8DEF\u4EA4\u6613\u5B89\u5168\uFF0C\u60A8\u540C\u610F\u672C\u516C\u53F8\u5F97\u5C31\u6B64\u7B46\u4EA4\u6613\u5411\u767C\u5361\u9280\u884C\u3001\u6536\u55AE\u9280\u884C\u53CA\u6301\u5361\u4EBA\u6838\u5C0D\u662F\u5426\u5C6C\u5BE6\u3002\u003c/li\u003e\r\n\u003cli\u003e\u4FE1\u7528\u5361\u6210\u529F\u4EA4\u6613\u5F8C\u5426\u8A8D\uFF0C\u5982\u7D93\u5224\u5B9A\u70BA\u672C\u4EBA\u6216\u6388\u6B0A\u5237\u5361\u7684\u884C\u70BA\uFF0C\u76F8\u95DC\u640D\u5931\u53CA\u8CBB\u7528\u9808\u81EA\u884C\u8CA0\u64D4\u3002\u003c/li\u003e\r\n\u003c/div\u003e","\u53CA":"\u53CA","\u500B\u4EBA\u8CC7\u6599\u904B\u7528\u8072\u660E":"\u500B\u4EBA\u8CC7\u6599\u904B\u7528\u8072\u660E","\u5237\u5361\u65B9\u5F0F":"\u5237\u5361\u65B9\u5F0F","\u5B9A\u671F\u5B9A\u984D":"\u5B9A\u671F\u5B9A\u984D","\u98A8\u96AA\u63D0\u9192":"\u7DA0\u754C\u79D1\u6280\u4E0D\u627F\u4F5C\u6295\u8CC7\u3001\u8CED\u535A\u3001\u865B\u64EC\u8CA8\u5E63\u7B49\u4EA4\u6613\u4EE3\u7406\u6536\u4ED8\uFF0C\u52FF\u807D\u5F9E\u4ED6\u4EBA\u6307\u793A\u4ED8\u6B3E\uFF0C\u6709\u7591\u616E\u8ACB\u64A5\u6253 165 \u6216 110"}</script>
+    <script src="/Scripts/jquery.blockUI.js?v=sha256-9EYUuWFrhVwyP5N+MjEqlPtM0+18bN1OwIyxM4LeR0E=" integrity="sha256-9EYUuWFrhVwyP5N+MjEqlPtM0+18bN1OwIyxM4LeR0E=" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="/Scripts/AML/Idverify.js?v=sha256-m3aotGYdy5fcr8UraEnFiqdQ1rT+xfsaaCeTWmD0R6o=" integrity="sha256-m3aotGYdy5fcr8UraEnFiqdQ1rT+xfsaaCeTWmD0R6o=" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="/Scripts/Signalr/signalr.min.js?v=sha256-29c5Ha4snS2BFf0mW6lHkJX8JjHbmQVMEgIV8J4JI1o=" integrity="sha256-29c5Ha4snS2BFf0mW6lHkJX8JjHbmQVMEgIV8J4JI1o=" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="/Scripts/jquery.qrcode.js?v=sha256-a8Vb8c+XkBVKWTdZnXFsg9nyv26lj9q4lJLbrI7vPNo=" integrity="sha256-a8Vb8c+XkBVKWTdZnXFsg9nyv26lj9q4lJLbrI7vPNo=" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="/Scripts/qrcode.js?v=sha256-B4e0p4KOOXXpLmWmmnYCCcF3pUdY7klHjtuQQ2aKHNE=" integrity="sha256-B4e0p4KOOXXpLmWmmnYCCcF3pUdY7klHjtuQQ2aKHNE=" crossorigin="anonymous" type="text/javascript"></script>
+    <script type="text/javascript" nonce="ecpaya18cfbc7659d42d88315867b41c68ea6">
+        var connection = new signalR.HubConnectionBuilder()
+			.withUrl('https://signalr-stage.ecpay.com.tw' +'/ScanCodePayHub?MerchantTradeNo=' + 'JZ1774983886274' + '&MerchantID=' + '2000132',
+				{ accessTokenFactory: () => this.loginToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIyMDAwMTMyIiwic3ViIjoiSloxNzc0OTgzODg2Mjc0IiwianRpIjoiaE9XVmtGWk5kMGlqRXJ1NkhsZ05qQT09Iiwicm9sZXMiOiJTaWduYWxSIiwibmJmIjoxNzc0OTgzODg2LCJleHAiOjE3NzQ5ODQ3ODYsImlhdCI6MTc3NDk4Mzg4Nn0.kCmwfWdKGd2O6OCKC38K4-xkEFxOP9HH5o-UqiU0o4M" })
+			.withAutomaticReconnect()
+            .configureLogging(signalR.LogLevel.None) // 設置為 None，禁用所有日誌
+            .build();
+
+
+		connection.start().then(function () {}).catch(function (err) {});
+
+		connection.on("ReciveScanCodePay", function (message, RedirectToPageUrl, dataCrypt) {
+			connection.stop();
+            if (RedirectToPageUrl != undefined) {
+                $("#dataCrypt").val(dataCrypt);
+                $('#RedirectToPageUrl').val(RedirectToPageUrl);
+				$("#ScanCodePayForm").submit();
+            }
+        });
+		$(function () {
+            var backToShopifyLink = document.getElementById('back-to-shopify');
+
+            if (backToShopifyLink) {
+                backToShopifyLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    window.location.href = '';
+                });
+
+                backToShopifyLink.addEventListener('contextmenu', function(event) {
+                    alert('提醒您，請勿使用另開分頁/視窗方式返回商店。');
+                    event.preventDefault();
+                });
+            }
+
+        });
+    </script>
+    <script type="text/javascript" nonce="ecpaya18cfbc7659d42d88315867b41c68ea6">
+		if ('False' == "True" && 'True' == "True" && 'False' == "True") {
+			openAppOrStore_F();
+		}
+		document.getElementById('GotoAPP').addEventListener('click', function () {
+			openAppOrStore_F();
+		});
+
+
+		window.openAppOrStore_F = function () {
+
+			function detectDevice() {
+				const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+				if (/android/i.test(userAgent)) {
+					return 'Android';
+				}
+				if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+					return 'iOS';
+				}
+				return 'desktop';
+			}
+
+			function openAppOrStore(scheme_url, download_url, deviceType) {
+				if (deviceType) {
+					deviceType = deviceType.toLowerCase(); // 轉換為小寫
+				}
+                if (deviceType === "ios") {
+
+                    window.location.href = download_url;
+
+				} else if (deviceType === "android") {
+					setTimeout(function () {
+						window.location.href = scheme_url;
+						var t = setTimeout(function () {
+							window.open(download_url);
+
+						}, 1000);
+						window.onblur = function () {
+							clearTimeout(t);
+						}
+					}, 100);
+
+				}
+
+			}
+
+			var scheme_url = 'gwpay-stage://aiolink/?q=%2bQpzRJLMPO3yx3ycY847oA%3d%3d';
+
+			var deviceType = detectDevice()
+			switch (deviceType) {
+				case 'Android':
+					var url = 'https://play.google.com/store/apps/details?id=tw.com.ecpay.app.gwpay';
+					openAppOrStore(scheme_url, url, deviceType)
+					break;
+				case 'iOS':
+					var url = 'https://apps.apple.com/tw/app/%E7%B6%A0%E7%95%8Cpay/id6476751523';
+					openAppOrStore(scheme_url, url, deviceType)
+					break;
+				default:
+					var url = 'https://play.google.com/store/apps/details?id=tw.com.ecpay.app.gwpay';
+					openAppOrStore(scheme_url, url, deviceType)
+					break;
+
+			}
+		}
+
+    </script>
+
+
+
+
+    <script src="/Frontend/src/vue.runtime.min.js?v=sha256-3L3t4ay1KnybjD7tgeWNCBxTBte9YuU5Kys9LSnwxro=" integrity="sha256-3L3t4ay1KnybjD7tgeWNCBxTBte9YuU5Kys9LSnwxro=" crossorigin="anonymous"></script>
+<script src="/Frontend/src/plugin/simplert.es5.js?v=sha256-kkTvjlZmsZ5Mucqv3mn3o48vwBHMrQ7V+VIxEtF/9I8=" integrity="sha256-kkTvjlZmsZ5Mucqv3mn3o48vwBHMrQ7V+VIxEtF/9I8=" crossorigin="anonymous"></script>
+<script src="/Frontend/src/utils/utility.js?v=sha256-ANGnfhy1oq+bCY06HzUFGeAnWR/O3Z/X3/a3NFItX48=" integrity="sha256-ANGnfhy1oq+bCY06HzUFGeAnWR/O3Z/X3/a3NFItX48=" crossorigin="anonymous"></script>
+<script src="/Frontend/src/utils/Payment.js?v=sha256-Jo2M931M4VpJNYfgOLEsk5/UMNlNKln47mtgdvILUVg=" integrity="sha256-Jo2M931M4VpJNYfgOLEsk5/UMNlNKln47mtgdvILUVg=" crossorigin="anonymous"></script>
+
+    <script src="/Frontend/dist/vendors-shared.bundle.js?v=sha256-4tsOzcGPTWxsgBrOAL/JA/6QgrH0idy4Qns/PGTJiWw=" integrity="sha256-4tsOzcGPTWxsgBrOAL/JA/6QgrH0idy4Qns/PGTJiWw=" crossorigin="anonymous"></script>
+<script src="/Frontend/dist/common.bundle.js?v=sha256-L+WPfCQn/8HFaQa84VapaoZ6NeKyHKdiIvIepQfElwI=" integrity="sha256-L+WPfCQn/8HFaQa84VapaoZ6NeKyHKdiIvIepQfElwI=" crossorigin="anonymous"></script>
+
+    
+    
+<script src="/Frontend/dist/vendors-credit.bundle.js?v=sha256-QFNV3Iqvq+uB6MtLaB6aDQ5Y08twZAdyeZSFyOgf4w0=" integrity="sha256-QFNV3Iqvq+uB6MtLaB6aDQ5Y08twZAdyeZSFyOgf4w0=" crossorigin="anonymous"></script>
+<script src="/Frontend/dist/credit.bundle.js?v=sha256-OqB2wNGmx9z2eY6Ry4No+iWDsqPXOjkZtgg55/qGMSQ=" integrity="sha256-OqB2wNGmx9z2eY6Ry4No+iWDsqPXOjkZtgg55/qGMSQ=" crossorigin="anonymous"></script>
+                                                
+    <script nonce="ecpaya18cfbc7659d42d88315867b41c68ea6">window.jQuery || document.write('<script src="js/third_party/jquery.min.js"><\/script>')</script>
+    <script src="/Scripts/jquery.magnific-popup.min.js?v=sha256-sKRc1a7Wbie9juhh0OO3gsjnmEm94y+Q8Hi58kUaNvI=" integrity="sha256-sKRc1a7Wbie9juhh0OO3gsjnmEm94y+Q8Hi58kUaNvI=" crossorigin="anonymous"></script>
+
+    <script src="/Scripts/AioPayment/_actions.js?v=sha256-uIMpposoB6PpEPliC+8XkkZpinl5wlvpuzuKDM6baA4=" integrity="sha256-uIMpposoB6PpEPliC+8XkkZpinl5wlvpuzuKDM6baA4=" crossorigin="anonymous"></script>
+
+    <script src="/Scripts/vue/GwQRCode.js?v=sha256-evt+gWEKueGX7Uf7gjRlB6SXYevMRH0MzELvUGjRMIs=" integrity="sha256-evt+gWEKueGX7Uf7gjRlB6SXYevMRH0MzELvUGjRMIs=" crossorigin="anonymous" type="text/javascript"></script>
+
+
+</body>
+
+
+</html>

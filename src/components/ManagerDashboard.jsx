@@ -18,7 +18,8 @@ import {
     UserCheck,
     Briefcase,
     ShieldCheck,
-    Image as ImageIcon
+    Image as ImageIcon,
+    CreditCard
 } from 'lucide-react';
 import ManagerHome from './manager/ManagerHome';
 import TopNav from './TopNav';
@@ -41,6 +42,11 @@ import InjuryAlertManager from './manager/InjuryAlertManager';
 import HeroBannerEditor from './manager/HeroBannerEditor';
 import BannerManager from './manager/BannerManager';
 import CourseApplicationReview from './manager/CourseApplicationReview';
+import StudentCourseManager from './manager/StudentCourseManager';
+import PaymentRequestManager from './manager/PaymentRequestManager';
+import MembershipPlanManager from './manager/MembershipPlanManager';
+import PaymentHistoryManager from './manager/PaymentHistoryManager';
+import AccountPlanManager from './manager/AccountPlanManager';
 
 const ManagerDashboard = ({ user, onLogout }) => {
     const [activeTab, setActiveTab] = useState('home');
@@ -118,6 +124,11 @@ const ManagerDashboard = ({ user, onLogout }) => {
             title: '學生專區',
             items: [
                 { id: 'student_mgmt', label: '學員管理', icon: UserCheck },
+                { id: 'student_courses', label: '學員課程管理', icon: Calendar },
+                { id: 'payment_mgmt', label: '應收帳款管理', icon: CreditCard },
+                { id: 'payment_history', label: '金流對帳中心', icon: CreditCard },
+                { id: 'membership_plans', label: '會籍方案管理', icon: Zap },
+                { id: 'student_plans', label: '學員方案與點數', icon: UserCheck },
                 { id: 'activities', label: '學員活動管理', icon: Calendar },
                 { id: 'locations', label: '據點管理', icon: MapPin },
                 { id: 'hero_banner', label: '首頁形象管理', icon: ImageIcon },
@@ -170,6 +181,7 @@ const ManagerDashboard = ({ user, onLogout }) => {
             case 'coach_schedule_review': return <CoachScheduleReview />;
             case 'coach_mgmt': return <UserDetailsManager targetRole="coach" />;
             case 'manager_mgmt': return <UserDetailsManager targetRole="manager" />;
+            case 'student_courses': return <StudentCourseManager />;
             case 'activities': return <UnifiedActivityManager initialTab="student" />;
             case 'coach_activities': return <UnifiedActivityManager initialTab="coach" />;
             case 'locations': return <LocationManager />;
@@ -178,6 +190,10 @@ const ManagerDashboard = ({ user, onLogout }) => {
             case 'certs': return <CertificationManager onUpdate={() => fetchPendingCounts()} />;
             case 'xp_review': return <XpApplicationReview onUpdate={() => fetchPendingCounts()} />;
             case 'articles': return <ArticleManager />;
+            case 'payment_mgmt': return <PaymentRequestManager />;
+            case 'membership_plans': return <MembershipPlanManager />;
+            case 'student_plans': return <AccountPlanManager />;
+            case 'payment_history': return <PaymentHistoryManager onBack={() => setActiveTab('home')} />;
             case 'hero_banner': return <HeroBannerEditor />;
             case 'ad_banners': return <BannerManager />;
             case 'settings': return <SettingsManager />;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabase';
 import heroBg from '../assets/hero-bg.png';
 
-const Hero = () => {
+const Hero = ({ onNavigate }) => {
   const [bgUrl, setBgUrl] = useState(heroBg);
 
   useEffect(() => {
@@ -33,8 +33,8 @@ const Hero = () => {
             您的專屬訓練管家，在這裡掌握所有運動與成長資源
           </p>
           <div className="hero-btns">
-            <button className="btn-primary">開始訓練</button>
-            <button className="btn-secondary">健康百科</button>
+            <button className="btn-primary" onClick={() => onNavigate && onNavigate('tools')}>AI 工具</button>
+            <button className="btn-secondary" onClick={() => onNavigate && onNavigate('records')}>健康紀錄</button>
           </div>
         </div>
       </div>
@@ -53,6 +53,7 @@ const Hero = () => {
           background-position: center;
           border-radius: var(--radius-lg);
           overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .hero-content {
           z-index: 10;
@@ -63,34 +64,47 @@ const Hero = () => {
           color: white;
           margin-bottom: 12px;
           line-height: 1.1;
+          letter-spacing: -0.5px;
         }
         .hero-tagline {
           font-size: 14px;
-          color: rgba(255, 255, 255, 0.9);
+          color: rgba(255, 255, 255, 0.85);
           margin-bottom: 24px;
           line-height: 1.6;
+          font-weight: 500;
         }
         .hero-btns {
           display: flex;
           gap: 12px;
         }
         .btn-primary {
-          background-color: var(--primary);
+          background: linear-gradient(135deg, #FF5C00 0%, #E11D48 100%);
           color: white;
-          padding: 12px 24px;
-          border-radius: var(--radius-md);
-          font-weight: 600;
-          font-size: 14px;
+          padding: 14px 28px;
+          border-radius: 14px;
+          font-weight: 800;
+          font-size: 15px;
+          border: none;
+          box-shadow: 0 4px 15px rgba(255, 92, 0, 0.3);
+          transition: 0.3s;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
+        .btn-primary:active { transform: scale(0.95); }
+
         .btn-secondary {
-          background-color: transparent;
-          color: white;
-          border: 1px solid white;
-          padding: 12px 24px;
-          border-radius: var(--radius-md);
-          font-weight: 600;
-          font-size: 14px;
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+          color: #FF5C00;
+          border: 1.5px solid rgba(255, 92, 0, 0.4);
+          padding: 14px 28px;
+          border-radius: 14px;
+          font-weight: 800;
+          font-size: 15px;
+          transition: 0.3s;
+          letter-spacing: 0.5px;
         }
+        .btn-secondary:active { transform: scale(0.95); }
       `}</style>
     </section>
   );

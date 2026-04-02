@@ -484,31 +484,7 @@ const NutritionistDetail = ({ onBack }) => {
     setIsGenerating(true);
     setGeneratedPlan(null);
 
-    const apiKey = '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';
-
-    if (!apiKey) {
-      // Fallback for demo if key is missing, but with a warning in console
-      console.warn('VITE_OPENAI_API_KEY is not set. Using local simulation.');
-      setTimeout(() => {
-        const localMock = {
-          meals: [
-            { name: "第 1 餐 - 模擬規劃", items: [{ food: "雞胸肉", weight: "150g", note: "高蛋白" }], fatNote: "無" }
-          ],
-          explanation: "⚠️ 偵測到尚未設定 VITE_OPENAI_API_KEY，目前顯示的是本地模擬內容。請在 .env.local 中設定金鑰以連線真實 OpenAI。"
-        };
-        setGeneratedPlan({
-          ...localMock,
-          proteinPowder: hasWPI === 'yes' ? `${wpiServings} 份` : null,
-          targetCals: results.targetCalories,
-          ratios: '模擬規劃'
-        });
-        setIsGenerating(false);
-      }, 1000);
-      return;
-    }
-
-    try {
-      const prompt = `你是一位專業的運動營養師。請為 JENZiQ 學員生成一份一天的飲食計畫。
+    const prompt = `你是一位專業的運動營養師。請為 JENZiQ 學員生成一份一天的飲食計畫。
       學員資料：
       - 目標：${goal === 'lose' ? '減脂' : '增肌'}
       - 目標熱量：${results.targetCalories} kcal (嚴格要求：總熱量誤差絕對「不能超過」上下 50 kcal)
@@ -537,13 +513,10 @@ const NutritionistDetail = ({ onBack }) => {
         "explanation": "你的專業解釋文本"
       }`;
 
-      const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
-      const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
+    try {
+      const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [
@@ -556,7 +529,7 @@ const NutritionistDetail = ({ onBack }) => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(`OpenAI 錯誤 (${response.status}): ${errorData.error?.message || response.statusText}`);
+        throw new Error(`AI 代理服務錯誤 (${response.status}): ${errorData.error?.message || response.statusText}`);
       }
 
       const data = await response.json();
@@ -569,10 +542,9 @@ const NutritionistDetail = ({ onBack }) => {
         ratios: 'AI 真實規劃：40% 蛋白質 | 35% 碳水 | 25% 脂肪'
       });
     } catch (err) {
-      console.error('OpenAI Error:', err);
-      // 提供更詳細的錯誤資訊以便排查
+      console.error('Nutritionist Error:', err);
       const errorMsg = err.message || '未知錯誤';
-      alert(`AI 生成時發生錯誤：\n${errorMsg}\n\n請檢查：\n1. Vercel 控制台是否已設定 VITE_OPENAI_API_KEY\n2. OpenAI 帳戶餘額是否充足\n3. 網路連線是否穩定`);
+      alert(`AI 生成時發生錯誤：\n${errorMsg}\n\n請檢查：\n1. Vercel 控制台是否已設定 OPENAI_API_KEY\n2. OpenAI 帳戶餘額是否充足\n3. 網路連線是否穩定`);
     } finally {
       setIsGenerating(false);
     }
@@ -1420,16 +1392,10 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
     setIsAnalyzing(true);
     setResult(null);
 
-    const apiKey = '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';
-
     try {
-      const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
-      const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [
@@ -1467,6 +1433,8 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
         })
       });
 
+      if (!response.ok) throw new Error('API 辨識服務暫時無法連線');
+
       const data = await response.json();
       const analysis = JSON.parse(data.choices[0].message.content);
 
@@ -1483,8 +1451,8 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
       saveRecord(newRec);
       setResult(analysis);
     } catch (err) {
-      console.error(err);
-      alert('分析失敗');
+      console.error('PhotoCal Error:', err);
+      alert(`分析失敗：${err.message}\n\n請檢查 OpenAI API Key 是否正確設定。`);
       setPreviewUrl(null);
     } finally {
       setIsAnalyzing(false);
@@ -2055,97 +2023,28 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
     setIsAnalyzing(true);
     setResult(null);
 
-    const apiKey = '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';
+    const prompt = `你是一位專業的運動防護員。請評估以下受傷資訊：
+    - 部位：${target}
+    - 發生時段：${timing}
+    - 痛感程度：${intensity}/10
+    - 詳細描述：${details || '無'}
+    - 學員基本資料：身高 ${height || '--'}cm, 體重 ${weight || '--'}kg (BMI: ${bmi.toFixed(1)})
+
+    請回傳 JSON 格式如下：
+    {
+      "status": "高度確認 / 不確定 / 無法辨識",
+      "injuryName": "可能的傷害名稱",
+      "reasons": "受傷原因分析",
+      "prevention": "預防建議",
+      "treatment": "即時處置方法",
+      "detailAnalysis": "更深入的防護專長分析",
+      "disclaimer": "【免責聲明】本分析結果由 AI 生成，僅供參考。若疼痛持續或加劇，請務必尋求專業醫生診斷。"
+    }`;
 
     try {
-      // 深度獲取使用者資料 (優先使用 prop，失敗則試圖從 supabase session 抓取)
-      let userData = {
-        name: user?.profile?.name || user?.email || '匿名學員',
-        email: user?.email || '無電子郵件',
-        phone: user?.profile?.phone || '未提供'
-      };
-
-      // 如果 prop 是空的，試圖從資料庫重新抓取以防萬一
-      if (!user || (!user.profile?.name && !user.email)) {
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user) {
-            const { data: profile } = await supabase
-              .from('user_profiles')
-              .select('*')
-              .eq('email', session.user.email)
-              .single();
-
-            userData = {
-              name: profile?.name || session.user.email || '系統學員',
-              email: session.user.email,
-              phone: profile?.phone || '未提供'
-            };
-          }
-        } catch (authErr) {
-          console.error('Auth fallback failed:', authErr);
-        }
-      }
-
-      // 構建評估數據
-      const reportData = {
-        target,
-        timing,
-        intensity,
-        details,
-        timestamp: new Date().toISOString(),
-        user: userData
-      };
-
-      // 如果痛感很高，儲存警訊到 localStorage (模擬後台接收)
-      if (intensity >= 9) {
-        let existingAlerts = [];
-        try {
-          const stored = localStorage.getItem('injury_alerts');
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed)) existingAlerts = parsed;
-          }
-        } catch (err) {
-          console.error('Failed to parse existing alerts:', err);
-        }
-        localStorage.setItem('injury_alerts', JSON.stringify([reportData, ...existingAlerts]));
-      }
-
-      const prompt = `你是一位同時具備「專業醫師」與「資深健身教練」身份的運動防護權威。請根據學員提供的資料，從臨床醫學、人體解剖學及肌肉運動學（Kinesiology）的深度視角出發，進行精準的代償分析與傷害判別。
-      資料：
-      - 受傷/疼痛部位：${target}
-      - 疼痛時段：${timing}
-      - 痛感程度 (1-10)：${intensity}
-      - 補充細節：${details || '無'}
-
-      要求：
-      1. 找出最有可能的傷害名稱。
-      2. 評估分析狀態，必須從以下三個標籤中選擇一個作為「分析狀態」：
-         - 「高度確認」：現有線索非常明確指向該傷害。
-         - 「不確定」：症狀可能指向多種傷害，需要更多臨床檢查。
-         - 「無法辨識」：資料過於模糊或自相矛盾。
-      3. 詳細分析「可能原因」：運用解剖學原理解釋肌肉代償、張力失衡、或是動力鏈（Kinetic Chain）斷裂。此部分必須論述詳盡，至少 70 字。
-      4. 提供「預防建議」：基於運動學提出具體的訓練動作優化、關節穩定練習或錯誤模式修正。此部分必須論述詳盡，至少 70 字。
-      5. 提供「處置方法」：結合醫學臨床處置與實務恢復手段。此部分必須論述詳盡，至少 70 字。
-      6. 針對學員提供的「補充細節」進行「線索深度解析」，解釋這些徵兆在生理力學上的意義。
-      7. 最後加入法律免責提示。
-
-      嚴格回傳 JSON 格式：
-      {
-        "injuryName": "名稱",
-        "status": "高度確認" | "不確定" | "無法辨識",
-        "reasons": "深度原因分析內容（至少70字）",
-        "prevention": "專業預防建議內容（至少70字）",
-        "treatment": "後續處置建議內容（至少70字）",
-        "detailAnalysis": "針對補充細節的深入解釋",
-        "disclaimer": "醫學免責聲明"
-      }`;
-
-      const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
-      const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [
@@ -2157,13 +2056,13 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
       });
 
       const data = await response.json();
-      if (!response.ok || data.error) {
-        throw new Error(`OpenAI 錯誤: ${data.error?.message || response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`AI 代理服務錯誤 (${response.status}): ${data.error?.message || response.statusText}`);
       }
       setResult(JSON.parse(data.choices[0].message.content));
     } catch (err) {
-      console.error(err);
-      alert('分析失敗，請稍後再試');
+      console.error('Injury Error:', err);
+      alert(`分析失敗：${err.message}\n\n請確認 Vercel 環境變數已正確設定。`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -2871,16 +2770,10 @@ const ChatBotDetail = ({ onBack }) => {
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setIsTyping(true);
 
-    const apiKey = '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';
-
     try {
-      const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
-      const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [
@@ -2909,10 +2802,14 @@ const ChatBotDetail = ({ onBack }) => {
       });
 
       const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.details || data.error?.message || 'AI 客服目前忙碌中');
+      }
       const botReply = data.choices[0].message.content;
       setMessages(prev => [...prev, { role: 'bot', content: botReply }]);
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'bot', content: '抱歉，我現在大腦有點卡住，請稍後再試。' }]);
+      console.error('ChatBot Error:', err);
+      setMessages(prev => [...prev, { role: 'bot', content: `抱歉，我現在大腦有點卡住，請稍後再試。\n(偵測到錯誤：${err.message})` }]);
     } finally {
       setIsTyping(false);
     }

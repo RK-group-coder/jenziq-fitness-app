@@ -107,7 +107,7 @@ const Login = ({ onLoginSuccess }) => {
                             <Mail size={18} className="input-icon" />
                             <input
                                 type="email"
-                                placeholder="Email"
+                                placeholder="帳號"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
@@ -120,7 +120,7 @@ const Login = ({ onLoginSuccess }) => {
                             <Lock size={18} className="input-icon" />
                             <input
                                 type="password"
-                                placeholder="Password"
+                                placeholder="密碼"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
@@ -129,11 +129,11 @@ const Login = ({ onLoginSuccess }) => {
                     </div>
 
                     <button type="submit" className="login-btn" disabled={isLoading}>
-                        {isLoading ? <Loader2 className="spin" size={20} /> : 'Login'}
+                        {isLoading ? <Loader2 className="spin" size={20} /> : '登入'}
                     </button>
 
-                    <p className="switch-text">
-                        Don't have an account? <span className="highlight-text">Sign Up here</span>
+                    <p className="login-hint">
+                        需由管理員提供帳號密碼才能登入
                     </p>
                 </form>
             </div>
@@ -325,18 +325,17 @@ const Login = ({ onLoginSuccess }) => {
                     width: 24px;
                     height: 24px;
                 }
-
-                .switch-text {
+                
+                .login-hint {
                     text-align: center;
-                    color: rgba(255,255,255,0.6);
-                    font-size: 14px;
-                    margin-top: 24px;
-                }
-                .highlight-text {
                     color: #FACC15;
-                    font-weight: 700;
-                    cursor: pointer;
+                    font-size: 13px;
+                    margin-top: 24px;
+                    opacity: 0.9;
+                    font-weight: 500;
                 }
+
+
 
                 .spin { animation: spin 1s linear infinite; }
                 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

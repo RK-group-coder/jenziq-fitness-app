@@ -6,8 +6,7 @@ import {
   Heart, 
   Send, 
   Info, 
-  MoreVertical,
-  Camera,
+    Camera,
   Mic,
   Smile,
   X,
@@ -18,16 +17,15 @@ import {
 } from 'lucide-react';
 import { supabase } from '../supabase';
 
-const RobotHeadAvatar = ({ size = 40 }) => (
-    <div className="robot-head-avatar-ui" style={{ width: size, height: size * 0.9 }}>
-        <div className="visor-avatar-ui">
-            <div className="eyes-avatar-ui">
-                <div className="eye-avatar-ui"></div>
-                <div className="eye-avatar-ui"></div>
-            </div>
-        </div>
-        <div className="ear-glow-l-ui"></div>
-        <div className="ear-glow-r-ui"></div>
+const JZLogoAvatar = ({ size = 40 }) => (
+    <div className="jz-logo-avatar" style={{ 
+        width: size, height: size, 
+        background: 'linear-gradient(135deg, #FF5C00, #E11D48)',
+        borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        color: 'white', fontWeight: '900', fontSize: size * 0.4,
+        boxShadow: '0 0 15px rgba(255, 92, 0, 0.3)'
+    }}>
+        JZ
     </div>
 );
 
@@ -145,7 +143,7 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                             ...p, 
                             lastMessage: lastMsg, 
                             unreadCount: unreadCount || 0,
-                            displayName: p.email.toLowerCase() === SUPPORT_EMAIL.toLowerCase() ? '支援中心' : (p.name || p.email)
+                            displayName: p.email.toLowerCase() === SUPPORT_EMAIL.toLowerCase() ? 'JENZiQ AI' : (p.name || p.email)
                         };
                     }));
 
@@ -324,16 +322,10 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
     // 4.5 AI 處理邏輯
     const handleAiTrigger = async (userMsg, myEmail, friendEmail) => {
         setIsTyping(true);
-        const apiKey = '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';
-
         try {
-            const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
-            const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     model: 'gpt-4o-mini',
                     messages: [
@@ -369,25 +361,16 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
     // 4.6 支援中心 AI 自動回覆
     const handleSupportAiTrigger = async (userMsg, myEmail, friendEmail) => {
         setIsTyping(true);
-        const apiKey = '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';
-
         try {
-            const apiBaseUrl = import.meta.env.DEV ? '/api-openai' : 'https://api.openai.com';
-            const response = await fetch(`${apiBaseUrl}/v1/chat/completions`, {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     model: 'gpt-4o-mini',
                     messages: [
                         { 
                             role: 'system', 
-                            content: `你現在是 JENZiQ FITNESS 的「支援中心」AI 助手。
-                            1. 負責回答用戶關於 APP 功能或健身的基本問題。
-                            2. 語氣要親切、專業、有耐心。
-                            3. 如果問題涉及到帳務、系統錯誤或是需要真人介入的私事，請回答：「我已收到您的問題，這部分需要真人管理員協助處理，請您耐心候傳，我們會盡速與您聯繫回覆。」`
+                            content: `你現在是 JENZiQ FITNESS 的「支援中心」AI 助手。\n1. 負責回答用戶關於 APP 功能或健身的基本問題。\n2. 語氣要親切、專業、有耐心。\n3. 在回覆的最後，請務必加上一段溫馨提示：「💡 我已收到您的訊息，若上述回答未能完全解決您的問題，請在此稍候，我們的『真人專業服務組』已收到通知並會盡速與您聯繫協助。」`
                         },
                         { role: 'user', content: userMsg }
                     ]
@@ -496,10 +479,9 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
     const renderFriendList = () => (
         <div className="friend-list-view">
             <header className="ig-header">
-                <button className="back-btn" onClick={onBack}><ChevronLeft size={28} /></button>
+                <button className="back-btn" onClick={onBack}><ChevronLeft size={28} color="white" strokeWidth={3} /></button>
                 <h2 className="title">{user?.profile?.name || '我的訊息'}</h2>
                 <div className="header-actions">
-                    <MoreVertical size={24} />
                 </div>
             </header>
 
@@ -526,7 +508,7 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                             <div className="avatar-box">
                                 {friend.email === SUPPORT_EMAIL ? (
                                     <div className="support-robot-avatar">
-                                        <RobotHeadAvatar size={44} />
+                                        <JZLogoAvatar size={44} />
                                     </div>
                                 ) : friend.avatar_url ? (
                                     <img src={friend.avatar_url} alt={friend.name} className="avatar-img" />
@@ -571,11 +553,11 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
     const renderChatRoom = () => (
         <div className="chatroom-view">
             <header className="chat-header">
-                <button className="back-btn" onClick={() => setSelectedFriend(null)}><ChevronLeft size={28} /></button>
+                <button className="back-btn" onClick={() => setSelectedFriend(null)}><ChevronLeft size={28} color="white" strokeWidth={3} /></button>
                 <div className="header-friend-info">
                     <div className={`mini-avatar ${selectedFriend.email === SUPPORT_EMAIL ? 'support-glow' : ''}`}>
                         {selectedFriend.email === SUPPORT_EMAIL ? (
-                            <RobotHeadAvatar size={34} />
+                            <JZLogoAvatar size={34} />
                         ) : selectedFriend.avatar_url ? (
                             <img src={selectedFriend.avatar_url} alt={selectedFriend.name} />
                         ) : (
@@ -584,7 +566,7 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                     </div>
                     <div className="header-text">
                         <span className="friend-name">
-                            {selectedFriend.email === SUPPORT_EMAIL ? '支援中心' : selectedFriend.name}
+                            {selectedFriend.email === SUPPORT_EMAIL ? 'JENZiQ AI' : selectedFriend.name}
                         </span>
                         <span className="active-status">剛剛在線上</span>
                     </div>
@@ -597,14 +579,14 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                 <div className="chat-intro">
                     <div className={`large-avatar ${selectedFriend.email === SUPPORT_EMAIL ? 'support-glow-large' : ''}`}>
                         {selectedFriend.email === SUPPORT_EMAIL ? (
-                            <RobotHeadAvatar size={80} />
+                            <JZLogoAvatar size={80} />
                         ) : selectedFriend.avatar_url ? (
                             <img src={selectedFriend.avatar_url} alt={selectedFriend.name} />
                         ) : (
                             <span>{selectedFriend.name.charAt(0)}</span>
                         )}
                     </div>
-                    <h3>{selectedFriend.email === SUPPORT_EMAIL ? '支援中心' : selectedFriend.email === user.email.toLowerCase() ? '我' : selectedFriend.name}</h3>
+                    <h3>{selectedFriend.email === SUPPORT_EMAIL ? 'JENZiQ AI' : selectedFriend.email === user.email.toLowerCase() ? '我' : selectedFriend.name}</h3>
                     <p>{selectedFriend.role === 'coach' ? 'JENZiQ 教練' : 'JENZiQ 學員'} ‧ {selectedFriend.branch || '未分店'}</p>
                     <button className="view-profile-btn">查看個人檔案</button>
                 </div>
@@ -614,12 +596,16 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                         key={idx} 
                         className={`message-bubble ${msg.is_ai ? 'ai-bubble' : (msg.sender_email === effectiveEmail ? 'own' : 'other')} ${msg.message_type}`}
                     >
-                        {msg.is_ai && (
+                        {msg.is_ai ? (
                             <div className="ai-badge-chat">
-                                <Brain size={12} color="white" />
                                 <span>JENZiQ AI</span>
                             </div>
-                        )}
+                        ) : (msg.sender_email === SUPPORT_EMAIL && msg.sender_email !== effectiveEmail) ? (
+                            <div className="admin-badge-chat">
+                                <Info size={12} color="white" />
+                                <span>🛡️ 專業服務組 (真人)</span>
+                            </div>
+                        ) : null}
                         <div className="bubble-content">
                             {msg.message_type === 'image' ? (
                                 <img src={msg.image_url} alt="Shared" className="msg-image" />
@@ -634,10 +620,12 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                 {isTyping && (
                     <div className="message-bubble ai-bubble typing-robot">
                         <div className="bubble-content">
-                            <div className="robot-animation">
-                                <BotIcon className="robot-icon-move" size={20} />
+                            <div className="typing-dots">
+                                <span className="dot"></span>
+                                <span className="dot"></span>
+                                <span className="dot"></span>
+                                <span className="typing-text">JENZiQ AI 正在處理中...</span>
                             </div>
-                            <span>支援中心 正在處理中...</span>
                         </div>
                     </div>
                 )}
@@ -935,24 +923,27 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                     max-width: 85%;
                     display: flex;
                     flex-direction: column;
-                    gap: 4px;
+                    gap: 6px;
+                    margin-bottom: 24px;
                 }
                 .message-bubble.ai-bubble .bubble-content {
-                    background: #064E3B;
+                    background: linear-gradient(135deg, #064E3B 0%, #065F46 100%);
                     color: #D1FAE5;
-                    border: 1px solid #10B981;
+                    border: 1px solid rgba(16, 185, 129, 0.4);
                     border-bottom-left-radius: 4px;
+                    box-shadow: 0 4px 15px rgba(6, 78, 59, 0.3);
                 }
-                .ai-badge-chat {
+                .ai-badge-chat, .admin-badge-chat {
                     display: flex;
                     align-items: center;
                     gap: 4px;
-                    font-size: 10px;
+                    font-size: 11px;
                     font-weight: 800;
-                    color: #10B981;
                     margin-left: 4px;
                     text-transform: uppercase;
                 }
+                .ai-badge-chat span { color: #10B981; }
+                .admin-badge-chat span { color: #FACC15; }
                 
                 .message-bubble.image { max-width: 240px; }
                 .message-bubble.image .bubble-content { padding: 4px; border-radius: 12px; overflow: hidden; }

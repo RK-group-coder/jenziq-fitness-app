@@ -244,7 +244,7 @@ const ManagerDashboard = ({ user, onLogout }) => {
                 <div className="drawer-header">
                     <div className="manager-brand">
                         <div className="brand-dot"></div>
-                        <span>FitAdmin</span>
+                        <span>JZ Admin</span>
                     </div>
                     <button className="close-btn" onClick={() => setIsMenuOpen(false)}>
                         <X size={24} />

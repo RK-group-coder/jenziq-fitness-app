@@ -15,6 +15,31 @@ const NutritionRecordSheet = React.forwardRef(({ data, profile, results }, ref) 
 
   const currentActivity = activityLevels.find(l => l.value === (results.activity || results.activity_level))?.label || '中度活動';
 
+  const isSteady = data.paceLabel === '輕鬆步調' || data.ratios?.includes('30% 蛋白質');
+  
+  // Define ratios based on plan
+  const ratios = isSteady ? { carbs: 0.40, protein: 0.30, fat: 0.30 } : { carbs: 0.35, protein: 0.40, fat: 0.25 };
+
+  const calculatePortion = (food, weightStr) => {
+    const weight = parseInt(weightStr?.replace(/[^0-9]/g, '')) || 0;
+    if (weight === 0) return '-';
+
+    const f = food.toLowerCase();
+    // 蛋白質: 25g = 1掌
+    if (f.includes('雞') || f.includes('魚') || f.includes('肉') || f.includes('蛋') || f.includes('豆腐') || f.includes('蝦') || f.includes('海鮮') || f.includes('牛') || f.includes('豬')) {
+      const palm = (weight / 25).toFixed(1);
+      return `約 ${palm} 個手掌大`;
+    }
+    // 蔬菜: 90g = 1拳
+    if (f.includes('菜') || f.includes('花') || f.includes('菇') || f.includes('筍') || f.includes('瓜') || f.includes('椒') || f.includes('茄')) {
+      const fist = (weight / 90).toFixed(1);
+      return `約 ${fist} 個拳頭大`;
+    }
+    // 碳水 / 其他: 30g = 1拳
+    const fist = (weight / 30).toFixed(1);
+    return `約 ${fist} 個拳頭大`;
+  };
+
   return (
     <div 
       ref={ref}
@@ -79,22 +104,22 @@ const NutritionRecordSheet = React.forwardRef(({ data, profile, results }, ref) 
           <tbody>
             <tr>
               <td style={tableCellStyle}><div style={{display:'flex', alignItems:'center', justifyContent:'center'}}><span style={{width:'8px', height:'8px', borderRadius:'50%', backgroundColor: '#EAB308', marginRight: '10px'}}></span>碳水化合物</div></td>
-              <td style={{...tableCellStyle, backgroundColor: '#FEFCE8'}}>35%</td>
-              <td style={tableCellStyle}>{Math.round(results.targetCalories * 0.35)}</td>
+              <td style={{...tableCellStyle, backgroundColor: '#FEFCE8'}}>{ratios.carbs * 100}%</td>
+              <td style={tableCellStyle}>{Math.round(results.targetCalories * ratios.carbs)}</td>
               <td style={{...tableCellStyle, color: '#2563EB', fontWeight: 'bold'}}>{results.carbs}g</td>
               <td style={tableCellStyle}>4 kcal / g</td>
             </tr>
             <tr>
               <td style={tableCellStyle}><div style={{display:'flex', alignItems:'center', justifyContent:'center'}}><span style={{width:'8px', height:'8px', borderRadius:'50%', backgroundColor: '#EF4444', marginRight: '10px'}}></span>蛋白質</div></td>
-              <td style={{...tableCellStyle, backgroundColor: '#FEF2F2'}}>40%</td>
-              <td style={tableCellStyle}>{Math.round(results.targetCalories * 0.4)}</td>
+              <td style={{...tableCellStyle, backgroundColor: '#FEF2F2'}}>{ratios.protein * 100}%</td>
+              <td style={tableCellStyle}>{Math.round(results.targetCalories * ratios.protein)}</td>
               <td style={{...tableCellStyle, color: '#2563EB', fontWeight: 'bold'}}>{results.protein}g</td>
               <td style={tableCellStyle}>4 kcal / g</td>
             </tr>
             <tr>
               <td style={tableCellStyle}><div style={{display:'flex', alignItems:'center', justifyContent:'center'}}><span style={{width:'8px', height:'8px', borderRadius:'50%', backgroundColor: '#10B981', marginRight: '10px'}}></span>脂肪</div></td>
-              <td style={{...tableCellStyle, backgroundColor: '#F0FDF4'}}>25%</td>
-              <td style={tableCellStyle}>{Math.round(results.targetCalories * 0.25)}</td>
+              <td style={{...tableCellStyle, backgroundColor: '#F0FDF4'}}>{ratios.fat * 100}%</td>
+              <td style={tableCellStyle}>{Math.round(results.targetCalories * ratios.fat)}</td>
               <td style={{...tableCellStyle, color: '#2563EB', fontWeight: 'bold'}}>{results.fat}g</td>
               <td style={tableCellStyle}>9 kcal / g</td>
             </tr>
@@ -130,7 +155,7 @@ const NutritionRecordSheet = React.forwardRef(({ data, profile, results }, ref) 
                   <tr key={i}>
                     <td style={{...mealCellStyle, fontWeight: 'bold', textAlign: 'left', paddingLeft: '20px'}}>{item.food}</td>
                     <td style={{...mealCellStyle, color: '#FF5C00', fontWeight: 'bold'}}>{item.weight}</td>
-                    <td style={mealCellStyle}>{item.portion || '-'}</td>
+                    <td style={mealCellStyle}>{calculatePortion(item.food, item.weight)}</td>
                     <td style={{...mealCellStyle, fontSize: '12px', color: '#666'}}>{item.note || '-'}</td>
                   </tr>
                 ))}

@@ -383,7 +383,7 @@ const ManagerHome = ({ onNavigate, pendingCounts = {} }) => {
         <div className={`manager-home ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="manager-header">
                 <div className="header-text">
-                    <p className="sub-title">FITADMIN 健身管理後台</p>
+                    <p className="sub-title">JZ ADMIN 健身管理後台</p>
                     <h2 className="page-title">總覽儀表板</h2>
                 </div>
                 <div className="header-actions">

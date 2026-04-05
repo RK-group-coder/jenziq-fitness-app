@@ -4,7 +4,7 @@ import manualImg from '../assets/manual.png';
 import { Loader2, ChevronRight } from 'lucide-react';
 import EventModal from './EventModal';
 
-const Events = ({ user }) => {
+const Events = ({ user, onSeeAll }) => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -63,9 +63,9 @@ const Events = ({ user }) => {
     <section className="events-section">
       <div className="section-header">
         <h3 className="section-title">最新活動</h3>
-        <a href="#all" className="view-all">
+        <button onClick={onSeeAll} className="view-all" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
           查看全部 <ChevronRight size={14} />
-        </a>
+        </button>
       </div>
 
       <div className="events-scroll">

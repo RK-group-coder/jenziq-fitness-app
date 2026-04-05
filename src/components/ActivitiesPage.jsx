@@ -539,8 +539,8 @@ const ActivitiesPage = ({ user }) => {
                                 </div>
                             </div>
                         ) : (
-                            <button className="buy-membership-btn" onClick={() => setShowMembership(true)}>
-                                購買會籍 <ChevronRight size={12}/>
+                            <button className="buy-membership-btn buy-plan-glow" onClick={() => setShowMembership(true)}>
+                                購買方案 <ChevronRight size={12}/>
                             </button>
                         )}
                         <span className="studio-label">當前顯示據點</span>
@@ -839,7 +839,16 @@ const ActivitiesPage = ({ user }) => {
                 .membership-mini-details .dot { opacity: 0.3; }
                 .membership-mini-details .end-date { color: #FF7A00; }
 
-                .buy-membership-btn { background: linear-gradient(135deg, #FF6B00 0%, #FF9E00 100%); color: white; border: none; padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 950; display: flex; align-items: center; gap: 4px; margin-bottom: 6px; width: fit-content; box-shadow: 0 4px 10px rgba(255,107,0,0.25); cursor: pointer; transition: 0.3s; }
+                .buy-membership-btn { background: linear-gradient(135deg, #FF6B00 0%, #FF9E00 100%); color: white; border: none; padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 950; display: flex; align-items: center; gap: 4px; margin-bottom: 6px; width: fit-content; cursor: pointer; transition: 0.3s; }
+                .buy-plan-glow {
+                    box-shadow: 0 0 15px rgba(255, 107, 0, 0.5);
+                    animation: orange-breathing 2s infinite ease-in-out;
+                }
+                @keyframes orange-breathing {
+                    0% { box-shadow: 0 0 5px rgba(255, 107, 0, 0.3); opacity: 0.95; }
+                    50% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.7); opacity: 1; transform: scale(1.03); }
+                    100% { box-shadow: 0 0 5px rgba(255, 107, 0, 0.3); opacity: 0.95; }
+                }
                 .buy-membership-btn:active { transform: scale(0.95); }
                 .premium-badge-v2 { background: #1e293b; color: white; padding: 6px 12px; border-radius: 12px; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 900; }
 

@@ -185,7 +185,7 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
             </div>
           </div>
         )}
-        
+
         <SupportBot onOpenChat={() => setActiveTool('chat')} />
       </div>
 
@@ -403,9 +403,32 @@ const NutritionistDetail = ({ onBack }) => {
   const [specialNeed, setSpecialNeed] = useState('');
   const [generatedPlan, setGeneratedPlan] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [planPace, setPlanPace] = useState('fast'); // 'fast' or 'steady'
   const recordSheetRef = useRef(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+
+  // Refs for auto-scroll
+  const tdeeSectionRef = useRef(null);
+  const mealPlanSectionRef = useRef(null);
+
+  // Auto-scroll when TDEE calculated
+  useEffect(() => {
+    if (results && tdeeSectionRef.current) {
+      setTimeout(() => {
+        tdeeSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
+  }, [results]);
+
+  // Auto-scroll when Meal Plan generated
+  useEffect(() => {
+    if (generatedPlan && mealPlanSectionRef.current) {
+      setTimeout(() => {
+        mealPlanSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 500);
+    }
+  }, [generatedPlan]);
 
   const handleSaveRecord = async () => {
     if (!recordSheetRef.current) return;
@@ -425,25 +448,11 @@ const NutritionistDetail = ({ onBack }) => {
       const fileName = `JENZiQ_營養紀錄表_${new Date().getTime()}.png`;
       const dataUrl = canvas.toDataURL('image/png', 0.8); // Slight compression
 
-      // Check if it's mobile based on screen width or user agent
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-
-      if (isMobile) {
-        // On mobile, showing a preview is way more reliable than forcing a download/share
-        setPreviewImage(dataUrl);
-        setIsGeneratingImage(false);
-        return;
-      }
-
-      // Default Download logic for Desktop
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      alert('✅ 已生成紀錄表！檔案已開始下載至您的電腦。');
+      // Unified Logic: On both desktop and mobile, we show a preview overlay first.
+      // This is more professional and prevents unintended downloads.
+      setPreviewImage(dataUrl);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      setIsGeneratingImage(false);
     } catch (err) {
       console.error('Save error:', err);
       alert('生成失敗，記憶體不足或系統繁忙，請縮短菜單內容後再試。');
@@ -466,9 +475,17 @@ const NutritionistDetail = ({ onBack }) => {
     if (goal === 'lose') targetCalories -= 500;
     else if (goal === 'gain') targetCalories += 300;
 
-    const pKcal = targetCalories * 0.4;
-    const cKcal = targetCalories * 0.35;
-    const fKcal = targetCalories * 0.25;
+    // Dynamic ratio logic based on Plan Pace
+    let pRatio = 0.40, cRatio = 0.35, fRatio = 0.25; // Default 'fast'
+    if (planPace === 'steady') {
+      pRatio = 0.30;
+      cRatio = 0.40;
+      fRatio = 0.30;
+    }
+
+    const pKcal = targetCalories * pRatio;
+    const cKcal = targetCalories * cRatio;
+    const fKcal = targetCalories * fRatio;
 
     setResults({
       bmr: Math.round(bmr),
@@ -476,7 +493,9 @@ const NutritionistDetail = ({ onBack }) => {
       targetCalories: Math.round(targetCalories),
       protein: Math.round(pKcal / 4),
       carbs: Math.round(cKcal / 4),
-      fat: Math.round(fKcal / 9)
+      fat: Math.round(fKcal / 9),
+      paceLabel: planPace === 'fast' ? '快速見效' : '輕鬆步調',
+      ratios: planPace === 'fast' ? '40% 蛋白質 | 35% 碳水 | 25% 脂肪' : '30% 蛋白質 | 40% 碳水 | 30% 脂肪'
     });
   };
 
@@ -486,9 +505,11 @@ const NutritionistDetail = ({ onBack }) => {
 
     const prompt = `你是一位專業的運動營養師。請為 JENZiQ 學員生成一份一天的飲食計畫。
       學員資料：
-      - 目標：${goal === 'lose' ? '減脂' : '增肌'}
-      - 目標熱量：${results.targetCalories} kcal (嚴格要求：總熱量誤差絕對「不能超過」上下 50 kcal)
-      - 比例：40% 蛋白質, 35% 碳水, 25% 脂肪 (P: ${results.protein}g, C: ${results.carbs}g, F: ${results.fat}g)
+      - 目標：${goal === 'lose' ? '減脂' : goal === 'gain' ? '增肌' : '維持'}
+      - 計畫步調：${planPace === 'fast' ? '快速見效' : '輕鬆步調'}
+      - 目標熱量：${results.targetCalories} kcal (嚴格要求：總熱量誤差絕對「不能超過」上下 30 kcal)
+      - 營養比例：${results.ratios}
+      - 具體指標：蛋白質 ${results.protein}g, 碳水 ${results.carbs}g, 脂肪 ${results.fat}g
       - 餐數：${mealCount} 餐
       - 乳清蛋白：${hasWPI === 'yes' ? wpiServings + ' 份' : '無'}
       - 忌口：${restriction || '無'}
@@ -539,7 +560,8 @@ const NutritionistDetail = ({ onBack }) => {
         ...plan,
         proteinPowder: hasWPI === 'yes' ? `${wpiServings} 份 (約 ${wpiServings * 22}g 蛋白質)` : null,
         targetCals: results.targetCalories,
-        ratios: 'AI 真實規劃：40% 蛋白質 | 35% 碳水 | 25% 脂肪'
+        paceLabel: results.paceLabel,
+        ratios: `AI 規劃目標：${results.ratios}`
       });
     } catch (err) {
       console.error('Nutritionist Error:', err);
@@ -625,6 +647,33 @@ const NutritionistDetail = ({ onBack }) => {
                 </div>
 
                 <div className="form-group-v2">
+                  <div className="pace-hint-box" style={{
+                    marginBottom: '14px', padding: '12px 16px',
+                    background: 'rgba(255, 107, 0, 0.08)', borderRadius: '16px',
+                    borderLeft: '4px solid #FF6B00', boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+                  }}>
+                    <p style={{ fontSize: '12px', color: '#EEE', margin: 0, lineHeight: '1.6', fontWeight: '500' }}>
+                      💡 <span style={{ color: '#FFB885' }}>請依自身需求選擇，不一定要急於求成；運動習慣的養成，貴在堅持。</span>
+                    </p>
+                  </div>
+                  <label><Activity size={14} /> 執行計畫步調</label>
+                  <div className={`modern-tabs ${results ? 'locked-toggles' : ''}`}>
+                    <div
+                      className={`modern-tab ${planPace === 'fast' ? 'active' : ''}`}
+                      onClick={() => !results && setPlanPace('fast')}
+                    >
+                      快速見效
+                    </div>
+                    <div
+                      className={`modern-tab ${planPace === 'steady' ? 'active' : ''}`}
+                      onClick={() => !results && setPlanPace('steady')}
+                    >
+                      輕鬆步調
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-group-v2">
                   <label><Zap size={14} /> 每日活動量</label>
                   <div className={`modern-select-box ${results ? 'locked-input' : ''}`}>
                     <select className="modern-select" value={activity} onChange={(e) => setActivity(Number(e.target.value))} disabled={!!results}>
@@ -642,7 +691,7 @@ const NutritionistDetail = ({ onBack }) => {
             </div>
 
             {results && (
-              <div className="results-container">
+              <div ref={tdeeSectionRef} className="results-container">
                 <div className="result-card main">
                   <div className="res-item"><span>基礎代謝率 (BMR)</span><span>{results.bmr} <small>kcal</small></span></div>
                   <div className="res-divider"></div>
@@ -732,154 +781,165 @@ const NutritionistDetail = ({ onBack }) => {
             </div>
             {isGenerating && (
               <div className="generated-plan-container">
-                <div className="robot-loader-card">
-                  <div className="robot-wrap">
-                    <div className="robot-head">
-                      <div className="eye left"></div>
-                      <div className="eye right"></div>
+                <div className="meal-orbit-loader">
+                  {/* Ambient glow */}
+                  <div className="meal-orbit-glow"></div>
+
+                  {/* Orbital system */}
+                  <div className="meal-orbit-system">
+                    {/* Outer orbit ring */}
+                    <div className="meal-orbit-ring ring-outer">
+                      <div className="meal-orbit-dot dot-protein"><span>P</span></div>
                     </div>
-                    <div className="robot-body">
-                      <div className="cpu-core"><Cpu size={24} color="#FF6B00" /></div>
+                    {/* Mid orbit ring */}
+                    <div className="meal-orbit-ring ring-mid">
+                      <div className="meal-orbit-dot dot-carbs"><span>C</span></div>
+                    </div>
+                    {/* Inner orbit ring */}
+                    <div className="meal-orbit-ring ring-inner">
+                      <div className="meal-orbit-dot dot-fat"><span>F</span></div>
+                    </div>
+                    {/* Core */}
+                    <div className="meal-orbit-core">
+                      <Sparkles size={22} color="#FF6B00" className="orbit-core-icon" />
                     </div>
                   </div>
-                  <div className="loader-title">AI 營養大腦正在高速運轉</div>
-                  <p className="loader-subtitle">正在根據您的身體參數、健身目標與特殊需求，計算最佳食材配比...</p>
-                  <div className="logic-dots">
-                    <span></span><span></span><span></span>
+
+                  {/* Text */}
+                  <div className="meal-orbit-title">AI 菜單規劃中</div>
+                  <div className="meal-orbit-messages">
+                    <span className="orbit-msg m1">📊 分析您的身體參數...</span>
+                    <span className="orbit-msg m2">🥗 匹配最佳食材組合...</span>
+                    <span className="orbit-msg m3">⚖️ 精算巨量營養素比例...</span>
+                    <span className="orbit-msg m4">✨ 生成專屬每日菜單...</span>
                   </div>
-                  <div className="loading-progress-bar">
-                    <div className="progress-fill"></div>
+
+                  {/* Wave progress */}
+                  <div className="meal-orbit-wave-bar">
+                    <div className="wave-fill-bar"></div>
+                    <div className="wave-shimmer"></div>
                   </div>
-                  <div className="loader-status">正在計算最佳營養配比...</div>
+                  <div className="meal-orbit-hint">正在為您量身打造最佳飲食計畫</div>
                 </div>
               </div>
             )}
+
             {!isGenerating && generatedPlan && (
-              <div className="generated-plan-container">
-                <h4 className="card-label">📝 AI 推薦食譜</h4>
-                <div className="plan-summary-card">
-                  <div className="summary-row">
-                    <span>目標熱量：{generatedPlan.targetCals} kcal</span>
-                    <span>AI 規劃總計：<span className="actual-val">{generatedPlan.actualTotal?.calories || generatedPlan.targetCals} kcal</span></span>
-                  </div>
-                  {generatedPlan.actualTotal && (
-                    <div className="actual-macros-row">
-                      <span>P: {generatedPlan.actualTotal.protein}g</span>
-                      <span>C: {generatedPlan.actualTotal.carbs}g</span>
-                      <span>F: {generatedPlan.actualTotal.fat}g</span>
+              <div ref={mealPlanSectionRef} className="generated-plan-container">
+                {/* Mode 1: Regular Meal Plan View (Hidden when previewing) */}
+                {!previewImage && (
+                  <div className="meal-plan-base-content">
+                    <h4 className="card-label">📝 AI 推薦食譜</h4>
+                    <div className="plan-summary-card" style={{ position: 'relative' }}>
+                      <div className="summary-row">
+                        <span>目標熱量：{generatedPlan?.targetCals || 0} kcal</span>
+                        <span>AI 規劃總計：<span className="actual-val">{generatedPlan?.actualTotal?.calories || generatedPlan?.targetCals || 0} kcal</span></span>
+                      </div>
+                      {generatedPlan?.actualTotal && (
+                        <div className="actual-macros-row">
+                          <span>P: {generatedPlan?.actualTotal?.protein || 0}g</span>
+                          <span>C: {generatedPlan?.actualTotal?.carbs || 0}g</span>
+                          <span>F: {generatedPlan?.actualTotal?.fat || 0}g</span>
+                        </div>
+                      )}
+
+                      {/* Guide Tag */}
+                      <div className="card-guide-tag" onClick={() => {
+                        const zone = document.querySelector('.export-btn-zone');
+                        if (zone) zone.scrollIntoView({ behavior: 'smooth' });
+                      }}>
+                        <ChevronDown size={14} />
+                        <span>領取紀錄表</span>
+                        <div className="tag-glow-pulse"></div>
+                      </div>
                     </div>
-                  )}
-                  {generatedPlan.proteinPowder && <div className="wp-note">已包含 {generatedPlan.proteinPowder} 補充</div>}
-                </div>
-                {generatedPlan.meals.map((m, i) => (
-                  <div className="meal-card" key={i}>
-                    <div className="meal-header">{m.name}</div>
-                    <div className="meal-items">
-                      {m.items.map((it, j) => (
-                        <div className="meal-item" key={j}>
-                          <div className="item-info">
-                            <span className="item-food">{it.food}</span>
-                            <span className="item-note">{it.note}</span>
-                            {it.portion && <span className="item-portion">📏 {it.portion}</span>}
+
+                    <div className="meals-list">
+                      {generatedPlan?.meals?.map?.((m, i) => (
+                        <div className="meal-card" key={`meal-${i}`}>
+                          <div className="meal-header">{m?.name || '未命名餐點'}</div>
+                          <div className="meal-items">
+                            {m?.items?.map?.((it, j) => (
+                              <div className="meal-item" key={`item-${i}-${j}`}>
+                                <div className="item-info">
+                                  <span className="item-food">{it?.food}</span>
+                                  <span className="item-note">{it?.note}</span>
+                                </div>
+                                <span className="item-weight">{it?.weight}</span>
+                              </div>
+                            ))}
                           </div>
-                          <span className="item-weight">{it.weight}</span>
                         </div>
                       ))}
                     </div>
-                    {m.fatNote && <div className="meal-footer-note">{m.fatNote}</div>}
-                  </div>
-                ))}
 
-                {generatedPlan.explanation && (
+                    <div className="export-btn-zone" style={{ marginTop: '24px' }}>
+                      <button className="premium-submit-btn orange-glow" onClick={() => handleSaveRecord()} disabled={isGeneratingImage}>
+                        {isGeneratingImage ? <><div className="spinner"></div> 正在完成...</> : <><Download size={18} /> 一鍵生成紀錄表</>}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* AI Explanation - Keep visible in both modes or hide if it's too long? User said "留著菜單解釋", so keep it visible! */}
+                {generatedPlan?.explanation && (
                   <div className="ai-explanation-card">
                     <div className="explanation-title flex items-center gap-2">
-                      <Sparkles size={16} /> AI 營養師編排解釋
+                      AI 營養師編排解釋
                     </div>
                     <div className="explanation-text">{generatedPlan.explanation}</div>
                   </div>
                 )}
 
-                <button
-                  className="premium-submit-btn orange-glow"
-                  style={{ marginTop: '20px' }}
-                  onClick={handleSaveRecord}
-                  disabled={isGeneratingImage}
-                >
-                  {isGeneratingImage ? (
-                    <><div className="spinner"></div> 正在生成中...</>
-                  ) : (
-                    <><Download size={18} /> 一鍵生成紀錄表</>
-                  )}
-                </button>
+                {/* Mode 2: EXCLUSIVE PREVIEW OVERLAY (Fullscreen & Opaque) */}
+                {previewImage && (
+                  <div className="share-preview-overlay preview-zoom-in" style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: '#0a0a0b', zIndex: 3500,
+                    display: 'flex', flexDirection: 'column', color: 'white', textAlign: 'center'
+                  }}>
+                    <div style={{ padding: '20px 20px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#FF6B00' }}>✨ 專屬紀錄表</span>
+                      <button onClick={() => { setPreviewImage(null); window.scrollTo(0, 0); }} style={{ background: 'rgba(255,255,255,1.0)', color: 'black', padding: '10px', border: 'none', borderRadius: '50%' }}>
+                        <X size={24} />
+                      </button>
+                    </div>
+
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 40px' }}>
+                      <div style={{ backgroundColor: 'rgba(255,107,0,0.2)', padding: '15px', borderRadius: '16px', marginBottom: '25px', fontSize: '14px', border: '1px solid #FF6B00', color: '#FFB885' }}>
+                        💡 <span style={{ fontWeight: 'bold' }}>長按圖片</span> 即可儲存到您的相簿
+                      </div>
+
+                      <img src={previewImage} alt="Record Preview" style={{ width: '100%', borderRadius: '16px', boxShadow: '0 30px 60px rgba(0,0,0,1)', marginBottom: '30px', border: '1px solid rgba(255,255,255,0.1)' }} />
+
+                      <button onClick={() => { setPreviewImage(null); window.scrollTo(0, 0); }} className="premium-submit-btn orange-glow" style={{ marginBottom: '30px' }}>
+                        關閉預覽重新查看
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 <div style={{ position: 'fixed', top: 0, left: '-9999px', opacity: 0, pointerEvents: 'none', zIndex: -1 }}>
                   <NutritionRecordSheet
                     ref={recordSheetRef}
                     data={generatedPlan}
-                    results={{ ...results, height, weight, age, activity }}
+                    results={{ ...results, gender, height, weight, age, activity }}
                   />
                 </div>
 
-                {previewImage && (
-                  <div className="share-preview-overlay" style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'rgba(0,0,0,0.9)',
-                    zIndex: 3000,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    padding: '20px',
-                    color: 'white',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 'bold' }}>紀錄表已生成</span>
-                      <button onClick={() => setPreviewImage(null)} style={{ color: 'white' }}>
-                        <X size={24} />
-                      </button>
-                    </div>
-                    <div className="preview-instructions" style={{
-                      backgroundColor: '#FF5C00',
-                      padding: '10px',
-                      borderRadius: '8px',
-                      marginBottom: '20px',
-                      fontSize: '14px'
-                    }}>
-                      💡 請「長按圖片」選擇「儲存影像」或「加入照片」即可存入您的相簿。
-                    </div>
-                    <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                      <img
-                        src={previewImage}
-                        alt="Nutrition Record"
-                        style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
-                      />
-                    </div>
-                    <button
-                      onClick={() => setPreviewImage(null)}
-                      style={{
-                        marginTop: '20px',
-                        padding: '15px',
-                        background: '#333',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      關閉預覽
-                    </button>
+                {!previewImage && (
+                  <div className="disclaimer" style={{ marginTop: '30px', fontSize: '12px', color: '#888', textAlign: 'center', opacity: 0.6 }}>
+                    * 重量均為烹飪後熟重。建議搭配充足份量蔬菜。
                   </div>
                 )}
-
-                <div className="disclaimer">* 重量均為烹飪後熟重。建議搭配充足份量蔬菜，確保豐富膳食纖維。</div>
               </div>
             )}
           </div>
         )}
       </div>
       <DetailStyles />
+
+
       <style>{`
         .nutritionist-page {
           background: #0a0a0b;
@@ -1146,7 +1206,167 @@ const NutritionistDetail = ({ onBack }) => {
         .macro-name { font-size: 10px; color: #666; font-weight: 800; text-transform: uppercase; }
         .macro-val { font-size: 18px; font-weight: 900; color: white; }
 
-        .generated-plan-container { margin-top: 24px; }
+        .generated-plan-container { margin-top: 24px; position: relative; }
+
+        /* Contextual Card Guide Tag */
+        .card-guide-tag {
+          position: absolute;
+          bottom: 12px; right: 12px;
+          display: flex; align-items: center; gap: 4px;
+          padding: 6px 12px;
+          background: rgba(255, 107, 0, 0.15);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 20px;
+          color: #FF6B00;
+          font-size: 11px; font-weight: 800;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          z-index: 10;
+        }
+        .card-guide-tag:active { transform: scale(0.95); background: rgba(255, 107, 0, 0.3); }
+        
+        .tag-glow-pulse {
+          position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+          border-radius: 20px;
+          box-shadow: 0 0 10px rgba(255, 107, 0, 0.4);
+          animation: tagGlow 2s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        @keyframes tagGlow {
+          0%, 100% { box-shadow: 0 0 5px rgba(255, 107, 0, 0.2); }
+          50% { box-shadow: 0 0 15px rgba(255, 107, 0, 0.6); }
+        }
+
+        /* Preview Overlay Animation */
+        .preview-zoom-in {
+          animation: previewZoom 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes previewZoom {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        .export-btn-zone { margin-top: 32px; padding: 0 10px; }
+
+        /* Guide Notice for Log Table */
+        .table-guide-notice {
+          display: flex; flex-direction: column; align-items: center;
+          margin: 32px 0 20px; padding: 24px;
+          background: linear-gradient(135deg, rgba(255,107,0,0.05), transparent);
+          border-radius: 20px; border: 1px dashed rgba(255,107,0,0.2);
+        }
+        .table-guide-notice p {
+          font-size: 14px; color: #FF6B00; font-weight: 800;
+          letter-spacing: 1px; margin: 0;
+        }
+        .guide-arrow-down {
+          width: 0; height: 0; 
+          border-left: 8px solid transparent; border-right: 8px solid transparent;
+          border-top: 10px solid #FF6B00;
+          margin-bottom: 12px;
+          animation: nudgeDown 1.5s ease-in-out infinite;
+        }
+        @keyframes nudgeDown {
+          0%, 100% { transform: translateY(0); opacity: 0.6; }
+          50% { transform: translateY(10px); opacity: 1; }
+        }
+
+        /* === Meal Planner Amber Orbital === */
+        .meal-orbit-loader {
+          position: relative;
+          background: rgba(255, 107, 0, 0.03);
+          backdrop-filter: blur(10px);
+          border: 1.5px solid rgba(255, 107, 0, 0.15);
+          border-radius: 32px;
+          padding: 40px 24px;
+          display: flex; flex-direction: column; align-items: center;
+          gap: 28px; overflow: hidden; margin: 20px 0;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        .meal-orbit-glow {
+          position: absolute; top: -50px; left: -50px; width: 100px; height: 100px;
+          background: radial-gradient(circle, rgba(255, 107, 0, 0.1) 0%, transparent 70%);
+          filter: blur(10px); pointer-events: none;
+        }
+        .meal-orbit-system {
+          position: relative; width: 160px; height: 160px;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .meal-orbit-ring {
+          position: absolute; border-radius: 50%;
+          border: 1px dashed rgba(255, 107, 0, 0.2);
+          display: flex; align-items: center; justify-content: center;
+          animation: orbitRotate linear infinite;
+        }
+        .ring-outer { width: 160px; height: 160px; animation-duration: 8s; }
+        .ring-mid { width: 115px; height: 115px; animation-duration: 6s; animation-direction: reverse; }
+        .ring-inner { width: 75px; height: 75px; animation-duration: 4s; }
+
+        .meal-orbit-dot {
+          position: absolute; width: 22px; height: 22px;
+          border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          font-size: 10px; font-weight: 900; color: white;
+          box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+          transform: translateY(-50%);
+        }
+        .dot-protein { top: 0; left: 50%; background: #FF6B00; }
+        .dot-carbs { top: 50%; left: 0; background: #FFBC11; }
+        .dot-fat { top: 100%; left: 50%; background: #FF9F00; }
+
+        @keyframes orbitRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .meal-orbit-core {
+          width: 48px; height: 48px;
+          background: rgba(255, 107, 0, 0.08);
+          border: 1.5px solid rgba(255, 107, 0, 0.3);
+          border-radius: 16px;
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 0 30px rgba(255, 107, 0, 0.2);
+          animation: corePulse 2s ease-in-out infinite;
+        }
+        @keyframes corePulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 107, 0, 0.2); } 50% { transform: scale(1.08); box-shadow: 0 0 35px rgba(255, 107, 0, 0.4); } }
+        
+        .meal-orbit-title {
+          font-size: 18px; font-weight: 850; color: #FF6B00;
+          letter-spacing: 2.5px; text-transform: uppercase;
+        }
+        .meal-orbit-messages {
+          height: 18px; position: relative; width: 100%;
+          display: flex; justify-content: center;
+        }
+        .orbit-msg {
+          position: absolute; font-size: 13px; color: rgba(255,255,255,0.5);
+          font-weight: 600; opacity: 0; animation: msgFade 8s infinite;
+        }
+        .m1 { animation-delay: 0s; } .m2 { animation-delay: 2s; } 
+        .m3 { animation-delay: 4s; } .m4 { animation-delay: 6s; }
+        @keyframes msgFade {
+          0%, 5% { opacity: 0; transform: translateY(5px); }
+          10%, 20% { opacity: 1; transform: translateY(0); }
+          25%, 100% { opacity: 0; transform: translateY(-5px); }
+        }
+
+        .meal-orbit-wave-bar {
+          width: 100%; height: 5px; background: rgba(255,255,255,0.05);
+          border-radius: 10px; overflow: hidden; position: relative;
+        }
+        .wave-fill-bar {
+          position: absolute; left: 0; top: 0; height: 100%; width: 100%;
+          background: linear-gradient(90deg, #FF6B00, #FFBC11);
+          transform: translateX(-100%); animation: waveGrow 10s ease-out forwards;
+        }
+        .wave-shimmer {
+          position: absolute; top: 0; left: 0; height: 100%; width: 50px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          animation: shimmerSlide 2s linear infinite;
+        }
+        @keyframes waveGrow { to { transform: translateX(-5%); } }
+        @keyframes shimmerSlide { from { transform: translateX(-100px); } to { transform: translateX(300px); } }
+        
+        .meal-orbit-hint { font-size: 11px; color: #666; font-weight: 600; letter-spacing: 0.5px; }
+        /* ================================== */
+
         .plan-summary-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 20px; margin-bottom: 24px; }
         .summary-row { display: flex; justify-content: space-between; font-size: 13px; color: #888; font-weight: 800; margin-bottom: 10px; }
         .actual-val { color: var(--primary); }
@@ -1346,8 +1566,30 @@ const DetailStyles = () => (
 
 const PhotoCalDetail = ({ onBack, onChat }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [loaderStep, setLoaderStep] = useState(0);
+
+  const loaderPhrases = [
+    "正在捕捉影像細節...",
+    "正在辨識食材比例...",
+    "正在分析營養成分...",
+    "正在估算熱量比例...",
+    "正在整合營養日誌..."
+  ];
+
+  useEffect(() => {
+    let interval;
+    if (isAnalyzing) {
+      interval = setInterval(() => {
+        setLoaderStep(prev => (prev + 1) % loaderPhrases.length);
+      }, 1500);
+    } else {
+      setLoaderStep(0);
+    }
+    return () => clearInterval(interval);
+  }, [isAnalyzing]);
+
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
@@ -1409,17 +1651,15 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
 請務必以「繁體中文」回傳所有分析內容。
 
 【關鍵命名要求】：
-餐點名稱 (mealName) 請命名得「簡潔且有質感」，請避開「主廚、時令、季節、極致」等過於浮誇或不符真實情況的詞彙。
-請使用簡單且好聽的食材描述（例如：不說「烤魚餐」，改說「烤魚佐食蔬」；不說「營養沙拉」，改說「生菜拼盤」）。
-
+餐點名稱 (mealName) 請命名得「簡潔且有質感」，並使用簡單且好聽的食材描述。
 針對每個食材，請務必估計其「重量（克數）」。
 
 回傳 JSON 格式如下：
-{ 
-  "mealName": "簡潔質感的餐點名稱", 
-  "items": [{ "food": "食材名", "weight": "約 120g", "kcal": 150, "protein": 10, "carbs": 20, "fat": 5, "note": "食材描述" }], 
-  "total": { "calories": 500, "protein": 30, "carbs": 50, "fat": 20 }, 
-  "chefNote": "營養師特別建議（繁體中文）" 
+{
+  "mealName": "簡潔質感的餐點名稱",
+  "items": [{ "food": "食材名", "weight": "約 120g", "kcal": 150, "protein": 10, "carbs": 20, "fat": 5, "note": "食材描述" }],
+  "total": { "calories": 500, "protein": 30, "carbs": 50, "fat": 20 },
+  "chefNote": "營養師特別建議（繁體中文）"
 }`
                 },
                 {
@@ -1452,7 +1692,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
       setResult(analysis);
     } catch (err) {
       console.error('PhotoCal Error:', err);
-      alert(`分析失敗：${err.message}\n\n請檢查 OpenAI API Key 是否正確設定。`);
+      alert(`分析失敗：${ err.message } \n\n請檢查 OpenAI API Key 是否正確設定。`);
       setPreviewUrl(null);
     } finally {
       setIsAnalyzing(false);
@@ -1546,7 +1786,6 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
                   )}
 
                   <div className="history-bot-bubble" onClick={onChat}>
-                    <div className="bot-avatar-mini">🤖</div>
                     <div className="bot-text-bubble">
                       <p>{botMessage}</p>
                       <span className="tap-hint">點擊與營養師對談 <Zap size={10} fill="#FF6B00" color="#FF6B00" /></span>
@@ -1578,27 +1817,55 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
                 onBack={() => { setPreviewUrl(null); setIsAnalyzing(false); }}
               />
               <div className="detail-content">
-                <div className="analyzing-preview-card">
+                <div className="analyzing-preview-card photo-cal-scan-wrap">
                   <img src={previewUrl} alt="Preview" className="analyzing-img" />
                   <div className="scanning-line"></div>
+                  <div className="photo-cal-corner tl"></div>
+                  <div className="photo-cal-corner tr"></div>
+                  <div className="photo-cal-corner bl"></div>
+                  <div className="photo-cal-corner br"></div>
+                  <div className="photo-cal-scan-label">SCANNING...</div>
                 </div>
-                <div className="robot-loader-card">
-                  <div className="robot-wrap">
-                    <div className="robot-head shadow-bot">
-                      <div className="eye left"></div>
-                      <div className="eye right"></div>
-                    </div>
-                    <div className="robot-body-mini">
-                      <div className="cpu-core mini"><Cpu size={14} color="#10B981" /></div>
+
+                <div className="photo-cal-electric-loader">
+                  {/* Robot with pulsing ring */}
+                  <div className="photo-cal-robot-wrap">
+                    <div className="photo-cal-pulse-ring pr1"></div>
+                    <div className="photo-cal-pulse-ring pr2"></div>
+                    <div className="robot-wrap" style={{ position: 'relative', zIndex: 2 }}>
+                      <div className="robot-head shadow-bot" style={{ borderColor: '#10B981' }}>
+                        <div className="eye left" style={{ background: '#10B981', boxShadow: '0 0 8px #10B981' }}></div>
+                        <div className="eye right" style={{ background: '#10B981', boxShadow: '0 0 8px #10B981' }}></div>
+                      </div>
+                      <div className="robot-body-mini">
+                        <div className="cpu-core mini"><Cpu size={14} color="#10B981" /></div>
+                      </div>
                     </div>
                   </div>
-                  <div className="loader-content">
-                    <div className="loader-title">AI 營養師分析中</div>
-                    <p className="loader-subtitle">正在辨識食材比例、解析營養成分與估算熱量...</p>
-                    <div className="logic-dots">
-                      <span></span><span></span><span></span>
-                    </div>
+
+                  {/* Title */}
+                  <div className="photo-cal-elec-title">AI 營養師分析中</div>
+                  <div className="photo-cal-elec-sub">正在辨識食材比例、解析營養成分與估算熱量...</div>
+
+                  {/* Data stream bars */}
+                  <div className="photo-cal-stream">
+                    {[
+                      { label: 'VISUAL RECOGNITION', color: '#10B981' },
+                      { label: 'INGREDIENT MAPPING', color: '#10B981' },
+                      { label: 'NUTRIENT CALCULATION', color: '#10B981' },
+                      { label: 'CALORIE ESTIMATION', color: '#10B981' },
+                    ].map((item, i) => (
+                      <div key={i} className="photo-cal-stream-row" style={{ animationDelay: `${ i * 0.35 } s` }}>
+                        <span className="photo-cal-stream-label" style={{ color: 'rgba(16,185,129,0.7)' }}>{item.label}</span>
+                        <div className="photo-cal-stream-bar">
+                          <div className="photo-cal-stream-fill" style={{ animationDelay: `${ i * 0.35 } s`, background: 'linear-gradient(90deg, #10B981, rgba(16,185,129,0.3))' }}></div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+
+                  {/* Bottom scanline */}
+                  <div className="photo-cal-h-scanline"></div>
                 </div>
               </div>
             </>
@@ -1661,315 +1928,394 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
 
       <DetailStyles />
       <style>{`
-        .photo-cal-page { background: #0d1117; min-height: 100vh; }
-        .photo-cal-records-view { position: fixed; inset: 0; background: #0d1117; display: flex; flex-direction: column; z-index: 1100; }
-        .records-header-v2 { padding: 60px 24px 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #111, transparent); }
-        .records-header-v2 h3 { font-size: 20px; font-weight: 900; color: white; margin: 0; }
-        .h-back-btn { background: none; border: none; color: white; cursor: pointer; }
-        .records-scroll-area { flex: 1; padding: 0 20px; overflow-y: auto; padding-bottom: 200px; }
+  .photo - cal - page { background: #0d1117; min - height: 100vh; }
+        .photo - cal - records - view { position: fixed; inset: 0; background: #0d1117; display: flex; flex - direction: column; z - index: 1100; }
+        .records - header - v2 { padding: 60px 24px 20px; display: flex; justify - content: space - between; align - items: center; background: linear - gradient(to bottom, #111, transparent); }
+        .records - header - v2 h3 { font - size: 20px; font - weight: 900; color: white; margin: 0; }
+        .h - back - btn { background: none; border: none; color: white; cursor: pointer; }
+        .records - scroll - area { flex: 1; padding: 0 20px; overflow - y: auto; padding - bottom: 200px; }
         
-        .records-premium-frame {
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 32px;
-          padding: 20px;
-          margin-top: 10px;
-          position: relative;
-          overflow: hidden;
-          box-shadow: inset 0 0 20px rgba(255,255,255,0.01);
-        }
-        .records-premium-frame::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; height: 1px;
-          background: linear-gradient(to right, transparent, rgba(255,107,0,0.3), transparent);
-        }
+        .records - premium - frame {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border - radius: 32px;
+  padding: 20px;
+  margin - top: 10px;
+  position: relative;
+  overflow: hidden;
+  box - shadow: inset 0 0 20px rgba(255, 255, 255, 0.01);
+}
+        .records - premium - frame::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear - gradient(to right, transparent, rgba(255, 107, 0, 0.3), transparent);
+}
         
-        .frame-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 24px;
-          padding: 0 4px;
-        }
-        .frame-title {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          font-size: 14px;
-          font-weight: 800;
-          color: #888;
-          letter-spacing: 0.5px;
-        }
-        .frame-count {
-          font-size: 11px;
-          background: rgba(255,107,0,0.1);
-          color: #FF6B00;
-          padding: 3px 10px;
-          border-radius: 8px;
-          font-weight: 800;
-          border: 1px solid rgba(255,107,0,0.1);
-        }
+        .frame - header {
+  display: flex;
+  justify - content: space - between;
+  align - items: center;
+  margin - bottom: 24px;
+  padding: 0 4px;
+}
+        .frame - title {
+  display: flex;
+  align - items: center;
+  gap: 10px;
+  font - size: 14px;
+  font - weight: 800;
+  color: #888;
+  letter - spacing: 0.5px;
+}
+        .frame - count {
+  font - size: 11px;
+  background: rgba(255, 107, 0, 0.1);
+  color: #FF6B00;
+  padding: 3px 10px;
+  border - radius: 8px;
+  font - weight: 800;
+  border: 1px solid rgba(255, 107, 0, 0.1);
+}
 
-        .records-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+        .records - list { display: flex; flex - direction: column; gap: 16px; margin - bottom: 24px; }
         
-        .history-bot-bubble {
-          margin-top: 10px;
-          display: flex;
-          gap: 12px;
-          align-items: flex-end;
-          cursor: pointer;
-          animation: fadeIn 0.8s ease-out;
+        .history - bot - bubble {
+  margin - top: 10px;
+  display: flex;
+  gap: 12px;
+  align - items: flex - end;
+  cursor: pointer;
+  animation: fadeIn 0.8s ease - out;
+}
+width: 40px;
+height: 40px;
+background: #1e1e1e;
+border: 1px solid #FF6B00;
+border - radius: 12px;
+display: flex;
+align - items: center;
+justify - content: center;
+font - size: 20px;
+box - shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+flex - shrink: 0;
         }
-        .bot-avatar-mini {
-          width: 40px;
-          height: 40px;
-          background: #1e1e1e;
-          border: 1px solid #FF6B00;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 20px;
-          box-shadow: 0 4px 12px rgba(255,107,0,0.2);
-          flex-shrink: 0;
-        }
-        .bot-text-bubble {
-          flex: 1;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 18px 18px 18px 4px;
-          padding: 12px 16px;
-          position: relative;
-        }
-        .bot-text-bubble p {
-          color: #eee;
-          font-size: 13px;
-          line-height: 1.5;
-          margin: 0 0 6px 0;
-          font-weight: 600;
-        }
-        .tap-hint {
-          font-size: 10px;
-          color: #FF6B00;
-          font-weight: 800;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          text-transform: uppercase;
-          opacity: 0.8;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .record-item-v2 {
-          background: rgba(255,255,255,0.03);
-          border-radius: 20px;
-          padding: 12px;
-          display: flex;
-          gap: 16px;
-          border: 1px solid rgba(255,255,255,0.05);
-          cursor: pointer;
-        }
-        .rec-img-box {
-          width: 100px; height: 100px;
-          border-radius: 16px;
-          overflow: hidden;
-          flex-shrink: 0;
-        }
-        .rec-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .rec-info-box { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0; }
+        .bot - text - bubble {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border - radius: 18px 18px 18px 4px;
+  padding: 12px 16px;
+  position: relative;
+}
+        .bot - text - bubble p {
+  color: #eee;
+  font - size: 13px;
+  line - height: 1.5;
+  margin: 0 0 6px 0;
+  font - weight: 600;
+}
+        .tap - hint {
+  font - size: 10px;
+  color: #FF6B00;
+  font - weight: 800;
+  display: flex;
+  align - items: center;
+  gap: 4px;
+  text - transform: uppercase;
+  opacity: 0.8;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .record - item - v2 {
+  background: rgba(255, 255, 255, 0.03);
+  border - radius: 20px;
+  padding: 12px;
+  display: flex;
+  gap: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+        .rec - img - box {
+  width: 100px; height: 100px;
+  border - radius: 16px;
+  overflow: hidden;
+  flex - shrink: 0;
+}
+        .rec - img - box img { width: 100 %; height: 100 %; object - fit: cover; }
+        .rec - info - box { flex: 1; display: flex; flex - direction: column; justify - content: space - between; padding: 4px 0; }
         
-        .rec-top-row { display: flex; justify-content: space-between; align-items: flex-start; }
-        .rec-name { font-size: 16px; font-weight: 800; color: #eee; display: flex; align-items: center; gap: 6px; }
-        .mini-edit-btn { background: none; border: none; display: flex; align-items: center; justify-content: center; padding: 4px; cursor: pointer; }
-        .rec-time { font-size: 11px; color: #555; font-weight: 600; margin-top: 2px; }
+        .rec - top - row { display: flex; justify - content: space - between; align - items: flex - start; }
+        .rec - name { font - size: 16px; font - weight: 800; color: #eee; display: flex; align - items: center; gap: 6px; }
+        .mini - edit - btn { background: none; border: none; display: flex; align - items: center; justify - content: center; padding: 4px; cursor: pointer; }
+        .rec - time { font - size: 11px; color: #555; font - weight: 600; margin - top: 2px; }
         
-        .rec-cal-row { display: flex; align-items: center; gap: 6px; }
-        .rec-cals { font-size: 18px; font-weight: 900; color: #fff; }
-        .rec-cals small { font-size: 12px; color: #666; font-weight: 700; margin-left: 2px; }
+        .rec - cal - row { display: flex; align - items: center; gap: 6px; }
+        .rec - cals { font - size: 18px; font - weight: 900; color: #fff; }
+        .rec - cals small { font - size: 12px; color: #666; font - weight: 700; margin - left: 2px; }
         
-        .rec-macros-row { display: flex; gap: 12px; }
-        .rec-macro { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #888; }
-        .rec-macro img { width: 14px; height: 14px; opacity: 0.8; }
+        .rec - macros - row { display: flex; gap: 12px; }
+        .rec - macro { display: flex; align - items: center; gap: 4px; font - size: 12px; font - weight: 700; color: #888; }
+        .rec - macro img { width: 14px; height: 14px; opacity: 0.8; }
 
-        .empty-records {
-          height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
-          text-align: center; color: #444;
-        }
-        .empty-box { font-size: 40px; }
+        .empty - records {
+  height: 300px; display: flex; flex - direction: column; align - items: center; justify - content: center; gap: 16px;
+  text - align: center; color: #444;
+}
+        .empty - box { font - size: 40px; }
 
-        .fixed-landing-actions {
-          position: fixed; bottom: 0; left: 0; right: 0;
-          padding: 40px 24px;
-          background: linear-gradient(to top, #0d1117 70%, transparent);
-          display: flex; flex-direction: column; gap: 12px;
-          z-index: 50;
-        }
-        .landing-btn {
-          width: 100%; height: 56px; border-radius: 16px; border: none; font-size: 16px; font-weight: 800;
-          display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
-          transition: 0.2s;
-        }
-        .landing-btn.primary { background: linear-gradient(135deg, #FF5C00 0%, #E11D48 100%); color: white; box-shadow: 0 8px 25px rgba(255, 92, 0, 0.4); }
-        .landing-btn.secondary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; backdrop-filter: blur(10px); }
+        .fixed - landing - actions {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 40px 24px;
+  background: linear - gradient(to top, #0d1117 70 %, transparent);
+  display: flex; flex - direction: column; gap: 12px;
+  z - index: 50;
+}
+        .landing - btn {
+  width: 100 %; height: 56px; border - radius: 16px; border: none; font - size: 16px; font - weight: 800;
+  display: flex; align - items: center; justify - content: center; gap: 10px; cursor: pointer;
+  transition: 0.2s;
+}
+        .landing - btn.primary { background: linear - gradient(135deg, #FF5C00 0 %, #E11D48 100 %); color: white; box - shadow: 0 8px 25px rgba(255, 92, 0, 0.4); }
+        .landing - btn.secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; backdrop - filter: blur(10px); }
 
-        .photo-result-hero { position: relative; }
-        .hero-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
-        .hero-back-btn, .hero-close-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); border: none; color: white; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .hero-image-wrap { width: 100%; height: 40vh; overflow: hidden; }
-        .hero-image { width: 100%; height: 100%; object-fit: cover; }
-        .result-body { margin-top: -24px; background: #0a0a0b; border-radius: 24px 24px 0 0; padding: 30px 20px; position: relative; z-index: 5; min-height: 65vh; }
-        .meal-main-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
-        .meal-name { font-size: 26px; font-weight: 900; color: white; flex: 1; line-height: 1.2; }
-        .meal-total-summary { font-size: 14px; color: #666; font-weight: 700; margin-top: 6px; }
-        .macros-strip { display: flex; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px 10px; margin-bottom: 30px; }
-        .macro-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
-        .macro-num { font-size: 26px; font-weight: 900; color: #FF6B00; text-shadow: 0 0 15px rgba(255, 107, 0, 0.4); }
-        .macro-label { font-size: 12px; color: #FF6B00; opacity: 0.7; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        .divider-line { height: 1px; background: rgba(255,255,255,0.05); margin: 0 -20px 30px; }
-        .ai-advice-section { margin-bottom: 32px; }
-        .advice-text { font-size: 15px; line-height: 1.7; color: #ccc; font-weight: 500; background: rgba(16,185,129,0.05); padding: 18px; border-radius: 20px; border-left: 4px solid #10B981; }
-        .section-title { font-size: 17px; font-weight: 800; color: white; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
-        .ingredient-cards { display: grid; gap: 14px; }
-        .ingredient-card { background: rgba(255,255,255,0.02); border-radius: 18px; padding: 18px; border: 1px solid rgba(255,255,255,0.05); }
-        .ing-card-main { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
-        .ing-name-box { display: flex; flex-direction: column; gap: 4px; }
-        .ing-title { font-size: 16px; font-weight: 800; color: #eee; }
-        .ing-subtitle { font-size: 12px; color: #666; font-weight: 500; }
-        .ing-cal-box { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-        .ing-kcal-val { font-size: 16px; font-weight: 900; color: #10B981; }
-        .ing-weight-tag { font-size: 11px; background: rgba(16,185,129,0.15); color: #10B981; padding: 2px 8px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(16,185,129,0.2); }
-        .ing-macros-row { display: flex; gap: 14px; font-size: 12px; color: #888; font-weight: 700; }
-        .ing-macros-row span { background: rgba(255,255,255,0.03); padding: 3px 10px; border-radius: 8px; }
-        .result-disclaimer { text-align: center; color: #333; font-size: 11px; margin-top: 40px; padding-bottom: 40px; font-weight: 600; }
+        .photo - result - hero { position: relative; }
+        .hero - header { position: fixed; top: 0; left: 0; right: 0; height: 60px; padding: 0 16px; display: flex; justify - content: space - between; align - items: center; z - index: 100; background: linear - gradient(to bottom, rgba(0, 0, 0, 0.5), transparent); }
+        .hero - back - btn, .hero - close - btn { width: 40px; height: 40px; border - radius: 50 %; background: rgba(0, 0, 0, 0.4); border: none; color: white; display: flex; align - items: center; justify - content: center; backdrop - filter: blur(10px); }
+        .hero - image - wrap { width: 100 %; height: 40vh; overflow: hidden; }
+        .hero - image { width: 100 %; height: 100 %; object - fit: cover; }
+        .result - body { margin - top: -24px; background: #0a0a0b; border - radius: 24px 24px 0 0; padding: 30px 20px; position: relative; z - index: 5; min - height: 65vh; }
+        .meal - main - header { display: flex; justify - content: space - between; align - items: flex - start; margin - bottom: 24px; }
+        .meal - name { font - size: 26px; font - weight: 900; color: white; flex: 1; line - height: 1.2; }
+        .meal - total - summary { font - size: 14px; color: #666; font - weight: 700; margin - top: 6px; }
+        .macros - strip { display: flex; justify - content: space - between; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border - radius: 20px; padding: 20px 10px; margin - bottom: 30px; }
+        .macro - item { display: flex; flex - direction: column; align - items: center; gap: 6px; flex: 1; }
+        .macro - num { font - size: 26px; font - weight: 900; color: #FF6B00; text - shadow: 0 0 15px rgba(255, 107, 0, 0.4); }
+        .macro - label { font - size: 12px; color: #FF6B00; opacity: 0.7; font - weight: 800; text - transform: uppercase; letter - spacing: 0.5px; }
+        .divider - line { height: 1px; background: rgba(255, 255, 255, 0.05); margin: 0 - 20px 30px; }
+        .ai - advice - section { margin - bottom: 32px; }
+        .advice - text { font - size: 15px; line - height: 1.7; color: #ccc; font - weight: 500; background: rgba(16, 185, 129, 0.05); padding: 18px; border - radius: 20px; border - left: 4px solid #10B981; }
+        .section - title { font - size: 17px; font - weight: 800; color: white; margin - bottom: 18px; display: flex; align - items: center; gap: 8px; }
+        .ingredient - cards { display: grid; gap: 14px; }
+        .ingredient - card { background: rgba(255, 255, 255, 0.02); border - radius: 18px; padding: 18px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .ing - card - main { display: flex; justify - content: space - between; align - items: flex - start; margin - bottom: 14px; }
+        .ing - name - box { display: flex; flex - direction: column; gap: 4px; }
+        .ing - title { font - size: 16px; font - weight: 800; color: #eee; }
+        .ing - subtitle { font - size: 12px; color: #666; font - weight: 500; }
+        .ing - cal - box { display: flex; flex - direction: column; align - items: flex - end; gap: 4px; }
+        .ing - kcal - val { font - size: 16px; font - weight: 900; color: #10B981; }
+        .ing - weight - tag { font - size: 11px; background: rgba(16, 185, 129, 0.15); color: #10B981; padding: 2px 8px; border - radius: 6px; font - weight: 800; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .ing - macros - row { display: flex; gap: 14px; font - size: 12px; color: #888; font - weight: 700; }
+        .ing - macros - row span { background: rgba(255, 255, 255, 0.03); padding: 3px 10px; border - radius: 8px; }
+        .result - disclaimer { text - align: center; color: #333; font - size: 11px; margin - top: 40px; padding - bottom: 40px; font - weight: 600; }
 
         /* Analyzing View Styles */
-        .analyzing-preview-card {
-          position: relative;
-          width: 100%;
-          border-radius: 28px;
-          overflow: hidden;
-          background: #111;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-          border: 1px solid rgba(255,255,255,0.05);
-          margin-bottom: 30px;
-        }
-        .analyzing-img {
-          width: 100%;
-          height: auto;
-          display: block;
-          filter: brightness(0.6) contrast(1.1);
-        }
-        .scanning-line {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100px;
-          background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.1), transparent);
-          border-top: 2px solid #10B981;
-          box-shadow: 0 -5px 15px rgba(16, 185, 129, 0.4);
-          z-index: 10;
-          animation: scanDown 2.5s ease-in-out infinite;
-          pointer-events: none;
-        }
-        @keyframes scanDown {
-          0% { top: -20%; }
-          100% { top: 100%; }
-        }
+        .analyzing - preview - card {
+  position: relative;
+  width: 100 %;
+  border - radius: 28px;
+  overflow: hidden;
+  background: #111;
+  box - shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin - bottom: 30px;
+}
+        .analyzing - img {
+  width: 100 %;
+  height: auto;
+  display: block;
+  filter: brightness(0.6) contrast(1.1);
+}
+        .scanning - line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100 %;
+  height: 100px;
+  background: linear - gradient(to bottom, transparent, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.1), transparent);
+  border - top: 2px solid #10B981;
+  box - shadow: 0 - 5px 15px rgba(16, 185, 129, 0.4);
+  z - index: 10;
+  animation: scanDown 2.5s ease -in -out infinite;
+  pointer - events: none;
+}
+@keyframes scanDown {
+  0 % { top: -20 %; }
+  100 % { top: 100 %; }
+}
 
-        /* Robot Interaction Styles */
-        .robot-loader-card {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 20px;
-          padding: 20px 0;
-        }
-        .robot-wrap {
-          position: relative;
-          width: 80px;
-          height: 80px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          animation: floatRobot 3.5s ease-in-out infinite;
-        }
-        @keyframes floatRobot {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
-        }
-        .robot-head {
-          width: 60px;
-          height: 48px;
-          background: linear-gradient(135deg, #1e1e1e, #0d1117);
-          border: 2px solid #10B981;
-          border-radius: 18px;
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-        }
-        .shadow-bot::after {
-          content: '';
-          position: absolute;
-          bottom: -20px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 40px;
-          height: 6px;
-          background: rgba(0,0,0,0.5);
-          filter: blur(4px);
-          border-radius: 50%;
-        }
+        /* === Photo Cal Corner Markers === */
+        .photo - cal - scan - wrap { position: relative; }
+        .photo - cal - corner {
+  position: absolute; width: 18px; height: 18px;
+  border - color: #10B981; border - style: solid;
+  z - index: 11; pointer - events: none;
+}
+        .photo - cal - corner.tl { top: 8px; left: 8px; border - width: 2px 0 0 2px; }
+        .photo - cal - corner.tr { top: 8px; right: 8px; border - width: 2px 2px 0 0; }
+        .photo - cal - corner.bl { bottom: 8px; left: 8px; border - width: 0 0 2px 2px; }
+        .photo - cal - corner.br { bottom: 8px; right: 8px; border - width: 0 2px 2px 0; }
+        .photo - cal - scan - label {
+  position: absolute; top: 10px; right: 28px;
+  font - size: 8px; color: #10B981; font - family: monospace;
+  font - weight: 800; letter - spacing: 2px; z - index: 12;
+  animation: blinkLabel 1.2s ease -in -out infinite;
+}
+@keyframes blinkLabel { 0 %, 100 % { opacity: 1 } 50 % { opacity: 0.3 } }
+
+        /* === Photo Cal Electric Loader === */
+        .photo - cal - electric - loader {
+  position: relative;
+  background: linear - gradient(135deg, rgba(16, 185, 129, 0.05), rgba(0, 0, 0, 0.85));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border - radius: 20px;
+  padding: 28px 20px 24px;
+  display: flex; flex - direction: column; align - items: center;
+  gap: 16px; overflow: hidden; margin - top: 16px;
+}
+        .photo - cal - robot - wrap {
+  position: relative; display: flex; align - items: center; justify - content: center;
+  width: 90px; height: 90px;
+}
+        .photo - cal - pulse - ring {
+  position: absolute; border - radius: 50 %;
+  border: 1.5px solid rgba(16, 185, 129, 0.5);
+  animation: pcPulse 2s ease - out infinite;
+}
+        .photo - cal - pulse - ring.pr1 { width: 80px; height: 80px; animation - delay: 0s; }
+        .photo - cal - pulse - ring.pr2 { width: 90px; height: 90px; animation - delay: 0.7s; opacity: 0.5; }
+@keyframes pcPulse {
+  0 % { transform: scale(0.8); opacity: 0.8; }
+  100 % { transform: scale(1.3); opacity: 0; }
+}
+        .photo - cal - elec - title {
+  font - size: 15px; font - weight: 900; color: #10B981;
+  letter - spacing: 1.5px; text - shadow: 0 0 16px rgba(16, 185, 129, 0.5);
+}
+        .photo - cal - elec - sub {
+  font - size: 11px; color: rgba(255, 255, 255, 0.4);
+  font - weight: 600; text - align: center;
+  margin - top: -8px; line - height: 1.5;
+}
+        .photo - cal - stream {
+  width: 100 %; display: flex; flex - direction: column; gap: 9px;
+}
+        .photo - cal - stream - row {
+  display: flex; align - items: center; gap: 8px;
+  animation: fadeInRow 0.5s ease - out both;
+}
+        .photo - cal - stream - label {
+  font - size: 8px; font - family: monospace; font - weight: 700;
+  min - width: 130px; letter - spacing: 0.5px;
+}
+        .photo - cal - stream - bar {
+  flex: 1; height: 3px;
+  background: rgba(16, 185, 129, 0.1); border - radius: 4px; overflow: hidden;
+}
+        .photo - cal - stream - fill {
+  height: 100 %; border - radius: 4px;
+  animation: streamLoad 2.5s ease -in -out infinite both;
+}
+        .photo - cal - h - scanline {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear - gradient(90deg, transparent, rgba(16, 185, 129, 0.7), transparent);
+  animation: scanAcross 2.2s linear infinite;
+}
+        /* ================================== */
+
+
+
+        .robot - loader - card {
+  display: flex;
+  flex - direction: column;
+  align - items: center;
+  gap: 20px;
+  padding: 20px 0;
+}
+        .robot - wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  flex - direction: column;
+  align - items: center;
+  justify - content: center;
+  animation: floatRobot 3.5s ease -in -out infinite;
+}
+@keyframes floatRobot {
+  0 %, 100 % { transform: translateY(0); }
+  50 % { transform: translateY(-8px); }
+}
+        .robot - head {
+  width: 60px;
+  height: 48px;
+  background: linear - gradient(135deg, #1e1e1e, #0d1117);
+  border: 2px solid #10B981;
+  border - radius: 18px;
+  position: relative;
+  display: flex;
+  align - items: center;
+  justify - content: center;
+  gap: 12px;
+  box - shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+        .shadow - bot::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50 %;
+  transform: translateX(-50 %);
+  width: 40px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  filter: blur(4px);
+  border - radius: 50 %;
+}
         .eye {
-          width: 8px;
-          height: 8px;
-          background: #10B981;
-          border-radius: 50%;
-          box-shadow: 0 0 10px #10B981;
-          animation: blink 4s infinite;
-        }
-        @keyframes blink {
-          0%, 45%, 50%, 100% { transform: scaleY(1); }
-          47% { transform: scaleY(0.1); }
-        }
-        .robot-body-mini {
-          width: 34px;
-          height: 18px;
-          background: #1e1e1e;
-          border: 2px solid #10B981;
-          border-top: none;
-          border-radius: 0 0 10px 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top: -2px;
-        }
-        .cpu-core.mini {
-          animation: pulseGreen 2s infinite;
-        }
-        @keyframes pulseGreen {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(0.9); }
-        }
-        .loader-content { text-align: center; }
-        .loader-title { font-size: 18px; font-weight: 900; color: white; margin-bottom: 8px; }
-        .loader-subtitle { font-size: 13px; color: #666; font-weight: 500; }
-        .logic-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
-        .logic-dots span {
-          width: 6px;
-          height: 6px;
-          background: #10B981;
-          border-radius: 50%;
-          animation: dotUp 1s infinite alternate;
-        }
-        .logic-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .logic-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes dotUp { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-6px); opacity: 1; } }
-      `}</style>
+  width: 8px;
+  height: 8px;
+  background: #10B981;
+  border - radius: 50 %;
+  box - shadow: 0 0 10px #10B981;
+  animation: blink 4s infinite;
+}
+@keyframes blink {
+  0 %, 45 %, 50 %, 100 % { transform: scaleY(1); }
+  47 % { transform: scaleY(0.1); }
+}
+        .robot - body - mini {
+  width: 34px;
+  height: 18px;
+  background: #1e1e1e;
+  border: 2px solid #10B981;
+  border - top: none;
+  border - radius: 0 0 10px 10px;
+  display: flex;
+  align - items: center;
+  justify - content: center;
+  margin - top: -2px;
+}
+        .cpu - core.mini {
+  animation: pulseGreen 2s infinite;
+}
+@keyframes pulseGreen {
+  0 %, 100 % { opacity: 1; transform: scale(1); }
+  50 % { opacity: 0.5; transform: scale(0.9); }
+}
+        .loader - content { text - align: center; }
+        .loader - title { font - size: 18px; font - weight: 900; color: white; margin - bottom: 8px; }
+        .loader - subtitle { font - size: 13px; color: #666; font - weight: 500; }
+        .logic - dots { display: flex; justify - content: center; gap: 8px; margin - top: 16px; }
+        .logic - dots span {
+  width: 6px;
+  height: 6px;
+  background: #10B981;
+  border - radius: 50 %;
+  animation: dotUp 1s infinite alternate;
+}
+        .logic - dots span: nth - child(2) { animation - delay: 0.2s; }
+        .logic - dots span: nth - child(3) { animation - delay: 0.4s; }
+@keyframes dotUp { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-6px); opacity: 1; } }
+`}</style>
     </div>
   );
 };
@@ -1988,6 +2334,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [plan, setPlan] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
+  const injuryResultRef = useRef(null);
 
   // 計算 BMI 作為身形比例依據
   const h_m = (height || 170) / 100;
@@ -2009,6 +2356,14 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
     }
   }, [height, weight]);
 
+  useEffect(() => {
+    if (result && injuryResultRef.current) {
+      setTimeout(() => {
+        injuryResultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
+  }, [result]);
+
   const timingOptions = ['運動中疼痛', '運動後當天疼痛', '運動後隔天疼痛', '無預兆疼痛'];
 
   const analyzeInjury = async () => {
@@ -2024,22 +2379,22 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
     setResult(null);
 
     const prompt = `你是一位專業的運動防護員。請評估以下受傷資訊：
-    - 部位：${target}
-    - 發生時段：${timing}
-    - 痛感程度：${intensity}/10
-    - 詳細描述：${details || '無'}
-    - 學員基本資料：身高 ${height || '--'}cm, 體重 ${weight || '--'}kg (BMI: ${bmi.toFixed(1)})
+- 部位：${ target }
+- 發生時段：${ timing }
+- 痛感程度：${ intensity }/10
+  - 詳細描述：${ details || '無' }
+- 學員基本資料：身高 ${ height || '--' } cm, 體重 ${ weight || '--' } kg(BMI: ${ bmi.toFixed(1) })
 
     請回傳 JSON 格式如下：
-    {
-      "status": "高度確認 / 不確定 / 無法辨識",
-      "injuryName": "可能的傷害名稱",
+{
+  "status": "高度確認 / 不確定 / 無法辨識",
+    "injuryName": "可能的傷害名稱",
       "reasons": "受傷原因分析",
-      "prevention": "預防建議",
-      "treatment": "即時處置方法",
-      "detailAnalysis": "更深入的防護專長分析",
-      "disclaimer": "【免責聲明】本分析結果由 AI 生成，僅供參考。若疼痛持續或加劇，請務必尋求專業醫生診斷。"
-    }`;
+        "prevention": "預防建議",
+          "treatment": "即時處置方法",
+            "detailAnalysis": "更深入的防護專長分析",
+              "disclaimer": "【免責聲明】本分析結果由 AI 生成，僅供參考。若疼痛持續或加劇，請務必尋求專業醫生診斷。"
+} `;
 
     try {
       const response = await fetch('/api/chat', {
@@ -2057,12 +2412,12 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(`AI 代理服務錯誤 (${response.status}): ${data.error?.message || response.statusText}`);
+        throw new Error(`AI 代理服務錯誤(${ response.status }): ${ data.error?.message || response.statusText } `);
       }
       setResult(JSON.parse(data.choices[0].message.content));
     } catch (err) {
       console.error('Injury Error:', err);
-      alert(`分析失敗：${err.message}\n\n請確認 Vercel 環境變數已正確設定。`);
+      alert(`分析失敗：${ err.message } \n\n請確認 Vercel 環境變數已正確設定。`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -2117,7 +2472,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                 {timingOptions.map(opt => (
                   <div
                     key={opt}
-                    className={`stack-btn-v2 tech-stack-btn ${timing === opt ? 'active red tech-glow' : ''}`}
+                    className={`stack - btn - v2 tech - stack - btn ${ timing === opt ? 'active red tech-glow' : '' } `}
                     onClick={() => setTiming(opt)}
                   >
                     <span className="btn-label">{opt}</span>
@@ -2130,7 +2485,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
             <div className="form-group-v2 tech-group">
               <label className="flex-between tech-label">
                 <span><ShieldAlert size={14} /> PAIN INTENSITY / 痛感程度 (1-10)</span>
-                <span className={`intensity-val tech-num ${intensity >= 8 ? 'neon-red' : ''}`}>
+                <span className={`intensity - val tech - num ${ intensity >= 8 ? 'neon-red' : '' } `}>
                   {intensity.toString().padStart(2, '0')}
                 </span>
               </label>
@@ -2140,12 +2495,12 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   min="1"
                   max="10"
                   step="1"
-                  className={`premium-slider red tech-slider ${intensity >= 8 ? 'neon-red-slider' : ''}`}
+                  className={`premium - slider red tech - slider ${ intensity >= 8 ? 'neon-red-slider' : '' } `}
                   value={intensity}
                   onChange={e => setIntensity(Number(e.target.value))}
                 />
                 <div className="slider-ticks">
-                  {[...Array(10)].map((_, i) => <div key={i} className={`tick ${intensity > i ? 'active' : ''}`}></div>)}
+                  {[...Array(10)].map((_, i) => <div key={i} className={`tick ${ intensity > i ? 'active' : '' } `}></div>)}
                 </div>
               </div>
               <div className="flex-between slider-labels tech-sub-labels">
@@ -2188,25 +2543,40 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
         </div>
 
         {isAnalyzing && (
-          <div className="robot-loader-card" style={{ borderColor: 'rgba(225,29,72,0.1)' }}>
-            <div className="robot-wrap">
-              <div className="robot-head" style={{ borderColor: '#E11D48' }}>
-                <div className="eye left" style={{ background: '#E11D48', boxShadow: '0 0 10px #E11D48' }}></div>
-                <div className="eye right" style={{ background: '#E11D48', boxShadow: '0 0 10px #E11D48' }}></div>
+          <div className="injury-electric-loader">
+            {/* Pulsing rings */}
+            <div className="elec-rings">
+              <div className="elec-ring r1"></div>
+              <div className="elec-ring r2"></div>
+              <div className="elec-ring r3"></div>
+              <div className="elec-core">
+                <Cpu size={28} color="#E11D48" className="elec-cpu-spin" />
               </div>
-              <div className="robot-body"><div className="cpu-core"><Cpu size={24} color="#E11D48" /></div></div>
             </div>
-            <div className="loader-title">AI 防護大腦掃描中</div>
-            <p className="loader-subtitle">正在對比數千份運動傷害文獻，尋找最可能的受傷原因...</p>
+            {/* Title */}
+            <div className="elec-title">AI 防護大腦掃描中</div>
+            <div className="elec-subtitle">正在對比數千份運動傷害文獻...</div>
+            {/* Data stream bars */}
+            <div className="elec-data-stream">
+              {['LOADING BIOMECH DATA', 'CROSS-REF INJURY DB', 'ANALYZING PAIN VECTOR', 'GENERATING REPORT'].map((t, i) => (
+                <div key={i} className="elec-stream-row" style={{ animationDelay: `${ i * 0.4 } s` }}>
+                  <span className="stream-label">{t}</span>
+                  <div className="stream-bar"><div className="stream-fill" style={{ animationDelay: `${ i * 0.4 } s` }}></div></div>
+                  <span className="stream-pct">...</span>
+                </div>
+              ))}
+            </div>
+            {/* Scan line */}
+            <div className="elec-scanline"></div>
           </div>
         )}
 
         {result && (
-          <div className="injury-result-container tech-result-view">
+          <div ref={injuryResultRef} className="injury-result-container tech-result-view">
             <div className="injury-main-card tech-result-card">
               <div className="status-indicators tech-status-row">
                 {['高度確認', '不確定', '無法辨識'].map(s => (
-                  <div key={s} className={`status-tag tech-tag ${result.status === s ? 'active' : ''}`}>
+                  <div key={s} className={`status - tag tech - tag ${ result.status === s ? 'active' : '' } `}>
                     <div className="status-light"></div>
                     <span>{s}</span>
                   </div>
@@ -2257,280 +2627,381 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
       </div>
       <DetailStyles />
       <style>{`
-        .injury-assessment-page {
-          background-color: #060608;
-          min-height: 100vh;
-          overflow-x: hidden;
-          position: relative;
-        }
-        
+  .injury - assessment - page {
+  background - color: #060608;
+  min - height: 100vh;
+  overflow - x: hidden;
+  position: relative;
+}
+
         /* Tech Overlay & HUD */
-        .tech-hud-overlay {
-          position: fixed;
-          inset: 0;
-          background-image: 
-            radial-gradient(circle at 50% 50%, rgba(225, 29, 72, 0.05) 0%, transparent 80%),
-            linear-gradient(rgba(225, 29, 72, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(225, 29, 72, 0.03) 1px, transparent 1px);
-          background-size: 100% 100%, 30px 30px, 30px 30px;
-          pointer-events: none;
-          z-index: 0;
-        }
+        .tech - hud - overlay {
+  position: fixed;
+  inset: 0;
+  background - image:
+  radial - gradient(circle at 50 % 50 %, rgba(225, 29, 72, 0.05) 0 %, transparent 80 %),
+    linear - gradient(rgba(225, 29, 72, 0.03) 1px, transparent 1px),
+    linear - gradient(90deg, rgba(225, 29, 72, 0.03) 1px, transparent 1px);
+  background - size: 100 % 100 %, 30px 30px, 30px 30px;
+  pointer - events: none;
+  z - index: 0;
+}
         
-        .tech-scanline {
-          position: fixed;
-          top: 0; left: 0; right: 0; height: 100px;
-          background: linear-gradient(to bottom, transparent, rgba(225, 29, 72, 0.05), transparent);
-          z-index: 0;
-          pointer-events: none;
-          animation: techScan 10s linear infinite;
-        }
-        
-        @keyframes techScan {
+        .tech - scanline {
+  position: fixed;
+  top: 0; left: 0; right: 0; height: 100px;
+  background: linear - gradient(to bottom, transparent, rgba(225, 29, 72, 0.05), transparent);
+  z - index: 0;
+  pointer - events: none;
+  animation: techScan 10s linear infinite;
+}
+
+        /* ===== Electric Loader ===== */
+        .injury - electric - loader {
+  position: relative;
+  margin: 24px 0;
+  padding: 32px 20px;
+  background: linear - gradient(135deg, rgba(225, 29, 72, 0.05), rgba(0, 0, 0, 0.8));
+  border: 1px solid rgba(225, 29, 72, 0.25);
+  border - radius: 24px;
+  display: flex;
+  flex - direction: column;
+  align - items: center;
+  gap: 20px;
+  overflow: hidden;
+}
+        .elec - rings {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align - items: center;
+  justify - content: center;
+}
+        .elec - ring {
+  position: absolute;
+  border - radius: 50 %;
+  border: 2px solid transparent;
+  border - top - color: #E11D48;
+  animation: elecSpin linear infinite;
+}
+        .elec - ring.r1 { width: 100px; height: 100px; animation - duration: 2s; border - top - color: rgba(225, 29, 72, 0.9); box - shadow: 0 0 12px rgba(225, 29, 72, 0.4); }
+        .elec - ring.r2 { width: 72px; height: 72px; animation - duration: 1.4s; animation - direction: reverse; border - top - color: rgba(225, 29, 72, 0.6); }
+        .elec - ring.r3 { width: 46px; height: 46px; animation - duration: 0.9s; border - top - color: rgba(225, 29, 72, 0.4); }
+        .elec - core {
+  position: absolute;
+  width: 32px; height: 32px;
+  background: rgba(225, 29, 72, 0.1);
+  border - radius: 50 %;
+  display: flex; align - items: center; justify - content: center;
+  box - shadow: 0 0 20px rgba(225, 29, 72, 0.5);
+}
+        .elec - cpu - spin { animation: elecSpin 3s linear infinite; }
+@keyframes elecSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .elec - title {
+  font - size: 16px; font - weight: 900;
+  color: #E11D48;
+  letter - spacing: 2px;
+  text - transform: uppercase;
+  text - shadow: 0 0 20px rgba(225, 29, 72, 0.6);
+}
+        .elec - subtitle {
+  font - size: 12px; color: rgba(255, 255, 255, 0.4);
+  font - weight: 600; letter - spacing: 1px;
+  margin - top: -12px;
+}
+        .elec - data - stream {
+  width: 100 %;
+  display: flex; flex - direction: column; gap: 10px;
+}
+        .elec - stream - row {
+  display: flex; align - items: center; gap: 10px;
+  animation: fadeInRow 0.6s ease - out both;
+}
+@keyframes fadeInRow { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        .stream - label {
+  font - size: 9px; color: rgba(225, 29, 72, 0.7);
+  font - family: monospace; font - weight: 700;
+  min - width: 140px; letter - spacing: 0.5px;
+}
+        .stream - bar {
+  flex: 1; height: 3px;
+  background: rgba(225, 29, 72, 0.1);
+  border - radius: 4px; overflow: hidden;
+}
+        .stream - fill {
+  height: 100 %;
+  background: linear - gradient(90deg, #E11D48, rgba(225, 29, 72, 0.3));
+  border - radius: 4px;
+  animation: streamLoad 2.5s ease -in -out infinite both;
+}
+@keyframes streamLoad {
+  0 % { width: 0 %; }
+  60 % { width: 85 %; }
+  80 % { width: 92 %; }
+  100 % { width: 85 %; }
+}
+        .stream - pct {
+  font - size: 9px; color: rgba(225, 29, 72, 0.5);
+  font - family: monospace; min - width: 20px; text - align: right;
+}
+        .elec - scanline {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear - gradient(90deg, transparent, rgba(225, 29, 72, 0.8), transparent);
+  animation: scanAcross 2s linear infinite;
+}
+@keyframes scanAcross {
+          from { transform: translateX(-100 %); }
+          to { transform: translateX(100vw); }
+}
+/* ========================== */
+@keyframes techScan {
           from { transform: translateY(-100vh); }
           to { transform: translateY(100vh); }
-        }
+}
 
-        .tech-content {
-          padding: 0 20px 40px;
-          position: relative;
-          z-index: 2;
-        }
+        .tech - content {
+  padding: 0 20px 40px;
+  position: relative;
+  z - index: 2;
+}
 
         /* Glassmorphism Tech Card */
-        .glass-tech-card {
-          background: rgba(20, 20, 22, 0.7);
-          backdrop-filter: blur(20px);
-          border-radius: 32px;
-          border: 1px solid rgba(225, 29, 72, 0.2);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(225, 29, 72, 0.05);
-          overflow: hidden;
-        }
+        .glass - tech - card {
+  background: rgba(20, 20, 22, 0.7);
+  backdrop - filter: blur(20px);
+  border - radius: 32px;
+  border: 1px solid rgba(225, 29, 72, 0.2);
+  box - shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(225, 29, 72, 0.05);
+  overflow: hidden;
+}
 
-        .tech-header-text {
-          color: rgba(225, 29, 72, 0.9);
-          font-family: 'Outfit', sans-serif;
-          letter-spacing: 2px;
-          font-weight: 800;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          font-size: 13px;
-        }
+        .tech - header - text {
+  color: rgba(225, 29, 72, 0.9);
+  font - family: 'Outfit', sans - serif;
+  letter - spacing: 2px;
+  font - weight: 800;
+  display: flex;
+  align - items: center;
+  gap: 10px;
+  font - size: 13px;
+}
 
-        .tech-icon-spin { animation: spin 8s linear infinite; }
+        .tech - icon - spin { animation: spin 8s linear infinite; }
         
-        .tech-card-inner { padding: 30px 24px !important; background: transparent !important; }
+        .tech - card - inner { padding: 30px 24px!important; background: transparent!important; }
 
-        .tech-label {
-          color: #666;
-          font-size: 11px;
-          font-weight: 800;
-          letter-spacing: 1px;
-          margin-bottom: 10px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
+        .tech - label {
+  color: #666;
+  font - size: 11px;
+  font - weight: 800;
+  letter - spacing: 1px;
+  margin - bottom: 10px;
+  display: flex;
+  align - items: center;
+  gap: 8px;
+}
 
-        .tech-num {
-          font-family: 'Monaco', monospace;
-          background: rgba(225, 29, 72, 0.1);
-          padding: 2px 8px;
-          border-radius: 6px;
-          font-size: 16px;
-        }
+        .tech - num {
+  font - family: 'Monaco', monospace;
+  background: rgba(225, 29, 72, 0.1);
+  padding: 2px 8px;
+  border - radius: 6px;
+  font - size: 16px;
+}
 
         /* Input Tech Decorations */
-        .tech-input-wrapper, .tech-textarea-wrapper {
-          position: relative;
-        }
-        .tech-input, .tech-textarea {
-          background: rgba(0, 0, 0, 0.4) !important;
-          border: 1px solid rgba(255, 255, 255, 0.08) !important;
-          border-radius: 12px !important;
-          transition: 0.3s;
-          color: white;
-        }
-        .tech-input:focus, .tech-textarea:focus {
-          border-color: #E11D48 !important;
-          box-shadow: 0 0 15px rgba(225, 29, 72, 0.15) !important;
-          background: rgba(0, 0, 0, 0.6) !important;
-        }
+        .tech - input - wrapper, .tech - textarea - wrapper {
+  position: relative;
+}
+        .tech - input, .tech - textarea {
+  background: rgba(0, 0, 0, 0.4)!important;
+  border: 1px solid rgba(255, 255, 255, 0.08)!important;
+  border - radius: 12px!important;
+  transition: 0.3s;
+  color: white;
+}
+        .tech - input: focus, .tech - textarea:focus {
+  border - color: #E11D48!important;
+  box - shadow: 0 0 15px rgba(225, 29, 72, 0.15)!important;
+  background: rgba(0, 0, 0, 0.6)!important;
+}
 
         /* Stack Buttons Tech */
-        .tech-stacks { gap: 10px !important; }
-        .tech-stack-btn {
-          background: rgba(255, 255, 255, 0.02) !important;
-          border: 1px solid rgba(255, 255, 255, 0.05) !important;
-          border-radius: 14px !important;
-          padding: 14px !important;
-          position: relative;
-          overflow: hidden;
-          transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .tech-stack-btn .btn-label { font-size: 14px; font-weight: 700; z-index: 2; position: relative; }
-        .tech-stack-btn.active {
-          background: rgba(225, 29, 72, 0.1) !important;
-          border-color: #E11D48 !important;
-          box-shadow: 0 0 20px rgba(225, 29, 72, 0.2);
-        }
-        .btn-active-dot {
-          position: absolute;
-          top: 8px; right: 8px; width: 6px; height: 6px;
-          background: #E11D48; border-radius: 50%;
-          box-shadow: 0 0 8px #E11D48;
-        }
+        .tech - stacks { gap: 10px!important; }
+        .tech - stack - btn {
+  background: rgba(255, 255, 255, 0.02)!important;
+  border: 1px solid rgba(255, 255, 255, 0.05)!important;
+  border - radius: 14px!important;
+  padding: 14px!important;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s cubic - bezier(0.4, 0, 0.2, 1);
+}
+        .tech - stack - btn.btn - label { font - size: 14px; font - weight: 700; z - index: 2; position: relative; }
+        .tech - stack - btn.active {
+  background: rgba(225, 29, 72, 0.1)!important;
+  border - color: #E11D48!important;
+  box - shadow: 0 0 20px rgba(225, 29, 72, 0.2);
+}
+        .btn - active - dot {
+  position: absolute;
+  top: 8px; right: 8px; width: 6px; height: 6px;
+  background: #E11D48; border - radius: 50 %;
+  box - shadow: 0 0 8px #E11D48;
+}
 
         /* Slider HUD */
-        .slider-hud-wrap { position: relative; padding: 20px 0 10px; }
-        .slider-ticks {
-          display: flex; justify-content: space-between;
-          position: absolute; top: 10px; left: 0; right: 0;
-          pointer-events: none;
-        }
-        .tick { width: 2px; height: 6px; background: #333; border-radius: 1px; transition: 0.3s; }
-        .tick.active { background: #E11D48; box-shadow: 0 0 5px #E11D48; }
+        .slider - hud - wrap { position: relative; padding: 20px 0 10px; }
+        .slider - ticks {
+  display: flex; justify - content: space - between;
+  position: absolute; top: 10px; left: 0; right: 0;
+  pointer - events: none;
+}
+        .tick { width: 2px; height: 6px; background: #333; border - radius: 1px; transition: 0.3s; }
+        .tick.active { background: #E11D48; box - shadow: 0 0 5px #E11D48; }
 
-        .tech-slider::-webkit-slider-thumb {
-          width: 24px; height: 24px;
-          background: #E11D48;
-          border: 3px solid #000;
-          box-shadow: 0 0 15px #E11D48;
-        }
+        .tech - slider:: -webkit - slider - thumb {
+  width: 24px; height: 24px;
+  background: #E11D48;
+  border: 3px solid #000;
+  box - shadow: 0 0 15px #E11D48;
+}
 
-        .tech-sub-labels span { font-size: 9px; color: #444; font-weight: 900; }
+        .tech - sub - labels span { font - size: 9px; color: #444; font - weight: 900; }
 
         /* Submit Button Sci-Fi */
-        .tech-submit {
-          height: 60px !important;
-          margin-top: 10px;
-          background: #E11D48 !important;
-          border-radius: 18px !important;
-          position: relative;
-          overflow: hidden;
-          border: none !important;
-        }
-        .tech-submit:active { transform: scale(0.96); }
-        .tech-submit::after {
-          content: '';
-          position: absolute;
-          top: -50%; left: -50%; width: 200%; height: 200%;
-          background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 60%);
-          opacity: 0; transition: 0.3s;
-        }
-        .tech-submit:hover::after { opacity: 1; transform: scale(1.1); }
+        .tech - submit {
+  height: 60px!important;
+  margin - top: 10px;
+  background: #E11D48!important;
+  border - radius: 18px!important;
+  position: relative;
+  overflow: hidden;
+  border: none!important;
+}
+        .tech - submit:active { transform: scale(0.96); }
+        .tech - submit::after {
+  content: '';
+  position: absolute;
+  top: -50 %; left: -50 %; width: 200 %; height: 200 %;
+  background: radial - gradient(circle at center, rgba(255, 255, 255, 0.2) 0 %, transparent 60 %);
+  opacity: 0; transition: 0.3s;
+}
+        .tech - submit: hover::after { opacity: 1; transform: scale(1.1); }
         
-        .btn-icon-pulse { animation: techHeartbeat 2s infinite; }
-        @keyframes techHeartbeat {
-          0% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.2); opacity: 0.7; }
-          100% { transform: scale(1); opacity: 1; }
-        }
+        .btn - icon - pulse { animation: techHeartbeat 2s infinite; }
+@keyframes techHeartbeat {
+  0 % { transform: scale(1); opacity: 1; }
+  50 % { transform: scale(1.2); opacity: 0.7; }
+  100 % { transform: scale(1); opacity: 1; }
+}
 
-        .tech-loading-wrap { display: flex; align-items: center; gap: 12px; font-weight: 900; letter-spacing: 2px; }
-        .tech-spinner {
-          width: 20px; height: 20px;
-          border: 3px solid rgba(255,255,255,0.2);
-          border-top-color: white;
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-        }
+        .tech - loading - wrap { display: flex; align - items: center; gap: 12px; font - weight: 900; letter - spacing: 2px; }
+        .tech - spinner {
+  width: 20px; height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border - top - color: white;
+  border - radius: 50 %;
+  animation: spin 0.8s linear infinite;
+}
 
         /* Result View Tech */
-        .tech-result-view { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); margin-bottom: 50px; }
-        .tech-result-card {
-          background: rgba(10, 10, 12, 0.9) !important;
-          border: 1px solid rgba(225, 29, 72, 0.4) !important;
-          padding: 30px 20px !important;
-          position: relative;
-        }
-        .result-header-box { margin-bottom: 25px; padding-left: 15px; border-left: 3px solid #E11D48; }
-        .header-glitch { font-size: 10px; color: #E11D48; font-weight: 900; letter-spacing: 3px; margin-bottom: 5px; opacity: 0.8; }
-        .tech-title { font-size: 24px; color: white; margin: 0; font-weight: 800; letter-spacing: 1px; }
+        .tech - result - view { animation: slideUp 0.6s cubic - bezier(0.2, 0.8, 0.2, 1); margin - bottom: 50px; }
+        .tech - result - card {
+  background: rgba(10, 10, 12, 0.9)!important;
+  border: 1px solid rgba(225, 29, 72, 0.4)!important;
+  padding: 30px 20px!important;
+  position: relative;
+}
+        .result - header - box { margin - bottom: 25px; padding - left: 15px; border - left: 3px solid #E11D48; }
+        .header - glitch { font - size: 10px; color: #E11D48; font - weight: 900; letter - spacing: 3px; margin - bottom: 5px; opacity: 0.8; }
+        .tech - title { font - size: 24px; color: white; margin: 0; font - weight: 800; letter - spacing: 1px; }
 
-        .tech-data-table {
-          display: flex; flex-direction: column; gap: 1px;
-          background: rgba(225, 29, 72, 0.1);
-          border: 1px solid rgba(225, 29, 72, 0.2);
-          border-radius: 16px; overflow: hidden;
-          margin-bottom: 25px;
-        }
-        .table-row {
-          background: rgba(15, 15, 18, 0.95);
-          display: flex; flex-direction: column;
-          padding: 16px;
-        }
-        .row-label {
-          font-size: 11px; color: #E11D48; font-weight: 900;
-          letter-spacing: 1px; margin-bottom: 10px;
-          display: flex; align-items: center; gap: 8px;
-          text-transform: uppercase;
-        }
-        .row-value { font-size: 14px; color: #ccc; line-height: 1.6; }
+        .tech - data - table {
+  display: flex; flex - direction: column; gap: 1px;
+  background: rgba(225, 29, 72, 0.1);
+  border: 1px solid rgba(225, 29, 72, 0.2);
+  border - radius: 16px; overflow: hidden;
+  margin - bottom: 25px;
+}
+        .table - row {
+  background: rgba(15, 15, 18, 0.95);
+  display: flex; flex - direction: column;
+  padding: 16px;
+}
+        .row - label {
+  font - size: 11px; color: #E11D48; font - weight: 900;
+  letter - spacing: 1px; margin - bottom: 10px;
+  display: flex; align - items: center; gap: 8px;
+  text - transform: uppercase;
+}
+        .row - value { font - size: 14px; color: #ccc; line - height: 1.6; }
 
-        .tech-log-box {
-          background: rgba(0, 0, 0, 0.5);
-          border: 1px dashed rgba(225, 29, 72, 0.3);
-          border-radius: 12px; padding: 15px;
-          position: relative;
-        }
-        .log-header {
-          display: flex; align-items: center; gap: 8px;
-          color: #aaa; font-size: 11px; font-weight: 900;
-          margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);
-          padding-bottom: 8px;
-        }
-        .log-footer {
-          margin-top: 12px; text-align: right; font-size: 9px;
-          color: #444; font-weight: 900; font-family: monospace;
-        }
+        .tech - log - box {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px dashed rgba(225, 29, 72, 0.3);
+  border - radius: 12px; padding: 15px;
+  position: relative;
+}
+        .log - header {
+  display: flex; align - items: center; gap: 8px;
+  color: #aaa; font - size: 11px; font - weight: 900;
+  margin - bottom: 12px; border - bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding - bottom: 8px;
+}
+        .log - footer {
+  margin - top: 12px; text - align: right; font - size: 9px;
+  color: #444; font - weight: 900; font - family: monospace;
+}
 
-        .tech-disclaimer {
-          display: flex; align-items: flex-start; gap: 10px;
-          background: rgba(225, 29, 72, 0.05);
-          padding: 15px; border-radius: 12px;
-          color: #666; font-size: 11px; font-weight: 500;
-          line-height: 1.5; margin-top: 20px;
-        }
-        .tech-disclaimer svg { flex-shrink: 0; margin-top: 2px; }
+        .tech - disclaimer {
+  display: flex; align - items: flex - start; gap: 10px;
+  background: rgba(225, 29, 72, 0.05);
+  padding: 15px; border - radius: 12px;
+  color: #666; font - size: 11px; font - weight: 500;
+  line - height: 1.5; margin - top: 20px;
+}
+        .tech - disclaimer svg { flex - shrink: 0; margin - top: 2px; }
 
         /* Status Indicator Tech Tags */
-        .tech-status-row { display: flex; gap: 10px; margin-bottom: 25px; align-items: center; justify-content: flex-start; }
-        .tech-tag {
-          display: flex; align-items: center; gap: 8px;
-          padding: 6px 12px; border-radius: 10px;
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          transition: 0.3s;
-        }
-        .tech-tag.active {
-          background: rgba(225, 29, 72, 0.12);
-          border: 1px solid rgba(225, 29, 72, 0.3);
-          box-shadow: 0 0 15px rgba(225, 29, 72, 0.1);
-        }
-        .status-light {
-          width: 8px; height: 8px; border-radius: 50%;
-          background: #333; transition: 0.3s;
-        }
-        .tech-tag.active .status-light {
-          background: #E11D48;
-          box-shadow: 0 0 10px #E11D48;
-          animation: techHeartbeat 1.5s infinite;
-        }
-        .tech-tag span { font-size: 11px; font-weight: 800; color: #666; transition: 0.3s; }
-        .tech-tag.active span { color: #E11D48; }
+        .tech - status - row { display: flex; gap: 10px; margin - bottom: 25px; align - items: center; justify - content: flex - start; }
+        .tech - tag {
+  display: flex; align - items: center; gap: 8px;
+  padding: 6px 12px; border - radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: 0.3s;
+}
+        .tech - tag.active {
+  background: rgba(225, 29, 72, 0.12);
+  border: 1px solid rgba(225, 29, 72, 0.3);
+  box - shadow: 0 0 15px rgba(225, 29, 72, 0.1);
+}
+        .status - light {
+  width: 8px; height: 8px; border - radius: 50 %;
+  background: #333; transition: 0.3s;
+}
+        .tech - tag.active.status - light {
+  background: #E11D48;
+  box - shadow: 0 0 10px #E11D48;
+  animation: techHeartbeat 1.5s infinite;
+}
+        .tech - tag span { font - size: 11px; font - weight: 800; color: #666; transition: 0.3s; }
+        .tech - tag.active span { color: #E11D48; }
 
-        .pulse-red-icon { animation: redIconPulse 2s infinite; }
-        @keyframes redIconPulse {
-          0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
-          70% { box-shadow: 0 0 0 10px rgba(225, 29, 72, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
+        .pulse - red - icon { animation: redIconPulse 2s infinite; }
+@keyframes redIconPulse {
+  0 % { box- shadow: 0 0 0 0 rgba(225, 29, 72, 0.4);
+}
+70 % { box- shadow: 0 0 0 10px rgba(225, 29, 72, 0); }
+100 % { box- shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
         }
 
-        .neon-red { color: #ff2d55; text-shadow: 0 0 10px rgba(255,45,85,0.5); }
-        .neon-red-slider::-webkit-slider-thumb { background: #ff2d55; box-shadow: 0 0 25px rgba(255,45,85,1); }
-      `}</style>
+        .neon - red { color: #ff2d55; text - shadow: 0 0 10px rgba(255, 45, 85, 0.5); }
+        .neon - red - slider:: -webkit - slider - thumb { background: #ff2d55; box - shadow: 0 0 25px rgba(255, 45, 85, 1); }
+`}</style>
     </div>
   );
 };
@@ -2555,19 +3026,19 @@ const ExerciseDbDetail = ({ onBack }) => (
     </div>
     <DetailStyles />
     <style>{`
-      .pulse-circle-db {
-        width: 80px; height: 80px;
-        background: rgba(139, 92, 246, 0.1);
-        border-radius: 50%;
-        position: absolute;
-        animation: dbPulse 2s infinite;
-      }
-      @keyframes dbPulse { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
-      .placeholder-text-v2 { 
-        margin-top: 24px; color: #888; font-size: 15px; font-weight: 500; line-height: 1.6; 
-      }
-      .glow-text { color: #8b5cf6; font-weight: 800; text-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
-    `}</style>
+  .pulse - circle - db {
+  width: 80px; height: 80px;
+  background: rgba(139, 92, 246, 0.1);
+  border - radius: 50 %;
+  position: absolute;
+  animation: dbPulse 2s infinite;
+}
+@keyframes dbPulse { 0 % { transform: scale(1); opacity: 0.5; } 100 % { transform: scale(1.5); opacity: 0; } }
+      .placeholder - text - v2 {
+  margin - top: 24px; color: #888; font - size: 15px; font - weight: 500; line - height: 1.6;
+}
+      .glow - text { color: #8b5cf6; font - weight: 800; text - shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
+`}</style>
   </div>
 );
 
@@ -2625,133 +3096,133 @@ const SupportBot = ({ onOpenChat }) => {
       </div>
 
       <style>{`
-        .support-bot-container { 
-          position: fixed; bottom: 120px; right: 28px; z-index: 1500; display: flex; flex-direction: column; align-items: flex-end; gap: 14px; pointer-events: none; 
-        }
-        .support-bot-container * { pointer-events: auto; }
+  .support - bot - container {
+  position: fixed; bottom: 120px; right: 28px; z - index: 1500; display: flex; flex - direction: column; align - items: flex - end; gap: 14px; pointer - events: none;
+}
+        .support - bot - container * { pointer- events: auto; }
         
-        .bot-speech-bubble { 
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(10px);
-          border-radius: 20px 20px 6px 20px; 
-          padding: 14px 18px; 
-          width: 210px; 
-          box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 20px rgba(0, 242, 255, 0.1); 
-          position: relative; 
-          transform-origin: bottom right; 
-          animation: bounceInBot 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-          cursor: pointer;
-          border: 1px solid rgba(0, 242, 255, 0.2);
-          margin-bottom: 8px;
-        }
-        .bot-speech-bubble p { font-size: 14px; font-weight: 700; line-height: 1.5; color: #1a202c; margin: 0; }
-        .bot-speech-bubble::after {
-          content: '🤖'; position: absolute; right: -8px; top: -12px; font-size: 18px;
-          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
+        .bot - speech - bubble {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop - filter: blur(10px);
+  border - radius: 20px 20px 6px 20px;
+  padding: 14px 18px;
+  width: 210px;
+  box - shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 242, 255, 0.1);
+  position: relative;
+  transform - origin: bottom right;
+  animation: bounceInBot 0.5s cubic - bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  margin - bottom: 8px;
+}
+        .bot - speech - bubble p { font - size: 14px; font - weight: 700; line - height: 1.5; color: #1a202c; margin: 0; }
+        .bot - speech - bubble::after {
+  content: '🤖'; position: absolute; right: -8px; top: -12px; font - size: 18px;
+  filter: drop - shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
         
-        .robot-wrapper { display: flex; flex-direction: column; align-items: center; position: relative; }
-        .robot-body-anim { width: 80px; height: 100px; display: flex; flex-direction: column; align-items: center; animation: hoverV2 4s ease-in-out infinite; }
-        
+        .robot - wrapper { display: flex; flex - direction: column; align - items: center; position: relative; }
+        .robot - body - anim { width: 80px; height: 100px; display: flex; flex - direction: column; align - items: center; animation: hoverV2 4s ease -in -out infinite; }
+
         /* Head Structure */
-        .robot-head-v2 { 
-          width: 54px; height: 50px; 
-          background: radial-gradient(circle at 30% 30%, #fff 0%, #eef2f3 100%); 
-          border-radius: 50% 50% 45% 45%; 
-          position: relative; 
-          display: flex; align-items: center; justify-content: center; 
-          box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset -2px -2px 5px rgba(0,0,0,0.05);
-          z-index: 10;
-        }
-        .visor-v2 {
-          width: 38px; height: 20px;
-          background: #0a0a0a;
-          border-radius: 12px;
-          display: flex; align-items: center; justify-content: center;
-          box-shadow: 0 0 15px rgba(0,0,0,0.5);
-          margin-top: 2px;
-        }
-        .robot-eyes-v2 { display: flex; gap: 10px; }
-        .eye-v2 { 
-          width: 7px; height: 7px; 
-          background: #00f2ff; 
-          border-radius: 50%; 
-          animation: blink 5s infinite; 
-          box-shadow: 0 0 10px #00f2ff, 0 0 20px rgba(0,242,255,0.4);
-        }
-        .ear-glow-left, .ear-glow-right {
-          position: absolute;
-          width: 6px; height: 14px;
-          background: rgba(0, 242, 255, 0.4);
-          border-radius: 50%;
-          top: 35%;
-          filter: blur(2px);
-        }
-        .ear-glow-left { left: -2px; }
-        .ear-glow-right { right: -2px; }
+        .robot - head - v2 {
+  width: 54px; height: 50px;
+  background: radial - gradient(circle at 30 % 30 %, #fff 0 %, #eef2f3 100 %);
+  border - radius: 50 % 50 % 45 % 45 %;
+  position: relative;
+  display: flex; align - items: center; justify - content: center;
+  box - shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset - 2px - 2px 5px rgba(0, 0, 0, 0.05);
+  z - index: 10;
+}
+        .visor - v2 {
+  width: 38px; height: 20px;
+  background: #0a0a0a;
+  border - radius: 12px;
+  display: flex; align - items: center; justify - content: center;
+  box - shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  margin - top: 2px;
+}
+        .robot - eyes - v2 { display: flex; gap: 10px; }
+        .eye - v2 {
+  width: 7px; height: 7px;
+  background: #00f2ff;
+  border - radius: 50 %;
+  animation: blink 5s infinite;
+  box - shadow: 0 0 10px #00f2ff, 0 0 20px rgba(0, 242, 255, 0.4);
+}
+        .ear - glow - left, .ear - glow - right {
+  position: absolute;
+  width: 6px; height: 14px;
+  background: rgba(0, 242, 255, 0.4);
+  border - radius: 50 %;
+  top: 35 %;
+  filter: blur(2px);
+}
+        .ear - glow - left { left: -2px; }
+        .ear - glow - right { right: -2px; }
 
         /* Neck Ring */
-        .neck-ring {
-          width: 22px; height: 4px;
-          background: #00f2ff;
-          border-radius: 4px;
-          margin-top: -2px;
-          box-shadow: 0 0 10px #00f2ff;
-          z-index: 8;
-          animation: glowPulse 2s ease-in-out infinite;
-        }
+        .neck - ring {
+  width: 22px; height: 4px;
+  background: #00f2ff;
+  border - radius: 4px;
+  margin - top: -2px;
+  box - shadow: 0 0 10px #00f2ff;
+  z - index: 8;
+  animation: glowPulse 2s ease -in -out infinite;
+}
 
         /* Body Structure */
-        .body-container {
-          display: flex;
-          align-items: flex-start;
-          justify-content: center;
-          margin-top: -1px;
-          position: relative;
-        }
-        .robot-torso-v2 { 
-          width: 44px; height: 42px; 
-          background: radial-gradient(circle at 40% 40%, #fff 0%, #dae1e7 100%); 
-          border-radius: 20px 20px 30px 30px; 
-          position: relative;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-          z-index: 5;
-        }
-        .torso-detail {
-          position: absolute;
-          bottom: 8px; left: 50%;
-          transform: translateX(-50%);
-          width: 14px; height: 2px;
-          background: #dae1e7;
-          border-radius: 2px;
-        }
+        .body - container {
+  display: flex;
+  align - items: flex - start;
+  justify - content: center;
+  margin - top: -1px;
+  position: relative;
+}
+        .robot - torso - v2 {
+  width: 44px; height: 42px;
+  background: radial - gradient(circle at 40 % 40 %, #fff 0 %, #dae1e7 100 %);
+  border - radius: 20px 20px 30px 30px;
+  position: relative;
+  box - shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  z - index: 5;
+}
+        .torso - detail {
+  position: absolute;
+  bottom: 8px; left: 50 %;
+  transform: translateX(-50 %);
+  width: 14px; height: 2px;
+  background: #dae1e7;
+  border - radius: 2px;
+}
 
-        .shoulder-v2 {
-          width: 18px; height: 20px;
-          background: #7f8c8d; /* Metallic Silver/Grey */
-          border-radius: 10px;
-          position: absolute;
-          top: 2px;
-          box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), 0 2px 5px rgba(0,0,0,0.3);
-          z-index: 4;
-        }
-        .shoulder-v2.left { left: -14px; transform: rotate(-15deg); }
-        .shoulder-v2.right { right: -14px; transform: rotate(15deg); }
+        .shoulder - v2 {
+  width: 18px; height: 20px;
+  background: #7f8c8d; /* Metallic Silver/Grey */
+  border - radius: 10px;
+  position: absolute;
+  top: 2px;
+  box - shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.2), 0 2px 5px rgba(0, 0, 0, 0.3);
+  z - index: 4;
+}
+        .shoulder - v2.left { left: -14px; transform: rotate(-15deg); }
+        .shoulder - v2.right { right: -14px; transform: rotate(15deg); }
 
-        .robot-platform-v2 { 
-          width: 50px; height: 6px; 
-          background: rgba(0, 242, 255, 0.2); 
-          border-radius: 50%; 
-          filter: blur(4px); 
-          margin-top: 5px; 
-          animation: shadowPulseV2 4s ease-in-out infinite; 
-        }
+        .robot - platform - v2 {
+  width: 50px; height: 6px;
+  background: rgba(0, 242, 255, 0.2);
+  border - radius: 50 %;
+  filter: blur(4px);
+  margin - top: 5px;
+  animation: shadowPulseV2 4s ease -in -out infinite;
+}
 
-        @keyframes glowPulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-        @keyframes hoverV2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        @keyframes shadowPulseV2 { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(0.6); opacity: 0.05; } }
-        @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
-      `}</style>
+@keyframes glowPulse { 0 %, 100 % { opacity: 0.6; } 50 % { opacity: 1; } }
+@keyframes hoverV2 { 0 %, 100 % { transform: translateY(0); } 50 % { transform: translateY(-15px); } }
+@keyframes shadowPulseV2 { 0 %, 100 % { transform: scale(1); opacity: 0.2; } 50 % { transform: scale(0.6); opacity: 0.05; } }
+@keyframes blink { 0 %, 90 %, 100 % { transform: scaleY(1); } 95 % { transform: scaleY(0.1); } }
+`}</style>
     </div>
   );
 };
@@ -2780,20 +3251,20 @@ const ChatBotDetail = ({ onBack }) => {
             {
               role: 'system',
               content: `你是一位 JENZiQ FITNESS APP 的「首席 AI 運動營養師」。
-              你的職責是根據使用者的飲食紀錄、健身目標提供專業且精確的營養建議。
-              
-              你的專業背景：
-              1. 擅長分析各種食材的宏觀營養素（蛋白質、碳水、脂肪）。
-              2. 能夠針對「減脂、增肌、維持」提供不同比例的飲食對策。
-              3. 熟悉運動補劑（如乳清蛋白）的使用時機。
+你的職責是根據使用者的飲食紀錄、健身目標提供專業且精確的營養建議。
+
+你的專業背景：
+1. 擅長分析各種食材的宏觀營養素（蛋白質、碳水、脂肪）。
+2. 能夠針對「減脂、增肌、維持」提供不同比例的飲食對策。
+3. 熟悉運動補劑（如乳清蛋白）的使用時機。
               
               目前的 APP 功能包含：
-              1. AI 營養師：計算熱量需求 (TDEE) 並生成智能菜單。
-              2. AI 傷害評估：分析運動傷害嚴重程度並給予建議。
-              3. 自動排課系統：根據目標自動安排訓練動作。
-              4. 照片熱量計算：拍攝食物照片即可分析營養成分。
-              
-              請以親切、幽默、專業的口吻回答問題。如果使用者詢問如何使用特定功能，請簡潔說明步驟。如果使用者想聊天，也可以愉快地聊天。`
+1. AI 營養師：計算熱量需求(TDEE) 並生成智能菜單。
+2. AI 傷害評估：分析運動傷害嚴重程度並給予建議。
+3. 自動排課系統：根據目標自動安排訓練動作。
+4. 照片熱量計算：拍攝食物照片即可分析營養成分。
+
+請以親切、幽默、專業的口吻回答問題。如果使用者詢問如何使用特定功能，請簡潔說明步驟。如果使用者想聊天，也可以愉快地聊天。`
             },
             ...messages.map(m => ({ role: m.role === 'bot' ? 'assistant' : 'user', content: m.content })),
             { role: 'user', content: userMsg }
@@ -2809,7 +3280,7 @@ const ChatBotDetail = ({ onBack }) => {
       setMessages(prev => [...prev, { role: 'bot', content: botReply }]);
     } catch (err) {
       console.error('ChatBot Error:', err);
-      setMessages(prev => [...prev, { role: 'bot', content: `抱歉，我現在大腦有點卡住，請稍後再試。\n(偵測到錯誤：${err.message})` }]);
+      setMessages(prev => [...prev, { role: 'bot', content: `抱歉，我現在大腦有點卡住，請稍後再試。\n(偵測到錯誤：${ err.message })` }]);
     } finally {
       setIsTyping(false);
     }
@@ -2838,7 +3309,7 @@ const ChatBotDetail = ({ onBack }) => {
       </header>
       <div className="chat-messages">
         {messages.map((m, i) => (
-          <div key={i} className={`chat-bubble-wrap ${m.role === 'bot' ? 'bot' : 'user'}`}>
+          <div key={i} className={`chat - bubble - wrap ${ m.role === 'bot' ? 'bot' : 'user' } `}>
             <div className="chat-bubble">{m.content}</div>
           </div>
         ))}
@@ -2863,92 +3334,92 @@ const ChatBotDetail = ({ onBack }) => {
       </div>
 
       <style>{`
-        .chat-detail-page { 
-          position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-          background: #0d1117; 
-          background-image: radial-gradient(circle at top right, rgba(0, 242, 255, 0.05), transparent 40%);
-          z-index: 1200; display: flex; flex-direction: column; 
-          font-family: 'Inter', system-ui, sans-serif;
-        }
+  .chat - detail - page {
+  position: fixed; top: 0; left: 0; width: 100 %; height: 100 %;
+  background: #0d1117;
+  background - image: radial - gradient(circle at top right, rgba(0, 242, 255, 0.05), transparent 40 %);
+  z - index: 1200; display: flex; flex - direction: column;
+  font - family: 'Inter', system - ui, sans - serif;
+}
 
-        .chat-detail-header {
-          padding: 20px 24px;
-          background: rgba(13, 17, 23, 0.8);
-          backdrop-filter: blur(20px);
-          border-bottom: 2px solid rgba(0, 242, 255, 0.1);
-          display: flex; align-items: center; gap: 16px;
-        }
-        .header-robot-info { display: flex; align-items: center; gap: 12px; }
-        .mini-robot-head {
-          width: 44px; height: 44px;
-          background: #000;
-          border-radius: 12px;
-          border: 1px solid rgba(0, 242, 255, 0.3);
-          display: flex; align-items: center; justify-content: center;
-          box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-        }
-        .header-text-group { display: flex; flex-direction: column; gap: 2px; }
-        .chat-main-title { font-size: 16px; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
-        .chat-status-text { font-size: 10px; color: #00f2ff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
+        .chat - detail - header {
+  padding: 20px 24px;
+  background: rgba(13, 17, 23, 0.8);
+  backdrop - filter: blur(20px);
+  border - bottom: 2px solid rgba(0, 242, 255, 0.1);
+  display: flex; align - items: center; gap: 16px;
+}
+        .header - robot - info { display: flex; align - items: center; gap: 12px; }
+        .mini - robot - head {
+  width: 44px; height: 44px;
+  background: #000;
+  border - radius: 12px;
+  border: 1px solid rgba(0, 242, 255, 0.3);
+  display: flex; align - items: center; justify - content: center;
+  box - shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+}
+        .header - text - group { display: flex; flex - direction: column; gap: 2px; }
+        .chat - main - title { font - size: 16px; font - weight: 800; color: #fff; text - shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        .chat - status - text { font - size: 10px; color: #00f2ff; font - weight: 700; text - transform: uppercase; letter - spacing: 0.5px; opacity: 0.8; }
 
-        .chat-messages { 
-          flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; 
-          padding-bottom: 100px;
-          scrollbar-width: thin; scrollbar-color: rgba(0, 242, 255, 0.2) transparent;
-        }
-        .chat-bubble-wrap { display: flex; width: 100%; }
-        .chat-bubble-wrap.bot { justify-content: flex-start; }
-        .chat-bubble-wrap.user { justify-content: flex-end; }
-        .chat-bubble { max-width: 85%; padding: 14px 18px; font-size: 15px; font-weight: 600; line-height: 1.6; }
+        .chat - messages {
+  flex: 1; padding: 24px; overflow - y: auto; display: flex; flex - direction: column; gap: 20px;
+  padding - bottom: 100px;
+  scrollbar - width: thin; scrollbar - color: rgba(0, 242, 255, 0.2) transparent;
+}
+        .chat - bubble - wrap { display: flex; width: 100 %; }
+        .chat - bubble - wrap.bot { justify - content: flex - start; }
+        .chat - bubble - wrap.user { justify - content: flex - end; }
+        .chat - bubble { max - width: 85 %; padding: 14px 18px; font - size: 15px; font - weight: 600; line - height: 1.6; }
         
-        .bot .chat-bubble { 
-          background: rgba(255, 255, 255, 0.03); 
-          color: #e2e8f0; 
-          border-radius: 20px 20px 20px 4px; 
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .user .chat-bubble { 
-          background: linear-gradient(135deg, #0066cc 0%, #004499 100%); 
-          color: white; 
-          border-radius: 20px 20px 4px 20px; 
-          border: 1px solid rgba(0, 242, 255, 0.3);
-          box-shadow: 0 8px 20px rgba(0, 71, 171, 0.3);
-        }
+        .bot.chat - bubble {
+  background: rgba(255, 255, 255, 0.03);
+  color: #e2e8f0;
+  border - radius: 20px 20px 20px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box - shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+        .user.chat - bubble {
+  background: linear - gradient(135deg, #0066cc 0 %, #004499 100 %);
+  color: white;
+  border - radius: 20px 20px 4px 20px;
+  border: 1px solid rgba(0, 242, 255, 0.3);
+  box - shadow: 0 8px 20px rgba(0, 71, 171, 0.3);
+}
 
-        .typing-indicator { 
-          font-size: 12px; color: #00f2ff; font-weight: 700; 
-          display: flex; align-items: center; gap: 6px; 
-          opacity: 0.8; margin-top: 4px;
-        }
-        .dot { width: 4px; height: 4px; background: #00f2ff; border-radius: 50%; animation: blinkDots 1.4s infinite; }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes blinkDots { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .typing - indicator {
+  font - size: 12px; color: #00f2ff; font - weight: 700;
+  display: flex; align - items: center; gap: 6px;
+  opacity: 0.8; margin - top: 4px;
+}
+        .dot { width: 4px; height: 4px; background: #00f2ff; border - radius: 50 %; animation: blinkDots 1.4s infinite; }
+        .dot: nth - child(2) { animation - delay: 0.2s; }
+        .dot: nth - child(3) { animation - delay: 0.4s; }
+@keyframes blinkDots { 0 %, 100 % { opacity: 0.3; } 50 % { opacity: 1; } }
 
-        .chat-input-row { 
-          position: fixed; bottom: 0; left: 0; width: 100%; 
-          background: rgba(13, 17, 23, 0.9); 
-          backdrop-filter: blur(20px);
-          padding: 24px; 
-          border-top: 2px solid rgba(0, 242, 255, 0.1); 
-          display: flex; gap: 14px; align-items: center;
-        }
-        .chat-input-row input { 
-          flex: 1; background: rgba(0,0,0,0.4); border: 1px solid rgba(0, 242, 255, 0.2); 
-          border-radius: 16px; padding: 14px 20px; color: #fff; font-size: 15px; outline: none; transition: 0.3s;
-        }
-        .chat-input-row input:focus { border-color: #00f2ff; box-shadow: 0 0 15px rgba(0, 242, 255, 0.1); }
-        .chat-send-pulse { 
-          width: 52px; height: 52px; 
-          background: linear-gradient(135deg, #00f2ff 0%, #0066cc 100%); 
-          border: none; border-radius: 16px; 
-          display: flex; align-items: center; justify-content: center; 
-          cursor: pointer; box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
-          transition: 0.3s;
-        }
-        .chat-send-pulse:active { transform: scale(0.9); }
-      `}</style>
+        .chat - input - row {
+  position: fixed; bottom: 0; left: 0; width: 100 %;
+  background: rgba(13, 17, 23, 0.9);
+  backdrop - filter: blur(20px);
+  padding: 24px;
+  border - top: 2px solid rgba(0, 242, 255, 0.1);
+  display: flex; gap: 14px; align - items: center;
+}
+        .chat - input - row input {
+  flex: 1; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2);
+  border - radius: 16px; padding: 14px 20px; color: #fff; font - size: 15px; outline: none; transition: 0.3s;
+}
+        .chat - input - row input:focus { border - color: #00f2ff; box - shadow: 0 0 15px rgba(0, 242, 255, 0.1); }
+        .chat - send - pulse {
+  width: 52px; height: 52px;
+  background: linear - gradient(135deg, #00f2ff 0 %, #0066cc 100 %);
+  border: none; border - radius: 16px;
+  display: flex; align - items: center; justify - content: center;
+  cursor: pointer; box - shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+  transition: 0.3s;
+}
+        .chat - send - pulse:active { transform: scale(0.9); }
+`}</style>
     </div>
   );
 };

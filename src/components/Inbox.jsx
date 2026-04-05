@@ -161,7 +161,7 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
             <div className="message-detail">
                 <header className="detail-header">
                     <button className="back-btn" onClick={() => setSelectedMsg(null)}>
-                        <ChevronRight size={24} style={{ transform: 'rotate(180deg)' }} />
+                        <ChevronRight size={24} color="white" strokeWidth={3} style={{ transform: 'rotate(180deg)' }} />
                     </button>
                     <h2 className="header-title">通知詳情</h2>
                     <div style={{ width: 44 }}></div>
@@ -305,7 +305,7 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
             <header className="inbox-header">
                 <div className="header-top">
                     <h2 className="title">我的信件夾</h2>
-                    {onBack && <button className="close-btn" onClick={onBack}><X size={24} /></button>}
+                    {onBack && <button className="close-btn" onClick={onBack}><X size={24} color="white" strokeWidth={3} /></button>}
                 </div>
                 <div className="filter-bar">
                     <div className="filter-scroll">
@@ -359,6 +359,8 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
                 .inbox-header { padding: 20px; border-bottom: 1px solid var(--border); }
                 .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
                 .title { font-size: 20px; font-weight: 800; color: white; }
+                .close-btn { background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.2s; }
+                .close-btn:hover { opacity: 1; }
                 .filter-scroll { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
                 .filter-btn { padding: 8px 18px; border-radius: 20px; background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 12px; font-weight: 700; border: none; cursor: pointer; }
                 .filter-btn.active { background: var(--primary); color: white; }

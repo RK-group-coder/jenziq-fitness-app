@@ -1,10 +1,15 @@
-/**
- * ECPay Local API Server (for development only)
- * Run with: node ecpay_server.mjs
- */
 import http from 'http';
 import crypto from 'crypto';
 import fs from 'fs';
+import dotenv from 'dotenv';
+
+// Load .env.local
+if (fs.existsSync('.env.local')) {
+    const envConfig = dotenv.parse(fs.readFileSync('.env.local'));
+    for (const k in envConfig) {
+        process.env[k] = envConfig[k];
+    }
+}
 
 const ECPAY_CONFIG = {
     MerchantID: '2000132',
@@ -13,6 +18,8 @@ const ECPAY_CONFIG = {
     ActionURL: 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5',
 };
 
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY;
+
 function log(msg) {
     const line = new Date().toISOString() + ' ' + msg + '\n';
     process.stdout.write(line);
@@ -20,27 +27,18 @@ function log(msg) {
 }
 
 function generateCheckMacValue(data) {
-    // Revert to standard ASCII sort (A-Z) which worked in Turn 12
     const keys = Object.keys(data).filter(k => k !== 'CheckMacValue').sort();
-
     let raw = `HashKey=${ECPAY_CONFIG.HashKey}`;
     for (const k of keys) raw += `&${k}=${data[k]}`;
     raw += `&HashIV=${ECPAY_CONFIG.HashIV}`;
 
-    // PHP urlencode equivalent
     let encoded = encodeURIComponent(raw).replace(/%20/g, '+');
     encoded = encoded
         .replace(/%2[Dd]/g, '-').replace(/%5[Ff]/g, '_')
         .replace(/%2[Ee]/g, '.').replace(/%21/g, '!')
         .replace(/%2[Aa]/g, '*').replace(/%28/g, '(').replace(/%29/g, ')');
     encoded = encoded.toLowerCase();
-    
     const hash = crypto.createHash('sha256').update(encoded).digest('hex').toUpperCase();
-    
-    log('RAW: ' + raw);
-    log('ENC: ' + encoded);
-    log('HASH: ' + hash);
-    
     return hash;
 }
 
@@ -56,16 +54,18 @@ function parseBody(req) {
 }
 
 const server = http.createServer(async (req, res) => {
+    // CORS Headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
 
+    // --- ECPay Handler ---
     if (req.method === 'POST' && req.url === '/api/ecpay-checkout') {
         const body = await parseBody(req);
-        log('Received: ' + JSON.stringify(body));
+        log('ECPay Request: ' + JSON.stringify(body));
         
         if (!body.price || !body.months) {
             res.writeHead(400);
@@ -85,7 +85,6 @@ const server = http.createServer(async (req, res) => {
         ].join(':');
 
         const tradeNo = `JZ${Date.now()}`.substring(0, 20);
-        // Use a fixed non-localhost ReturnURL - ECPay Stage rejects localhost URLs
         const returnURL = 'https://your-domain.com/api/ecpay-return';
 
         const payload = {
@@ -101,7 +100,6 @@ const server = http.createServer(async (req, res) => {
             EncryptType:       '1'
         };
 
-        // Only add periodic parameters if months > 1
         if (parseInt(body.months) > 1) {
             payload.PeriodAmount = String(body.price);
             payload.PeriodType = 'M';
@@ -111,14 +109,40 @@ const server = http.createServer(async (req, res) => {
         }
 
         payload.CheckMacValue = generateCheckMacValue(payload);
-
-        log('All fields: ' + JSON.stringify(payload));
-
         res.writeHead(200);
-        res.end(JSON.stringify({
-            action: ECPAY_CONFIG.ActionURL,
-            fields: payload
-        }));
+        res.end(JSON.stringify({ action: ECPAY_CONFIG.ActionURL, fields: payload }));
+        return;
+    }
+
+    // --- AI Chat/Vision Proxy Handler ---
+    if (req.method === 'POST' && (req.url === '/api/chat' || req.url === '/api/chat.js')) {
+        const body = await parseBody(req);
+        log('AI Request: ' + body.model);
+
+        if (!OPENAI_API_KEY) {
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: 'OpenAI API Key is missing in local environment.' }));
+            return;
+        }
+
+        try {
+            const apiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                },
+                body: JSON.stringify(body),
+            });
+
+            const data = await apiRes.json();
+            res.writeHead(apiRes.status);
+            res.end(JSON.stringify(data));
+        } catch (error) {
+            log('Proxy Error: ' + error.message);
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: 'Proxy error', details: error.message }));
+        }
         return;
     }
 
@@ -126,9 +150,10 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify({ error: 'Not found' }));
 });
 
-// Clear log file on start
-fs.writeFileSync('ecpay_server_log.txt', '=== ECPay Server Log ===\n');
+fs.writeFileSync('ecpay_server_log.txt', '=== Integrated JZ-Dev Server Log ===\n');
 
 server.listen(5174, () => {
-    log('ECPay API server running at http://localhost:5174');
+    log('JZ Integrated API server (ECPay + AI) running at http://localhost:5174');
+    log('Proxying /api/chat to OpenAI...');
 });
+

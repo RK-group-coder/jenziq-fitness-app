@@ -60,7 +60,12 @@ const Locations = ({ showAll = false, onNavigate, onBack }) => {
               <ChevronLeft size={20} color="white" />
             </button>
           )}
-          <h3 className="section-title">據點資訊</h3>
+          <div>
+            <h3 className="section-title">據點資訊</h3>
+            {showAll && !isLoading && (
+              <p className="location-count-label">統計共 {locations.length} 個據點</p>
+            )}
+          </div>
         </div>
         {!showAll && (
           <button className="view-all-btn" onClick={() => onNavigate && onNavigate('locations')}>
@@ -69,7 +74,7 @@ const Locations = ({ showAll = false, onNavigate, onBack }) => {
         )}
       </div>
 
-      <div className={`locations-list ${showAll ? 'grid-layout' : ''}`}>
+      <div className="locations-list">
         {isLoading ? (
           <div className="loader-box">
             <Loader2 className="spin" size={24} />
@@ -137,12 +142,11 @@ const Locations = ({ showAll = false, onNavigate, onBack }) => {
         )}
       </div>
 
-      {/* Recommended Articles Section */}
-      {articles.length > 0 && (
+      {/* Recommended Articles Section - only show on homepage preview */}
+      {!showAll && articles.length > 0 && (
         <div className="articles-section">
           <div className="section-header">
             <h3 className="section-title">為您推薦</h3>
-            <button className="view-all-btn">查看更多 <ChevronRight size={14} /></button>
           </div>
 
           <div className="articles-scroll">
@@ -183,11 +187,10 @@ const Locations = ({ showAll = false, onNavigate, onBack }) => {
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .header-left { display: flex; align-items: center; gap: 12px; }
         .back-btn { background: rgba(255,255,255,0.05); border: none; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .section-title { font-size: 20px; font-weight: 850; color: white; }
+        .section-title { font-size: 20px; font-weight: 850; color: white; margin: 0; }
+        .location-count-label { font-size: 12px; color: #888; margin: 2px 0 0 0; font-weight: 600; }
         .view-all-btn { background: none; border: none; color: var(--primary); font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px; cursor: pointer; }
         .locations-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
-        .locations-list.grid-layout { display: grid; grid-template-columns: 1fr; }
-        @media (min-width: 640px) { .locations-list.grid-layout { grid-template-columns: 1fr 1fr; } }
 
         .location-card { position: relative; background-color: #1a1a1b; border-radius: 20px; padding: 20px; border: 1px solid var(--border); transition: transform 0.2s; overflow: hidden; display: flex; align-items: stretch; }
         .location-card:active { transform: scale(0.98); }

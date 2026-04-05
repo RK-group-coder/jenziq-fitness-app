@@ -71,7 +71,7 @@ const StudentDashboard = ({ user, onLogout }) => {
           <>
             <Hero user={user} onNavigate={setActivePage} />
             <PromoBanner />
-            <Events user={user} />
+            <Events user={user} onSeeAll={() => setActivePage('events')} />
             <ShopifyMall />
             <Locations onNavigate={setActivePage} />
           </>

@@ -48,13 +48,13 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
     }
   };
 
-  if (activeTool === 'nutrition') return <NutritionistDetail onBack={handleBack} />;
-  if (activeTool === 'injury') return <InjuryAssessmentDetail onBack={handleBack} user={user} />;
-  if (activeTool === 'planner') return <AutoPlannerDetail onBack={handleBack} />;
-  if (activeTool === 'photo_cal') return <PhotoCalDetail onBack={handleBack} onChat={() => setActiveTool('chat')} />;
-  if (activeTool === 'chat') return <ChatBotDetail onBack={handleBack} />;
-  if (activeTool === 'warmup') return <ExerciseDbDetail onBack={handleBack} />;
-  if (activeTool === 'payment_history') return <PaymentHistoryManager onBack={handleBack} />;
+  if (activeTool==='nutrition') return <NutritionistDetail onBack={handleBack} />;
+  if (activeTool==='injury') return <InjuryAssessmentDetail onBack={handleBack} user={user} />;
+  if (activeTool==='planner') return <AutoPlannerDetail onBack={handleBack} />;
+  if (activeTool==='photo_cal') return <PhotoCalDetail onBack={handleBack} onChat={() => setActiveTool('chat')} />;
+  if (activeTool==='chat') return <ChatBotDetail onBack={handleBack} />;
+  if (activeTool==='warmup') return <ExerciseDbDetail onBack={handleBack} />;
+  if (activeTool==='payment_history') return <PaymentHistoryManager onBack={handleBack} />;
 
   return (
     <div className="tools-page">
@@ -165,7 +165,7 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
           })}
         </div>
         {/* Admin Section */}
-        {user?.user_metadata?.role === 'manager' && (
+        {user?.user_metadata?.role==='manager' && (
           <div className="admin-tools-section">
             <h4 className="section-label">管理員專區</h4>
             <div className="ai-banner-card admin-variant" onClick={() => setActiveTool('payment_history')}>
@@ -193,7 +193,7 @@ const Tools = ({ initialTool = null, onBack = null, user }) => {
         .tools-page {
           padding: 20px 16px 40px;
           background: var(--background);
-          min-height: calc(100vh - var(--bottom-nav-height));
+          min-height: calc(100vh-var(--bottom-nav-height));
         }
         .tools-header { 
           margin-bottom: 24px; 
@@ -466,18 +466,18 @@ const NutritionistDetail = ({ onBack }) => {
       alert('請填寫完整基本資料');
       return;
     }
-    let bmr = (10 * Number(weight)) + (6.25 * Number(height)) - (5 * Number(age));
-    if (gender === 'male') bmr += 5;
+    let bmr = (10 * Number(weight))+(6.25 * Number(height))-(5 * Number(age));
+    if (gender==='male') bmr += 5;
     else bmr -= 161;
 
     const tdee = bmr * activity;
     let targetCalories = tdee;
-    if (goal === 'lose') targetCalories -= 500;
-    else if (goal === 'gain') targetCalories += 300;
+    if (goal==='lose') targetCalories -= 500;
+    else if (goal==='gain') targetCalories += 300;
 
     // Dynamic ratio logic based on Plan Pace
     let pRatio = 0.40, cRatio = 0.35, fRatio = 0.25; // Default 'fast'
-    if (planPace === 'steady') {
+    if (planPace==='steady') {
       pRatio = 0.30;
       cRatio = 0.40;
       fRatio = 0.30;
@@ -494,8 +494,8 @@ const NutritionistDetail = ({ onBack }) => {
       protein: Math.round(pKcal / 4),
       carbs: Math.round(cKcal / 4),
       fat: Math.round(fKcal / 9),
-      paceLabel: planPace === 'fast' ? '快速見效' : '輕鬆步調',
-      ratios: planPace === 'fast' ? '40% 蛋白質 | 35% 碳水 | 25% 脂肪' : '30% 蛋白質 | 40% 碳水 | 30% 脂肪'
+      paceLabel: planPace==='fast' ? '快速見效':'輕鬆步調',
+      ratios: planPace==='fast' ? '40% 蛋白質 | 35% 碳水 | 25% 脂肪':'30% 蛋白質 | 40% 碳水 | 30% 脂肪'
     });
   };
 
@@ -505,15 +505,15 @@ const NutritionistDetail = ({ onBack }) => {
 
     const prompt = `你是一位專業的運動營養師。請為 JENZiQ 學員生成一份一天的飲食計畫。
       學員資料：
-      - 目標：${goal === 'lose' ? '減脂' : goal === 'gain' ? '增肌' : '維持'}
-      - 計畫步調：${planPace === 'fast' ? '快速見效' : '輕鬆步調'}
-      - 目標熱量：${results.targetCalories} kcal (嚴格要求：總熱量誤差絕對「不能超過」上下 30 kcal)
-      - 營養比例：${results.ratios}
-      - 具體指標：蛋白質 ${results.protein}g, 碳水 ${results.carbs}g, 脂肪 ${results.fat}g
-      - 餐數：${mealCount} 餐
-      - 乳清蛋白：${hasWPI === 'yes' ? wpiServings + ' 份' : '無'}
-      - 忌口：${restriction || '無'}
-      - 特殊需求：${specialNeed || '無'}
+     -目標：${goal==='lose' ? '減脂':goal==='gain' ? '增肌':'維持'}
+     -計畫步調：${planPace==='fast' ? '快速見效':'輕鬆步調'}
+     -目標熱量：${results.targetCalories} kcal (嚴格要求：總熱量誤差絕對「不能超過」上下 30 kcal)
+     -營養比例：${results.ratios}
+     -具體指標：蛋白質 ${results.protein}g, 碳水 ${results.carbs}g, 脂肪 ${results.fat}g
+     -餐數：${mealCount} 餐
+     -乳清蛋白：${hasWPI==='yes' ? wpiServings+' 份':'無'}
+     -忌口：${restriction || '無'}
+     -特殊需求：${specialNeed || '無'}
 
       要求：
       1. 每餐食材盡量「不重複」。
@@ -525,7 +525,7 @@ const NutritionistDetail = ({ onBack }) => {
       {
         "meals": [
           {
-            "name": "第 1 餐 - [主食名稱]",
+            "name": "第 1 餐-[主食名稱]",
             "items": [{"food": "食材名", "weight": "重量", "portion": "份量估算", "note": "特色"}],
             "fatNote": "脂肪補充建議"
           }
@@ -558,7 +558,7 @@ const NutritionistDetail = ({ onBack }) => {
 
       setGeneratedPlan({
         ...plan,
-        proteinPowder: hasWPI === 'yes' ? `${wpiServings} 份 (約 ${wpiServings * 22}g 蛋白質)` : null,
+        proteinPowder: hasWPI==='yes' ? `${wpiServings} 份 (約 ${wpiServings * 22}g 蛋白質)`:null,
         targetCals: results.targetCalories,
         paceLabel: results.paceLabel,
         ratios: `AI 規劃目標：${results.ratios}`
@@ -605,7 +605,7 @@ const NutritionistDetail = ({ onBack }) => {
                     <div className="visual-stage">
                       <div className={`gender-visual-box active ${gender}`}>
                         <img
-                          src={gender === 'male' ? "/images/male_muscle_v2.png" : "/images/female_muscle_v2.png"}
+                          src={gender==='male' ? "/images/male_muscle_v2.png":"/images/female_muscle_v2.png"}
                           alt="Gender Visual"
                           className="muscle-fig-static"
                         />
@@ -613,34 +613,34 @@ const NutritionistDetail = ({ onBack }) => {
                       </div>
                     </div>
                   </div>
-                  <div className={`modern-toggles ${results ? 'locked-toggles' : ''}`}>
-                    <div className={`modern-toggle ${gender === 'male' ? 'active male' : ''}`} onClick={() => !results && setGender('male')}>男性</div>
-                    <div className={`modern-toggle ${gender === 'female' ? 'active female' : ''}`} onClick={() => !results && setGender('female')}>女性</div>
+                  <div className={`modern-toggles ${results ? 'locked-toggles':''}`}>
+                    <div className={`modern-toggle ${gender==='male' ? 'active male':''}`} onClick={() => !results && setGender('male')}>男性</div>
+                    <div className={`modern-toggle ${gender==='female' ? 'active female':''}`} onClick={() => !results && setGender('female')}>女性</div>
                   </div>
                 </div>
 
                 <div className="form-row-v2">
                   <div className="form-group-v2 flex-1">
                     <label><Activity size={14} /> 身高 (cm)</label>
-                    <input type="number" value={height} onChange={(e) => setHeight(Number(e.target.value))} className={`modern-input ${results ? 'locked-input' : ''}`} placeholder="175" disabled={!!results} />
+                    <input type="number" value={height} onChange={(e) => setHeight(Number(e.target.value))} className={`modern-input ${results ? 'locked-input':''}`} placeholder="175" disabled={!!results} />
                   </div>
                   <div className="form-group-v2 flex-1">
                     <label><Weight size={14} /> 體重 (kg)</label>
-                    <input type="number" value={weight} onChange={(e) => setWeight(Number(e.target.value))} className={`modern-input ${results ? 'locked-input' : ''}`} placeholder="70" disabled={!!results} />
+                    <input type="number" value={weight} onChange={(e) => setWeight(Number(e.target.value))} className={`modern-input ${results ? 'locked-input':''}`} placeholder="70" disabled={!!results} />
                   </div>
                 </div>
 
                 <div className="form-group-v2">
                   <label><Clock size={14} /> 現在年齡</label>
-                  <input type="number" value={age} onChange={(e) => setAge(Number(e.target.value))} className={`modern-input ${results ? 'locked-input' : ''}`} placeholder="25" disabled={!!results} />
+                  <input type="number" value={age} onChange={(e) => setAge(Number(e.target.value))} className={`modern-input ${results ? 'locked-input':''}`} placeholder="25" disabled={!!results} />
                 </div>
 
                 <div className="form-group-v2">
                   <label><Zap size={14} /> 健身目標</label>
-                  <div className={`modern-tabs ${results ? 'locked-toggles' : ''}`}>
+                  <div className={`modern-tabs ${results ? 'locked-toggles':''}`}>
                     {['lose', 'gain', 'maintain'].map((m) => (
-                      <div key={m} className={`modern-tab ${goal === m ? 'active' : ''}`} onClick={() => !results && setGoal(m)}>
-                        {m === 'lose' ? '減脂' : m === 'gain' ? '增肌' : '維持'}
+                      <div key={m} className={`modern-tab ${goal===m ? 'active':''}`} onClick={() => !results && setGoal(m)}>
+                        {m==='lose' ? '減脂':m==='gain' ? '增肌':'維持'}
                       </div>
                     ))}
                   </div>
@@ -657,15 +657,15 @@ const NutritionistDetail = ({ onBack }) => {
                     </p>
                   </div>
                   <label><Activity size={14} /> 執行計畫步調</label>
-                  <div className={`modern-tabs ${results ? 'locked-toggles' : ''}`}>
+                  <div className={`modern-tabs ${results ? 'locked-toggles':''}`}>
                     <div
-                      className={`modern-tab ${planPace === 'fast' ? 'active' : ''}`}
+                      className={`modern-tab ${planPace==='fast' ? 'active':''}`}
                       onClick={() => !results && setPlanPace('fast')}
                     >
                       快速見效
                     </div>
                     <div
-                      className={`modern-tab ${planPace === 'steady' ? 'active' : ''}`}
+                      className={`modern-tab ${planPace==='steady' ? 'active':''}`}
                       onClick={() => !results && setPlanPace('steady')}
                     >
                       輕鬆步調
@@ -675,7 +675,7 @@ const NutritionistDetail = ({ onBack }) => {
 
                 <div className="form-group-v2">
                   <label><Zap size={14} /> 每日活動量</label>
-                  <div className={`modern-select-box ${results ? 'locked-input' : ''}`}>
+                  <div className={`modern-select-box ${results ? 'locked-input':''}`}>
                     <select className="modern-select" value={activity} onChange={(e) => setActivity(Number(e.target.value))} disabled={!!results}>
                       {activityLevels.map((l, i) => <option key={i} value={l.value}>{l.label}</option>)}
                     </select>
@@ -683,7 +683,7 @@ const NutritionistDetail = ({ onBack }) => {
                   </div>
                 </div>
 
-                <button className={`premium-submit-btn orange-glow ${results ? 'dimmed-btn' : ''}`} onClick={calculate} disabled={!!results}>
+                <button className={`premium-submit-btn orange-glow ${results ? 'dimmed-btn':''}`} onClick={calculate} disabled={!!results}>
                   <Calculator size={18} />
                   <span>精準計算需求</span>
                 </button>
@@ -696,7 +696,7 @@ const NutritionistDetail = ({ onBack }) => {
                   <div className="res-item"><span>基礎代謝率 (BMR)</span><span>{results.bmr} <small>kcal</small></span></div>
                   <div className="res-divider"></div>
                   <div className="res-item"><span>每日總消耗 (TDEE)</span><span className="res-value highlight">{results.tdee} <small>kcal</small></span></div>
-                  <button className={`ai-plan-btn ${results ? 'pulse-glow-orange' : ''}`} onClick={() => setShowMealPlanForm(true)}><Zap size={16} /> 菜單安排智能</button>
+                  <button className={`ai-plan-btn ${results ? 'pulse-glow-orange':''}`} onClick={() => setShowMealPlanForm(true)}><Zap size={16} /> 菜單安排智能</button>
                 </div>
                 <h4 className="card-label">🥗 AI 建議每日攝取 (40/35/25)</h4>
                 <div className="result-card">
@@ -711,7 +711,7 @@ const NutritionistDetail = ({ onBack }) => {
               </div>
             )}
           </>
-        ) : (
+        ):(
           <div className="premium-form-container">
             <div className="form-section-header">
               <div className="header-accent"></div>
@@ -722,9 +722,9 @@ const NutritionistDetail = ({ onBack }) => {
             <div className="form-card-v2">
               <div className="form-group-v2">
                 <label><Clock size={14} /> 一天攝取餐數</label>
-                <div className={`modern-tabs ${generatedPlan ? 'locked-toggles' : ''}`}>
+                <div className={`modern-tabs ${generatedPlan ? 'locked-toggles':''}`}>
                   {[2, 3, 4, 5].map(n => (
-                    <div key={n} className={`modern-tab ${mealCount === n ? 'active' : ''}`} onClick={() => !generatedPlan && setMealCount(n)}>
+                    <div key={n} className={`modern-tab ${mealCount===n ? 'active':''}`} onClick={() => !generatedPlan && setMealCount(n)}>
                       {n}餐
                     </div>
                   ))}
@@ -733,18 +733,18 @@ const NutritionistDetail = ({ onBack }) => {
 
               <div className="form-group-v2">
                 <label><Flame size={14} /> 額外乳清補充</label>
-                <div className={`modern-toggles ${generatedPlan ? 'locked-toggles' : ''}`}>
-                  <div className={`modern-toggle ${hasWPI === 'yes' ? 'active orange' : ''}`} onClick={() => !generatedPlan && setHasWPI('yes')}>我有喝</div>
-                  <div className={`modern-toggle ${hasWPI === 'no' ? 'active' : ''}`} onClick={() => !generatedPlan && setHasWPI('no')}>不常喝</div>
+                <div className={`modern-toggles ${generatedPlan ? 'locked-toggles':''}`}>
+                  <div className={`modern-toggle ${hasWPI==='yes' ? 'active orange':''}`} onClick={() => !generatedPlan && setHasWPI('yes')}>我有喝</div>
+                  <div className={`modern-toggle ${hasWPI==='no' ? 'active':''}`} onClick={() => !generatedPlan && setHasWPI('no')}>不常喝</div>
                 </div>
               </div>
 
-              {hasWPI === 'yes' && (
+              {hasWPI==='yes' && (
                 <div className="form-group-v2">
                   <label><Zap size={14} /> 每日份量</label>
-                  <div className={`modern-tabs ${generatedPlan ? 'locked-toggles' : ''}`}>
+                  <div className={`modern-tabs ${generatedPlan ? 'locked-toggles':''}`}>
                     {[1, 2, 3, 4, 5].map(n => (
-                      <div key={n} className={`modern-tab ${wpiServings === n ? 'active' : ''}`} onClick={() => !generatedPlan && setWpiServings(n)}>
+                      <div key={n} className={`modern-tab ${wpiServings===n ? 'active':''}`} onClick={() => !generatedPlan && setWpiServings(n)}>
                         {n}份
                       </div>
                     ))}
@@ -754,16 +754,16 @@ const NutritionistDetail = ({ onBack }) => {
 
               <div className="form-group-v2">
                 <label><X size={14} /> 飲食忌口</label>
-                <input type="text" placeholder="例如：過敏、不吃牛、素食..." className={`modern-input ${generatedPlan ? 'locked-input' : ''}`} value={restriction} onChange={e => setRestriction(e.target.value)} disabled={!!generatedPlan} />
+                <input type="text" placeholder="例如：過敏、不吃牛、素食..." className={`modern-input ${generatedPlan ? 'locked-input':''}`} value={restriction} onChange={e => setRestriction(e.target.value)} disabled={!!generatedPlan} />
               </div>
 
               <div className="form-group-v2">
                 <label><Sparkles size={14} /> 進階需求</label>
-                <input type="text" placeholder="例如：多吃原型食物、低碳..." className={`modern-input ${generatedPlan ? 'locked-input' : ''}`} value={specialNeed} onChange={e => setSpecialNeed(e.target.value)} disabled={!!generatedPlan} />
+                <input type="text" placeholder="例如：多吃原型食物、低碳..." className={`modern-input ${generatedPlan ? 'locked-input':''}`} value={specialNeed} onChange={e => setSpecialNeed(e.target.value)} disabled={!!generatedPlan} />
               </div>
 
               <button
-                className={`premium-submit-btn orange-glow ${generatedPlan ? 'dimmed-btn' : ''}`}
+                className={`premium-submit-btn orange-glow ${generatedPlan ? 'dimmed-btn':''}`}
                 onClick={generateMealPlan}
                 disabled={isGenerating || !!generatedPlan}
               >
@@ -772,7 +772,7 @@ const NutritionistDetail = ({ onBack }) => {
                     <div className="spinner"></div>
                     AI 正在為您規劃食譜...
                   </>
-                ) : (
+                ):(
                   <>
                     <Sparkles size={18} /> 生成專屬菜單
                   </>
@@ -875,13 +875,13 @@ const NutritionistDetail = ({ onBack }) => {
 
                     <div className="export-btn-zone" style={{ marginTop: '24px' }}>
                       <button className="premium-submit-btn orange-glow" onClick={() => handleSaveRecord()} disabled={isGeneratingImage}>
-                        {isGeneratingImage ? <><div className="spinner"></div> 正在完成...</> : <><Download size={18} /> 一鍵生成紀錄表</>}
+                        {isGeneratingImage ? <><div className="spinner"></div> 正在完成...</>:<><Download size={18} /> 一鍵生成紀錄表</>}
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* AI Explanation - Keep visible in both modes or hide if it's too long? User said "留著菜單解釋", so keep it visible! */}
+                {/* AI Explanation-Keep visible in both modes or hide if it's too long? User said "留著菜單解釋", so keep it visible! */}
                 {generatedPlan?.explanation && (
                   <div className="ai-explanation-card">
                     <div className="explanation-title flex items-center gap-2">
@@ -1272,7 +1272,7 @@ const NutritionistDetail = ({ onBack }) => {
           50% { transform: translateY(10px); opacity: 1; }
         }
 
-        /* === Meal Planner Amber Orbital === */
+        /*===Meal Planner Amber Orbital===*/
         .meal-orbit-loader {
           position: relative;
           background: rgba(255, 107, 0, 0.03);
@@ -1582,7 +1582,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
     let interval;
     if (isAnalyzing) {
       interval = setInterval(() => {
-        setLoaderStep(prev => (prev + 1) % loaderPhrases.length);
+        setLoaderStep(prev => (prev+1) % loaderPhrases.length);
       }, 1500);
     } else {
       setLoaderStep(0);
@@ -1595,7 +1595,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
 
   const [records, setRecords] = useState(() => {
     const saved = localStorage.getItem('photo_cal_records_v1');
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved):[];
   });
 
   const saveRecord = (newRec) => {
@@ -1607,11 +1607,11 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
   };
 
   const handleRename = (id) => {
-    const targetRec = records.find(r => r.id === id);
+    const targetRec = records.find(r => r.id===id);
     const newName = prompt('請輸入更具質感的餐點名稱：', targetRec.name);
     if (newName && newName.trim() !== '') {
       setRecords(prev => {
-        const updated = prev.map(rec => rec.id === id ? { ...rec, name: newName } : rec);
+        const updated = prev.map(rec => rec.id===id ? { ...rec, name: newName }:rec);
         localStorage.setItem('photo_cal_records_v1', JSON.stringify(updated));
         return updated;
       });
@@ -1714,7 +1714,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
         "今日份的健康已達標！對剛才辨識的食物有好奇的地方嗎？隨時問我！",
         "我是您的 AI 助理營養師，您的飲食紀錄我都看在眼裡喔！有什麼想聊的嗎？"
       ];
-      const pool = records.length > 0 ? filledMessages : emptyMessages;
+      const pool = records.length > 0 ? filledMessages:emptyMessages;
       setBotMessage(pool[Math.floor(Math.random() * pool.length)]);
     }
   }, [records.length, previewUrl, isAnalyzing]);
@@ -1778,7 +1778,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
                         </div>
                       ))}
                     </div>
-                  ) : (
+                  ):(
                     <div className="empty-records">
                       <div className="empty-box">📸</div>
                       <p>尚未有辨識紀錄<br />開始拍攝您的第一餐吧！</p>
@@ -1808,7 +1808,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
               <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleImageChange} hidden />
               <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} hidden />
             </div>
-          ) : (
+          ):(
             <>
               <DetailHeader
                 icon={<div className="icon-wrap green"><Camera size={22} color="white" /></div>}
@@ -1871,7 +1871,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
             </>
           )}
         </>
-      ) : (
+      ):(
         <div className="photo-result-hero">
           <div className="hero-header">
             <button className="hero-back-btn" onClick={() => { if (records.length > 0) { setResult(null); setPreviewUrl(null); } else { setResult(null); } }}><ChevronLeft size={24} /></button>
@@ -1928,337 +1928,337 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
 
       <DetailStyles />
       <style>{`
-  .photo - cal - page { background: #0d1117; min - height: 100vh; }
-        .photo - cal - records - view { position: fixed; inset: 0; background: #0d1117; display: flex; flex - direction: column; z - index: 1100; }
-        .records - header - v2 { padding: 60px 24px 20px; display: flex; justify - content: space - between; align - items: center; background: linear - gradient(to bottom, #111, transparent); }
-        .records - header - v2 h3 { font - size: 20px; font - weight: 900; color: white; margin: 0; }
-        .h - back - btn { background: none; border: none; color: white; cursor: pointer; }
-        .records - scroll - area { flex: 1; padding: 0 20px; overflow - y: auto; padding - bottom: 200px; }
+  .photo-cal-page { background: #0d1117; min-height: 100vh; }
+        .photo-cal-records-view { position: fixed; inset: 0; background: #0d1117; display: flex; flex-direction: column; z-index: 1100; }
+        .records-header-v2 { padding: 60px 24px 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #111, transparent); }
+        .records-header-v2 h3 { font-size: 20px; font-weight: 900; color: white; margin: 0; }
+        .h-back-btn { background: none; border: none; color: white; cursor: pointer; }
+        .records-scroll-area { flex: 1; padding: 0 20px; overflow-y: auto; padding-bottom: 200px; }
         
-        .records - premium - frame {
+        .records-premium-frame {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border - radius: 32px;
+  border-radius: 32px;
   padding: 20px;
-  margin - top: 10px;
+  margin-top: 10px;
   position: relative;
   overflow: hidden;
-  box - shadow: inset 0 0 20px rgba(255, 255, 255, 0.01);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.01);
 }
-        .records - premium - frame::before {
+        .records-premium-frame::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; height: 1px;
-  background: linear - gradient(to right, transparent, rgba(255, 107, 0, 0.3), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 107, 0, 0.3), transparent);
 }
         
-        .frame - header {
+        .frame-header {
   display: flex;
-  justify - content: space - between;
-  align - items: center;
-  margin - bottom: 24px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
   padding: 0 4px;
 }
-        .frame - title {
+        .frame-title {
   display: flex;
-  align - items: center;
+  align-items: center;
   gap: 10px;
-  font - size: 14px;
-  font - weight: 800;
+  font-size: 14px;
+  font-weight: 800;
   color: #888;
-  letter - spacing: 0.5px;
+  letter-spacing: 0.5px;
 }
-        .frame - count {
-  font - size: 11px;
+        .frame-count {
+  font-size: 11px;
   background: rgba(255, 107, 0, 0.1);
   color: #FF6B00;
   padding: 3px 10px;
-  border - radius: 8px;
-  font - weight: 800;
+  border-radius: 8px;
+  font-weight: 800;
   border: 1px solid rgba(255, 107, 0, 0.1);
 }
 
-        .records - list { display: flex; flex - direction: column; gap: 16px; margin - bottom: 24px; }
+        .records-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
         
-        .history - bot - bubble {
-  margin - top: 10px;
+        .history-bot-bubble {
+  margin-top: 10px;
   display: flex;
   gap: 12px;
-  align - items: flex - end;
+  align-items: flex-end;
   cursor: pointer;
-  animation: fadeIn 0.8s ease - out;
+  animation: fadeIn 0.8s ease-out;
 }
 width: 40px;
 height: 40px;
 background: #1e1e1e;
 border: 1px solid #FF6B00;
-border - radius: 12px;
+border-radius: 12px;
 display: flex;
-align - items: center;
-justify - content: center;
-font - size: 20px;
-box - shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
-flex - shrink: 0;
+align-items: center;
+justify-content: center;
+font-size: 20px;
+box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+flex-shrink: 0;
         }
-        .bot - text - bubble {
+        .bot-text-bubble {
   flex: 1;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border - radius: 18px 18px 18px 4px;
+  border-radius: 18px 18px 18px 4px;
   padding: 12px 16px;
   position: relative;
 }
-        .bot - text - bubble p {
+        .bot-text-bubble p {
   color: #eee;
-  font - size: 13px;
-  line - height: 1.5;
+  font-size: 13px;
+  line-height: 1.5;
   margin: 0 0 6px 0;
-  font - weight: 600;
+  font-weight: 600;
 }
-        .tap - hint {
-  font - size: 10px;
+        .tap-hint {
+  font-size: 10px;
   color: #FF6B00;
-  font - weight: 800;
+  font-weight: 800;
   display: flex;
-  align - items: center;
+  align-items: center;
   gap: 4px;
-  text - transform: uppercase;
+  text-transform: uppercase;
   opacity: 0.8;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .record - item - v2 {
+        .record-item-v2 {
   background: rgba(255, 255, 255, 0.03);
-  border - radius: 20px;
+  border-radius: 20px;
   padding: 12px;
   display: flex;
   gap: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
 }
-        .rec - img - box {
+        .rec-img-box {
   width: 100px; height: 100px;
-  border - radius: 16px;
+  border-radius: 16px;
   overflow: hidden;
-  flex - shrink: 0;
+  flex-shrink: 0;
 }
-        .rec - img - box img { width: 100 %; height: 100 %; object - fit: cover; }
-        .rec - info - box { flex: 1; display: flex; flex - direction: column; justify - content: space - between; padding: 4px 0; }
+        .rec-img-box img { width: 100 %; height: 100 %; object-fit: cover; }
+        .rec-info-box { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0; }
         
-        .rec - top - row { display: flex; justify - content: space - between; align - items: flex - start; }
-        .rec - name { font - size: 16px; font - weight: 800; color: #eee; display: flex; align - items: center; gap: 6px; }
-        .mini - edit - btn { background: none; border: none; display: flex; align - items: center; justify - content: center; padding: 4px; cursor: pointer; }
-        .rec - time { font - size: 11px; color: #555; font - weight: 600; margin - top: 2px; }
+        .rec-top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        .rec-name { font-size: 16px; font-weight: 800; color: #eee; display: flex; align-items: center; gap: 6px; }
+        .mini-edit-btn { background: none; border: none; display: flex; align-items: center; justify-content: center; padding: 4px; cursor: pointer; }
+        .rec-time { font-size: 11px; color: #555; font-weight: 600; margin-top: 2px; }
         
-        .rec - cal - row { display: flex; align - items: center; gap: 6px; }
-        .rec - cals { font - size: 18px; font - weight: 900; color: #fff; }
-        .rec - cals small { font - size: 12px; color: #666; font - weight: 700; margin - left: 2px; }
+        .rec-cal-row { display: flex; align-items: center; gap: 6px; }
+        .rec-cals { font-size: 18px; font-weight: 900; color: #fff; }
+        .rec-cals small { font-size: 12px; color: #666; font-weight: 700; margin-left: 2px; }
         
-        .rec - macros - row { display: flex; gap: 12px; }
-        .rec - macro { display: flex; align - items: center; gap: 4px; font - size: 12px; font - weight: 700; color: #888; }
-        .rec - macro img { width: 14px; height: 14px; opacity: 0.8; }
+        .rec-macros-row { display: flex; gap: 12px; }
+        .rec-macro { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #888; }
+        .rec-macro img { width: 14px; height: 14px; opacity: 0.8; }
 
-        .empty - records {
-  height: 300px; display: flex; flex - direction: column; align - items: center; justify - content: center; gap: 16px;
-  text - align: center; color: #444;
+        .empty-records {
+  height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  text-align: center; color: #444;
 }
-        .empty - box { font - size: 40px; }
+        .empty-box { font-size: 40px; }
 
-        .fixed - landing - actions {
+        .fixed-landing-actions {
   position: fixed; bottom: 0; left: 0; right: 0;
   padding: 40px 24px;
-  background: linear - gradient(to top, #0d1117 70 %, transparent);
-  display: flex; flex - direction: column; gap: 12px;
-  z - index: 50;
+  background: linear-gradient(to top, #0d1117 70 %, transparent);
+  display: flex; flex-direction: column; gap: 12px;
+  z-index: 50;
 }
-        .landing - btn {
-  width: 100 %; height: 56px; border - radius: 16px; border: none; font - size: 16px; font - weight: 800;
-  display: flex; align - items: center; justify - content: center; gap: 10px; cursor: pointer;
+        .landing-btn {
+  width: 100 %; height: 56px; border-radius: 16px; border: none; font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
   transition: 0.2s;
 }
-        .landing - btn.primary { background: linear - gradient(135deg, #FF5C00 0 %, #E11D48 100 %); color: white; box - shadow: 0 8px 25px rgba(255, 92, 0, 0.4); }
-        .landing - btn.secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; backdrop - filter: blur(10px); }
+        .landing-btn.primary { background: linear-gradient(135deg, #FF5C00 0 %, #E11D48 100 %); color: white; box-shadow: 0 8px 25px rgba(255, 92, 0, 0.4); }
+        .landing-btn.secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; backdrop-filter: blur(10px); }
 
-        .photo - result - hero { position: relative; }
-        .hero - header { position: fixed; top: 0; left: 0; right: 0; height: 60px; padding: 0 16px; display: flex; justify - content: space - between; align - items: center; z - index: 100; background: linear - gradient(to bottom, rgba(0, 0, 0, 0.5), transparent); }
-        .hero - back - btn, .hero - close - btn { width: 40px; height: 40px; border - radius: 50 %; background: rgba(0, 0, 0, 0.4); border: none; color: white; display: flex; align - items: center; justify - content: center; backdrop - filter: blur(10px); }
-        .hero - image - wrap { width: 100 %; height: 40vh; overflow: hidden; }
-        .hero - image { width: 100 %; height: 100 %; object - fit: cover; }
-        .result - body { margin - top: -24px; background: #0a0a0b; border - radius: 24px 24px 0 0; padding: 30px 20px; position: relative; z - index: 5; min - height: 65vh; }
-        .meal - main - header { display: flex; justify - content: space - between; align - items: flex - start; margin - bottom: 24px; }
-        .meal - name { font - size: 26px; font - weight: 900; color: white; flex: 1; line - height: 1.2; }
-        .meal - total - summary { font - size: 14px; color: #666; font - weight: 700; margin - top: 6px; }
-        .macros - strip { display: flex; justify - content: space - between; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border - radius: 20px; padding: 20px 10px; margin - bottom: 30px; }
-        .macro - item { display: flex; flex - direction: column; align - items: center; gap: 6px; flex: 1; }
-        .macro - num { font - size: 26px; font - weight: 900; color: #FF6B00; text - shadow: 0 0 15px rgba(255, 107, 0, 0.4); }
-        .macro - label { font - size: 12px; color: #FF6B00; opacity: 0.7; font - weight: 800; text - transform: uppercase; letter - spacing: 0.5px; }
-        .divider - line { height: 1px; background: rgba(255, 255, 255, 0.05); margin: 0 - 20px 30px; }
-        .ai - advice - section { margin - bottom: 32px; }
-        .advice - text { font - size: 15px; line - height: 1.7; color: #ccc; font - weight: 500; background: rgba(16, 185, 129, 0.05); padding: 18px; border - radius: 20px; border - left: 4px solid #10B981; }
-        .section - title { font - size: 17px; font - weight: 800; color: white; margin - bottom: 18px; display: flex; align - items: center; gap: 8px; }
-        .ingredient - cards { display: grid; gap: 14px; }
-        .ingredient - card { background: rgba(255, 255, 255, 0.02); border - radius: 18px; padding: 18px; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .ing - card - main { display: flex; justify - content: space - between; align - items: flex - start; margin - bottom: 14px; }
-        .ing - name - box { display: flex; flex - direction: column; gap: 4px; }
-        .ing - title { font - size: 16px; font - weight: 800; color: #eee; }
-        .ing - subtitle { font - size: 12px; color: #666; font - weight: 500; }
-        .ing - cal - box { display: flex; flex - direction: column; align - items: flex - end; gap: 4px; }
-        .ing - kcal - val { font - size: 16px; font - weight: 900; color: #10B981; }
-        .ing - weight - tag { font - size: 11px; background: rgba(16, 185, 129, 0.15); color: #10B981; padding: 2px 8px; border - radius: 6px; font - weight: 800; border: 1px solid rgba(16, 185, 129, 0.2); }
-        .ing - macros - row { display: flex; gap: 14px; font - size: 12px; color: #888; font - weight: 700; }
-        .ing - macros - row span { background: rgba(255, 255, 255, 0.03); padding: 3px 10px; border - radius: 8px; }
-        .result - disclaimer { text - align: center; color: #333; font - size: 11px; margin - top: 40px; padding - bottom: 40px; font - weight: 600; }
+        .photo-result-hero { position: relative; }
+        .hero-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent); }
+        .hero-back-btn, .hero-close-btn { width: 40px; height: 40px; border-radius: 50 %; background: rgba(0, 0, 0, 0.4); border: none; color: white; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .hero-image-wrap { width: 100 %; height: 40vh; overflow: hidden; }
+        .hero-image { width: 100 %; height: 100 %; object-fit: cover; }
+        .result-body { margin-top: -24px; background: #0a0a0b; border-radius: 24px 24px 0 0; padding: 30px 20px; position: relative; z-index: 5; min-height: 65vh; }
+        .meal-main-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .meal-name { font-size: 26px; font-weight: 900; color: white; flex: 1; line-height: 1.2; }
+        .meal-total-summary { font-size: 14px; color: #666; font-weight: 700; margin-top: 6px; }
+        .macros-strip { display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 20px 10px; margin-bottom: 30px; }
+        .macro-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+        .macro-num { font-size: 26px; font-weight: 900; color: #FF6B00; text-shadow: 0 0 15px rgba(255, 107, 0, 0.4); }
+        .macro-label { font-size: 12px; color: #FF6B00; opacity: 0.7; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .divider-line { height: 1px; background: rgba(255, 255, 255, 0.05); margin: 0-20px 30px; }
+        .ai-advice-section { margin-bottom: 32px; }
+        .advice-text { font-size: 15px; line-height: 1.7; color: #ccc; font-weight: 500; background: rgba(16, 185, 129, 0.05); padding: 18px; border-radius: 20px; border-left: 4px solid #10B981; }
+        .section-title { font-size: 17px; font-weight: 800; color: white; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+        .ingredient-cards { display: grid; gap: 14px; }
+        .ingredient-card { background: rgba(255, 255, 255, 0.02); border-radius: 18px; padding: 18px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .ing-card-main { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+        .ing-name-box { display: flex; flex-direction: column; gap: 4px; }
+        .ing-title { font-size: 16px; font-weight: 800; color: #eee; }
+        .ing-subtitle { font-size: 12px; color: #666; font-weight: 500; }
+        .ing-cal-box { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .ing-kcal-val { font-size: 16px; font-weight: 900; color: #10B981; }
+        .ing-weight-tag { font-size: 11px; background: rgba(16, 185, 129, 0.15); color: #10B981; padding: 2px 8px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .ing-macros-row { display: flex; gap: 14px; font-size: 12px; color: #888; font-weight: 700; }
+        .ing-macros-row span { background: rgba(255, 255, 255, 0.03); padding: 3px 10px; border-radius: 8px; }
+        .result-disclaimer { text-align: center; color: #333; font-size: 11px; margin-top: 40px; padding-bottom: 40px; font-weight: 600; }
 
         /* Analyzing View Styles */
-        .analyzing - preview - card {
+        .analyzing-preview-card {
   position: relative;
   width: 100 %;
-  border - radius: 28px;
+  border-radius: 28px;
   overflow: hidden;
   background: #111;
-  box - shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  margin - bottom: 30px;
+  margin-bottom: 30px;
 }
-        .analyzing - img {
+        .analyzing-img {
   width: 100 %;
   height: auto;
   display: block;
   filter: brightness(0.6) contrast(1.1);
 }
-        .scanning - line {
+        .scanning-line {
   position: absolute;
   top: 0;
   left: 0;
   width: 100 %;
   height: 100px;
-  background: linear - gradient(to bottom, transparent, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.1), transparent);
-  border - top: 2px solid #10B981;
-  box - shadow: 0 - 5px 15px rgba(16, 185, 129, 0.4);
-  z - index: 10;
+  background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.1), transparent);
+  border-top: 2px solid #10B981;
+  box-shadow: 0-5px 15px rgba(16, 185, 129, 0.4);
+  z-index: 10;
   animation: scanDown 2.5s ease -in -out infinite;
-  pointer - events: none;
+  pointer-events: none;
 }
 @keyframes scanDown {
   0 % { top: -20 %; }
   100 % { top: 100 %; }
 }
 
-        /* === Photo Cal Corner Markers === */
-        .photo - cal - scan - wrap { position: relative; }
-        .photo - cal - corner {
+        /*===Photo Cal Corner Markers===*/
+        .photo-cal-scan-wrap { position: relative; }
+        .photo-cal-corner {
   position: absolute; width: 18px; height: 18px;
-  border - color: #10B981; border - style: solid;
-  z - index: 11; pointer - events: none;
+  border-color: #10B981; border-style: solid;
+  z-index: 11; pointer-events: none;
 }
-        .photo - cal - corner.tl { top: 8px; left: 8px; border - width: 2px 0 0 2px; }
-        .photo - cal - corner.tr { top: 8px; right: 8px; border - width: 2px 2px 0 0; }
-        .photo - cal - corner.bl { bottom: 8px; left: 8px; border - width: 0 0 2px 2px; }
-        .photo - cal - corner.br { bottom: 8px; right: 8px; border - width: 0 2px 2px 0; }
-        .photo - cal - scan - label {
+        .photo-cal-corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+        .photo-cal-corner.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+        .photo-cal-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+        .photo-cal-corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+        .photo-cal-scan-label {
   position: absolute; top: 10px; right: 28px;
-  font - size: 8px; color: #10B981; font - family: monospace;
-  font - weight: 800; letter - spacing: 2px; z - index: 12;
+  font-size: 8px; color: #10B981; font-family: monospace;
+  font-weight: 800; letter-spacing: 2px; z-index: 12;
   animation: blinkLabel 1.2s ease -in -out infinite;
 }
 @keyframes blinkLabel { 0 %, 100 % { opacity: 1 } 50 % { opacity: 0.3 } }
 
-        /* === Photo Cal Electric Loader === */
-        .photo - cal - electric - loader {
+        /*===Photo Cal Electric Loader===*/
+        .photo-cal-electric-loader {
   position: relative;
-  background: linear - gradient(135deg, rgba(16, 185, 129, 0.05), rgba(0, 0, 0, 0.85));
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(0, 0, 0, 0.85));
   border: 1px solid rgba(16, 185, 129, 0.2);
-  border - radius: 20px;
+  border-radius: 20px;
   padding: 28px 20px 24px;
-  display: flex; flex - direction: column; align - items: center;
-  gap: 16px; overflow: hidden; margin - top: 16px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 16px; overflow: hidden; margin-top: 16px;
 }
-        .photo - cal - robot - wrap {
-  position: relative; display: flex; align - items: center; justify - content: center;
+        .photo-cal-robot-wrap {
+  position: relative; display: flex; align-items: center; justify-content: center;
   width: 90px; height: 90px;
 }
-        .photo - cal - pulse - ring {
-  position: absolute; border - radius: 50 %;
+        .photo-cal-pulse-ring {
+  position: absolute; border-radius: 50 %;
   border: 1.5px solid rgba(16, 185, 129, 0.5);
-  animation: pcPulse 2s ease - out infinite;
+  animation: pcPulse 2s ease-out infinite;
 }
-        .photo - cal - pulse - ring.pr1 { width: 80px; height: 80px; animation - delay: 0s; }
-        .photo - cal - pulse - ring.pr2 { width: 90px; height: 90px; animation - delay: 0.7s; opacity: 0.5; }
+        .photo-cal-pulse-ring.pr1 { width: 80px; height: 80px; animation-delay: 0s; }
+        .photo-cal-pulse-ring.pr2 { width: 90px; height: 90px; animation-delay: 0.7s; opacity: 0.5; }
 @keyframes pcPulse {
   0 % { transform: scale(0.8); opacity: 0.8; }
   100 % { transform: scale(1.3); opacity: 0; }
 }
-        .photo - cal - elec - title {
-  font - size: 15px; font - weight: 900; color: #10B981;
-  letter - spacing: 1.5px; text - shadow: 0 0 16px rgba(16, 185, 129, 0.5);
+        .photo-cal-elec-title {
+  font-size: 15px; font-weight: 900; color: #10B981;
+  letter-spacing: 1.5px; text-shadow: 0 0 16px rgba(16, 185, 129, 0.5);
 }
-        .photo - cal - elec - sub {
-  font - size: 11px; color: rgba(255, 255, 255, 0.4);
-  font - weight: 600; text - align: center;
-  margin - top: -8px; line - height: 1.5;
+        .photo-cal-elec-sub {
+  font-size: 11px; color: rgba(255, 255, 255, 0.4);
+  font-weight: 600; text-align: center;
+  margin-top: -8px; line-height: 1.5;
 }
-        .photo - cal - stream {
-  width: 100 %; display: flex; flex - direction: column; gap: 9px;
+        .photo-cal-stream {
+  width: 100 %; display: flex; flex-direction: column; gap: 9px;
 }
-        .photo - cal - stream - row {
-  display: flex; align - items: center; gap: 8px;
-  animation: fadeInRow 0.5s ease - out both;
+        .photo-cal-stream-row {
+  display: flex; align-items: center; gap: 8px;
+  animation: fadeInRow 0.5s ease-out both;
 }
-        .photo - cal - stream - label {
-  font - size: 8px; font - family: monospace; font - weight: 700;
-  min - width: 130px; letter - spacing: 0.5px;
+        .photo-cal-stream-label {
+  font-size: 8px; font-family: monospace; font-weight: 700;
+  min-width: 130px; letter-spacing: 0.5px;
 }
-        .photo - cal - stream - bar {
+        .photo-cal-stream-bar {
   flex: 1; height: 3px;
-  background: rgba(16, 185, 129, 0.1); border - radius: 4px; overflow: hidden;
+  background: rgba(16, 185, 129, 0.1); border-radius: 4px; overflow: hidden;
 }
-        .photo - cal - stream - fill {
-  height: 100 %; border - radius: 4px;
+        .photo-cal-stream-fill {
+  height: 100 %; border-radius: 4px;
   animation: streamLoad 2.5s ease -in -out infinite both;
 }
-        .photo - cal - h - scanline {
+        .photo-cal-h-scanline {
   position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear - gradient(90deg, transparent, rgba(16, 185, 129, 0.7), transparent);
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.7), transparent);
   animation: scanAcross 2.2s linear infinite;
 }
         /* ================================== */
 
 
 
-        .robot - loader - card {
+        .robot-loader-card {
   display: flex;
-  flex - direction: column;
-  align - items: center;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
   padding: 20px 0;
 }
-        .robot - wrap {
+        .robot-wrap {
   position: relative;
   width: 80px;
   height: 80px;
   display: flex;
-  flex - direction: column;
-  align - items: center;
-  justify - content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   animation: floatRobot 3.5s ease -in -out infinite;
 }
 @keyframes floatRobot {
   0 %, 100 % { transform: translateY(0); }
   50 % { transform: translateY(-8px); }
 }
-        .robot - head {
+        .robot-head {
   width: 60px;
   height: 48px;
-  background: linear - gradient(135deg, #1e1e1e, #0d1117);
+  background: linear-gradient(135deg, #1e1e1e, #0d1117);
   border: 2px solid #10B981;
-  border - radius: 18px;
+  border-radius: 18px;
   position: relative;
   display: flex;
-  align - items: center;
-  justify - content: center;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
-  box - shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 }
-        .shadow - bot::after {
+        .shadow-bot::after {
   content: '';
   position: absolute;
   bottom: -20px;
@@ -2268,52 +2268,52 @@ flex - shrink: 0;
   height: 6px;
   background: rgba(0, 0, 0, 0.5);
   filter: blur(4px);
-  border - radius: 50 %;
+  border-radius: 50 %;
 }
         .eye {
   width: 8px;
   height: 8px;
   background: #10B981;
-  border - radius: 50 %;
-  box - shadow: 0 0 10px #10B981;
+  border-radius: 50 %;
+  box-shadow: 0 0 10px #10B981;
   animation: blink 4s infinite;
 }
 @keyframes blink {
   0 %, 45 %, 50 %, 100 % { transform: scaleY(1); }
   47 % { transform: scaleY(0.1); }
 }
-        .robot - body - mini {
+        .robot-body-mini {
   width: 34px;
   height: 18px;
   background: #1e1e1e;
   border: 2px solid #10B981;
-  border - top: none;
-  border - radius: 0 0 10px 10px;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
   display: flex;
-  align - items: center;
-  justify - content: center;
-  margin - top: -2px;
+  align-items: center;
+  justify-content: center;
+  margin-top: -2px;
 }
-        .cpu - core.mini {
+        .cpu-core.mini {
   animation: pulseGreen 2s infinite;
 }
 @keyframes pulseGreen {
   0 %, 100 % { opacity: 1; transform: scale(1); }
   50 % { opacity: 0.5; transform: scale(0.9); }
 }
-        .loader - content { text - align: center; }
-        .loader - title { font - size: 18px; font - weight: 900; color: white; margin - bottom: 8px; }
-        .loader - subtitle { font - size: 13px; color: #666; font - weight: 500; }
-        .logic - dots { display: flex; justify - content: center; gap: 8px; margin - top: 16px; }
-        .logic - dots span {
+        .loader-content { text-align: center; }
+        .loader-title { font-size: 18px; font-weight: 900; color: white; margin-bottom: 8px; }
+        .loader-subtitle { font-size: 13px; color: #666; font-weight: 500; }
+        .logic-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+        .logic-dots span {
   width: 6px;
   height: 6px;
   background: #10B981;
-  border - radius: 50 %;
+  border-radius: 50 %;
   animation: dotUp 1s infinite alternate;
 }
-        .logic - dots span: nth - child(2) { animation - delay: 0.2s; }
-        .logic - dots span: nth - child(3) { animation - delay: 0.4s; }
+        .logic-dots span: nth-child(2) { animation-delay: 0.2s; }
+        .logic-dots span: nth-child(3) { animation-delay: 0.4s; }
 @keyframes dotUp { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-6px); opacity: 1; } }
 `}</style>
     </div>
@@ -2382,7 +2382,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
 - 部位：${ target }
 - 發生時段：${ timing }
 - 痛感程度：${ intensity }/10
-  - 詳細描述：${ details || '無' }
+ -詳細描述：${ details || '無' }
 - 學員基本資料：身高 ${ height || '--' } cm, 體重 ${ weight || '--' } kg(BMI: ${ bmi.toFixed(1) })
 
     請回傳 JSON 格式如下：
@@ -2472,11 +2472,11 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                 {timingOptions.map(opt => (
                   <div
                     key={opt}
-                    className={`stack - btn - v2 tech - stack - btn ${ timing === opt ? 'active red tech-glow' : '' } `}
+                    className={`stack-btn-v2 tech-stack-btn ${ timing===opt ? 'active red tech-glow':'' } `}
                     onClick={() => setTiming(opt)}
                   >
                     <span className="btn-label">{opt}</span>
-                    {timing === opt && <div className="btn-active-dot"></div>}
+                    {timing===opt && <div className="btn-active-dot"></div>}
                   </div>
                 ))}
               </div>
@@ -2485,7 +2485,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
             <div className="form-group-v2 tech-group">
               <label className="flex-between tech-label">
                 <span><ShieldAlert size={14} /> PAIN INTENSITY / 痛感程度 (1-10)</span>
-                <span className={`intensity - val tech - num ${ intensity >= 8 ? 'neon-red' : '' } `}>
+                <span className={`intensity-val tech-num ${ intensity >= 8 ? 'neon-red':'' } `}>
                   {intensity.toString().padStart(2, '0')}
                 </span>
               </label>
@@ -2495,12 +2495,12 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   min="1"
                   max="10"
                   step="1"
-                  className={`premium - slider red tech - slider ${ intensity >= 8 ? 'neon-red-slider' : '' } `}
+                  className={`premium-slider red tech-slider ${ intensity >= 8 ? 'neon-red-slider':'' } `}
                   value={intensity}
                   onChange={e => setIntensity(Number(e.target.value))}
                 />
                 <div className="slider-ticks">
-                  {[...Array(10)].map((_, i) => <div key={i} className={`tick ${ intensity > i ? 'active' : '' } `}></div>)}
+                  {[...Array(10)].map((_, i) => <div key={i} className={`tick ${ intensity > i ? 'active':'' } `}></div>)}
                 </div>
               </div>
               <div className="flex-between slider-labels tech-sub-labels">
@@ -2531,7 +2531,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   <div className="tech-spinner"></div>
                   <span>PROCESSING...</span>
                 </div>
-              ) : (
+              ):(
                 <>
                   <Activity size={18} className="btn-icon-pulse" />
                   <span className="btn-text">INITIALIZE DIAGNOSIS / 分析傷害</span>
@@ -2576,7 +2576,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
             <div className="injury-main-card tech-result-card">
               <div className="status-indicators tech-status-row">
                 {['高度確認', '不確定', '無法辨識'].map(s => (
-                  <div key={s} className={`status - tag tech - tag ${ result.status === s ? 'active' : '' } `}>
+                  <div key={s} className={`status-tag tech-tag ${ result.status===s ? 'active':'' } `}>
                     <div className="status-light"></div>
                     <span>{s}</span>
                   </div>
@@ -2614,7 +2614,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   <div className="log-content">
                     <p className="res-text">{result.detailAnalysis}</p>
                   </div>
-                  <div className="log-footer">ANALYSIS COMPLETE - 100%</div>
+                  <div className="log-footer">ANALYSIS COMPLETE-100%</div>
                 </div>
               )}
             </div>
@@ -2627,112 +2627,112 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
       </div>
       <DetailStyles />
       <style>{`
-  .injury - assessment - page {
-  background - color: #060608;
-  min - height: 100vh;
-  overflow - x: hidden;
+  .injury-assessment-page {
+  background-color: #060608;
+  min-height: 100vh;
+  overflow-x: hidden;
   position: relative;
 }
 
         /* Tech Overlay & HUD */
-        .tech - hud - overlay {
+        .tech-hud-overlay {
   position: fixed;
   inset: 0;
-  background - image:
-  radial - gradient(circle at 50 % 50 %, rgba(225, 29, 72, 0.05) 0 %, transparent 80 %),
-    linear - gradient(rgba(225, 29, 72, 0.03) 1px, transparent 1px),
-    linear - gradient(90deg, rgba(225, 29, 72, 0.03) 1px, transparent 1px);
-  background - size: 100 % 100 %, 30px 30px, 30px 30px;
-  pointer - events: none;
-  z - index: 0;
+  background-image:
+  radial-gradient(circle at 50 % 50 %, rgba(225, 29, 72, 0.05) 0 %, transparent 80 %),
+    linear-gradient(rgba(225, 29, 72, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(225, 29, 72, 0.03) 1px, transparent 1px);
+  background-size: 100 % 100 %, 30px 30px, 30px 30px;
+  pointer-events: none;
+  z-index: 0;
 }
         
-        .tech - scanline {
+        .tech-scanline {
   position: fixed;
   top: 0; left: 0; right: 0; height: 100px;
-  background: linear - gradient(to bottom, transparent, rgba(225, 29, 72, 0.05), transparent);
-  z - index: 0;
-  pointer - events: none;
+  background: linear-gradient(to bottom, transparent, rgba(225, 29, 72, 0.05), transparent);
+  z-index: 0;
+  pointer-events: none;
   animation: techScan 10s linear infinite;
 }
 
         /* ===== Electric Loader ===== */
-        .injury - electric - loader {
+        .injury-electric-loader {
   position: relative;
   margin: 24px 0;
   padding: 32px 20px;
-  background: linear - gradient(135deg, rgba(225, 29, 72, 0.05), rgba(0, 0, 0, 0.8));
+  background: linear-gradient(135deg, rgba(225, 29, 72, 0.05), rgba(0, 0, 0, 0.8));
   border: 1px solid rgba(225, 29, 72, 0.25);
-  border - radius: 24px;
+  border-radius: 24px;
   display: flex;
-  flex - direction: column;
-  align - items: center;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
   overflow: hidden;
 }
-        .elec - rings {
+        .elec-rings {
   position: relative;
   width: 100px;
   height: 100px;
   display: flex;
-  align - items: center;
-  justify - content: center;
+  align-items: center;
+  justify-content: center;
 }
-        .elec - ring {
+        .elec-ring {
   position: absolute;
-  border - radius: 50 %;
+  border-radius: 50 %;
   border: 2px solid transparent;
-  border - top - color: #E11D48;
+  border-top-color: #E11D48;
   animation: elecSpin linear infinite;
 }
-        .elec - ring.r1 { width: 100px; height: 100px; animation - duration: 2s; border - top - color: rgba(225, 29, 72, 0.9); box - shadow: 0 0 12px rgba(225, 29, 72, 0.4); }
-        .elec - ring.r2 { width: 72px; height: 72px; animation - duration: 1.4s; animation - direction: reverse; border - top - color: rgba(225, 29, 72, 0.6); }
-        .elec - ring.r3 { width: 46px; height: 46px; animation - duration: 0.9s; border - top - color: rgba(225, 29, 72, 0.4); }
-        .elec - core {
+        .elec-ring.r1 { width: 100px; height: 100px; animation-duration: 2s; border-top-color: rgba(225, 29, 72, 0.9); box-shadow: 0 0 12px rgba(225, 29, 72, 0.4); }
+        .elec-ring.r2 { width: 72px; height: 72px; animation-duration: 1.4s; animation-direction: reverse; border-top-color: rgba(225, 29, 72, 0.6); }
+        .elec-ring.r3 { width: 46px; height: 46px; animation-duration: 0.9s; border-top-color: rgba(225, 29, 72, 0.4); }
+        .elec-core {
   position: absolute;
   width: 32px; height: 32px;
   background: rgba(225, 29, 72, 0.1);
-  border - radius: 50 %;
-  display: flex; align - items: center; justify - content: center;
-  box - shadow: 0 0 20px rgba(225, 29, 72, 0.5);
+  border-radius: 50 %;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 20px rgba(225, 29, 72, 0.5);
 }
-        .elec - cpu - spin { animation: elecSpin 3s linear infinite; }
+        .elec-cpu-spin { animation: elecSpin 3s linear infinite; }
 @keyframes elecSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .elec - title {
-  font - size: 16px; font - weight: 900;
+        .elec-title {
+  font-size: 16px; font-weight: 900;
   color: #E11D48;
-  letter - spacing: 2px;
-  text - transform: uppercase;
-  text - shadow: 0 0 20px rgba(225, 29, 72, 0.6);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(225, 29, 72, 0.6);
 }
-        .elec - subtitle {
-  font - size: 12px; color: rgba(255, 255, 255, 0.4);
-  font - weight: 600; letter - spacing: 1px;
-  margin - top: -12px;
+        .elec-subtitle {
+  font-size: 12px; color: rgba(255, 255, 255, 0.4);
+  font-weight: 600; letter-spacing: 1px;
+  margin-top: -12px;
 }
-        .elec - data - stream {
+        .elec-data-stream {
   width: 100 %;
-  display: flex; flex - direction: column; gap: 10px;
+  display: flex; flex-direction: column; gap: 10px;
 }
-        .elec - stream - row {
-  display: flex; align - items: center; gap: 10px;
-  animation: fadeInRow 0.6s ease - out both;
+        .elec-stream-row {
+  display: flex; align-items: center; gap: 10px;
+  animation: fadeInRow 0.6s ease-out both;
 }
 @keyframes fadeInRow { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-        .stream - label {
-  font - size: 9px; color: rgba(225, 29, 72, 0.7);
-  font - family: monospace; font - weight: 700;
-  min - width: 140px; letter - spacing: 0.5px;
+        .stream-label {
+  font-size: 9px; color: rgba(225, 29, 72, 0.7);
+  font-family: monospace; font-weight: 700;
+  min-width: 140px; letter-spacing: 0.5px;
 }
-        .stream - bar {
+        .stream-bar {
   flex: 1; height: 3px;
   background: rgba(225, 29, 72, 0.1);
-  border - radius: 4px; overflow: hidden;
+  border-radius: 4px; overflow: hidden;
 }
-        .stream - fill {
+        .stream-fill {
   height: 100 %;
-  background: linear - gradient(90deg, #E11D48, rgba(225, 29, 72, 0.3));
-  border - radius: 4px;
+  background: linear-gradient(90deg, #E11D48, rgba(225, 29, 72, 0.3));
+  border-radius: 4px;
   animation: streamLoad 2.5s ease -in -out infinite both;
 }
 @keyframes streamLoad {
@@ -2741,14 +2741,14 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
   80 % { width: 92 %; }
   100 % { width: 85 %; }
 }
-        .stream - pct {
-  font - size: 9px; color: rgba(225, 29, 72, 0.5);
-  font - family: monospace; min - width: 20px; text - align: right;
+        .stream-pct {
+  font-size: 9px; color: rgba(225, 29, 72, 0.5);
+  font-family: monospace; min-width: 20px; text-align: right;
 }
-        .elec - scanline {
+        .elec-scanline {
   position: absolute;
   top: 0; left: 0; right: 0; height: 3px;
-  background: linear - gradient(90deg, transparent, rgba(225, 29, 72, 0.8), transparent);
+  background: linear-gradient(90deg, transparent, rgba(225, 29, 72, 0.8), transparent);
   animation: scanAcross 2s linear infinite;
 }
 @keyframes scanAcross {
@@ -2761,237 +2761,237 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
           to { transform: translateY(100vh); }
 }
 
-        .tech - content {
+        .tech-content {
   padding: 0 20px 40px;
   position: relative;
-  z - index: 2;
+  z-index: 2;
 }
 
         /* Glassmorphism Tech Card */
-        .glass - tech - card {
+        .glass-tech-card {
   background: rgba(20, 20, 22, 0.7);
-  backdrop - filter: blur(20px);
-  border - radius: 32px;
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
   border: 1px solid rgba(225, 29, 72, 0.2);
-  box - shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(225, 29, 72, 0.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(225, 29, 72, 0.05);
   overflow: hidden;
 }
 
-        .tech - header - text {
+        .tech-header-text {
   color: rgba(225, 29, 72, 0.9);
-  font - family: 'Outfit', sans - serif;
-  letter - spacing: 2px;
-  font - weight: 800;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 2px;
+  font-weight: 800;
   display: flex;
-  align - items: center;
+  align-items: center;
   gap: 10px;
-  font - size: 13px;
+  font-size: 13px;
 }
 
-        .tech - icon - spin { animation: spin 8s linear infinite; }
+        .tech-icon-spin { animation: spin 8s linear infinite; }
         
-        .tech - card - inner { padding: 30px 24px!important; background: transparent!important; }
+        .tech-card-inner { padding: 30px 24px!important; background: transparent!important; }
 
-        .tech - label {
+        .tech-label {
   color: #666;
-  font - size: 11px;
-  font - weight: 800;
-  letter - spacing: 1px;
-  margin - bottom: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
   display: flex;
-  align - items: center;
+  align-items: center;
   gap: 8px;
 }
 
-        .tech - num {
-  font - family: 'Monaco', monospace;
+        .tech-num {
+  font-family: 'Monaco', monospace;
   background: rgba(225, 29, 72, 0.1);
   padding: 2px 8px;
-  border - radius: 6px;
-  font - size: 16px;
+  border-radius: 6px;
+  font-size: 16px;
 }
 
         /* Input Tech Decorations */
-        .tech - input - wrapper, .tech - textarea - wrapper {
+        .tech-input-wrapper, .tech-textarea-wrapper {
   position: relative;
 }
-        .tech - input, .tech - textarea {
+        .tech-input, .tech-textarea {
   background: rgba(0, 0, 0, 0.4)!important;
   border: 1px solid rgba(255, 255, 255, 0.08)!important;
-  border - radius: 12px!important;
+  border-radius: 12px!important;
   transition: 0.3s;
   color: white;
 }
-        .tech - input: focus, .tech - textarea:focus {
-  border - color: #E11D48!important;
-  box - shadow: 0 0 15px rgba(225, 29, 72, 0.15)!important;
+        .tech-input: focus, .tech-textarea:focus {
+  border-color: #E11D48!important;
+  box-shadow: 0 0 15px rgba(225, 29, 72, 0.15)!important;
   background: rgba(0, 0, 0, 0.6)!important;
 }
 
         /* Stack Buttons Tech */
-        .tech - stacks { gap: 10px!important; }
-        .tech - stack - btn {
+        .tech-stacks { gap: 10px!important; }
+        .tech-stack-btn {
   background: rgba(255, 255, 255, 0.02)!important;
   border: 1px solid rgba(255, 255, 255, 0.05)!important;
-  border - radius: 14px!important;
+  border-radius: 14px!important;
   padding: 14px!important;
   position: relative;
   overflow: hidden;
-  transition: 0.3s cubic - bezier(0.4, 0, 0.2, 1);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-        .tech - stack - btn.btn - label { font - size: 14px; font - weight: 700; z - index: 2; position: relative; }
-        .tech - stack - btn.active {
+        .tech-stack-btn.btn-label { font-size: 14px; font-weight: 700; z-index: 2; position: relative; }
+        .tech-stack-btn.active {
   background: rgba(225, 29, 72, 0.1)!important;
-  border - color: #E11D48!important;
-  box - shadow: 0 0 20px rgba(225, 29, 72, 0.2);
+  border-color: #E11D48!important;
+  box-shadow: 0 0 20px rgba(225, 29, 72, 0.2);
 }
-        .btn - active - dot {
+        .btn-active-dot {
   position: absolute;
   top: 8px; right: 8px; width: 6px; height: 6px;
-  background: #E11D48; border - radius: 50 %;
-  box - shadow: 0 0 8px #E11D48;
+  background: #E11D48; border-radius: 50 %;
+  box-shadow: 0 0 8px #E11D48;
 }
 
         /* Slider HUD */
-        .slider - hud - wrap { position: relative; padding: 20px 0 10px; }
-        .slider - ticks {
-  display: flex; justify - content: space - between;
+        .slider-hud-wrap { position: relative; padding: 20px 0 10px; }
+        .slider-ticks {
+  display: flex; justify-content: space-between;
   position: absolute; top: 10px; left: 0; right: 0;
-  pointer - events: none;
+  pointer-events: none;
 }
-        .tick { width: 2px; height: 6px; background: #333; border - radius: 1px; transition: 0.3s; }
-        .tick.active { background: #E11D48; box - shadow: 0 0 5px #E11D48; }
+        .tick { width: 2px; height: 6px; background: #333; border-radius: 1px; transition: 0.3s; }
+        .tick.active { background: #E11D48; box-shadow: 0 0 5px #E11D48; }
 
-        .tech - slider:: -webkit - slider - thumb {
+        .tech-slider:: -webkit-slider-thumb {
   width: 24px; height: 24px;
   background: #E11D48;
   border: 3px solid #000;
-  box - shadow: 0 0 15px #E11D48;
+  box-shadow: 0 0 15px #E11D48;
 }
 
-        .tech - sub - labels span { font - size: 9px; color: #444; font - weight: 900; }
+        .tech-sub-labels span { font-size: 9px; color: #444; font-weight: 900; }
 
         /* Submit Button Sci-Fi */
-        .tech - submit {
+        .tech-submit {
   height: 60px!important;
-  margin - top: 10px;
+  margin-top: 10px;
   background: #E11D48!important;
-  border - radius: 18px!important;
+  border-radius: 18px!important;
   position: relative;
   overflow: hidden;
   border: none!important;
 }
-        .tech - submit:active { transform: scale(0.96); }
-        .tech - submit::after {
+        .tech-submit:active { transform: scale(0.96); }
+        .tech-submit::after {
   content: '';
   position: absolute;
   top: -50 %; left: -50 %; width: 200 %; height: 200 %;
-  background: radial - gradient(circle at center, rgba(255, 255, 255, 0.2) 0 %, transparent 60 %);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0 %, transparent 60 %);
   opacity: 0; transition: 0.3s;
 }
-        .tech - submit: hover::after { opacity: 1; transform: scale(1.1); }
+        .tech-submit: hover::after { opacity: 1; transform: scale(1.1); }
         
-        .btn - icon - pulse { animation: techHeartbeat 2s infinite; }
+        .btn-icon-pulse { animation: techHeartbeat 2s infinite; }
 @keyframes techHeartbeat {
   0 % { transform: scale(1); opacity: 1; }
   50 % { transform: scale(1.2); opacity: 0.7; }
   100 % { transform: scale(1); opacity: 1; }
 }
 
-        .tech - loading - wrap { display: flex; align - items: center; gap: 12px; font - weight: 900; letter - spacing: 2px; }
-        .tech - spinner {
+        .tech-loading-wrap { display: flex; align-items: center; gap: 12px; font-weight: 900; letter-spacing: 2px; }
+        .tech-spinner {
   width: 20px; height: 20px;
   border: 3px solid rgba(255, 255, 255, 0.2);
-  border - top - color: white;
-  border - radius: 50 %;
+  border-top-color: white;
+  border-radius: 50 %;
   animation: spin 0.8s linear infinite;
 }
 
         /* Result View Tech */
-        .tech - result - view { animation: slideUp 0.6s cubic - bezier(0.2, 0.8, 0.2, 1); margin - bottom: 50px; }
-        .tech - result - card {
+        .tech-result-view { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); margin-bottom: 50px; }
+        .tech-result-card {
   background: rgba(10, 10, 12, 0.9)!important;
   border: 1px solid rgba(225, 29, 72, 0.4)!important;
   padding: 30px 20px!important;
   position: relative;
 }
-        .result - header - box { margin - bottom: 25px; padding - left: 15px; border - left: 3px solid #E11D48; }
-        .header - glitch { font - size: 10px; color: #E11D48; font - weight: 900; letter - spacing: 3px; margin - bottom: 5px; opacity: 0.8; }
-        .tech - title { font - size: 24px; color: white; margin: 0; font - weight: 800; letter - spacing: 1px; }
+        .result-header-box { margin-bottom: 25px; padding-left: 15px; border-left: 3px solid #E11D48; }
+        .header-glitch { font-size: 10px; color: #E11D48; font-weight: 900; letter-spacing: 3px; margin-bottom: 5px; opacity: 0.8; }
+        .tech-title { font-size: 24px; color: white; margin: 0; font-weight: 800; letter-spacing: 1px; }
 
-        .tech - data - table {
-  display: flex; flex - direction: column; gap: 1px;
+        .tech-data-table {
+  display: flex; flex-direction: column; gap: 1px;
   background: rgba(225, 29, 72, 0.1);
   border: 1px solid rgba(225, 29, 72, 0.2);
-  border - radius: 16px; overflow: hidden;
-  margin - bottom: 25px;
+  border-radius: 16px; overflow: hidden;
+  margin-bottom: 25px;
 }
-        .table - row {
+        .table-row {
   background: rgba(15, 15, 18, 0.95);
-  display: flex; flex - direction: column;
+  display: flex; flex-direction: column;
   padding: 16px;
 }
-        .row - label {
-  font - size: 11px; color: #E11D48; font - weight: 900;
-  letter - spacing: 1px; margin - bottom: 10px;
-  display: flex; align - items: center; gap: 8px;
-  text - transform: uppercase;
+        .row-label {
+  font-size: 11px; color: #E11D48; font-weight: 900;
+  letter-spacing: 1px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+  text-transform: uppercase;
 }
-        .row - value { font - size: 14px; color: #ccc; line - height: 1.6; }
+        .row-value { font-size: 14px; color: #ccc; line-height: 1.6; }
 
-        .tech - log - box {
+        .tech-log-box {
   background: rgba(0, 0, 0, 0.5);
   border: 1px dashed rgba(225, 29, 72, 0.3);
-  border - radius: 12px; padding: 15px;
+  border-radius: 12px; padding: 15px;
   position: relative;
 }
-        .log - header {
-  display: flex; align - items: center; gap: 8px;
-  color: #aaa; font - size: 11px; font - weight: 900;
-  margin - bottom: 12px; border - bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding - bottom: 8px;
+        .log-header {
+  display: flex; align-items: center; gap: 8px;
+  color: #aaa; font-size: 11px; font-weight: 900;
+  margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 8px;
 }
-        .log - footer {
-  margin - top: 12px; text - align: right; font - size: 9px;
-  color: #444; font - weight: 900; font - family: monospace;
+        .log-footer {
+  margin-top: 12px; text-align: right; font-size: 9px;
+  color: #444; font-weight: 900; font-family: monospace;
 }
 
-        .tech - disclaimer {
-  display: flex; align - items: flex - start; gap: 10px;
+        .tech-disclaimer {
+  display: flex; align-items: flex-start; gap: 10px;
   background: rgba(225, 29, 72, 0.05);
-  padding: 15px; border - radius: 12px;
-  color: #666; font - size: 11px; font - weight: 500;
-  line - height: 1.5; margin - top: 20px;
+  padding: 15px; border-radius: 12px;
+  color: #666; font-size: 11px; font-weight: 500;
+  line-height: 1.5; margin-top: 20px;
 }
-        .tech - disclaimer svg { flex - shrink: 0; margin - top: 2px; }
+        .tech-disclaimer svg { flex-shrink: 0; margin-top: 2px; }
 
         /* Status Indicator Tech Tags */
-        .tech - status - row { display: flex; gap: 10px; margin - bottom: 25px; align - items: center; justify - content: flex - start; }
-        .tech - tag {
-  display: flex; align - items: center; gap: 8px;
-  padding: 6px 12px; border - radius: 10px;
+        .tech-status-row { display: flex; gap: 10px; margin-bottom: 25px; align-items: center; justify-content: flex-start; }
+        .tech-tag {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: 10px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: 0.3s;
 }
-        .tech - tag.active {
+        .tech-tag.active {
   background: rgba(225, 29, 72, 0.12);
   border: 1px solid rgba(225, 29, 72, 0.3);
-  box - shadow: 0 0 15px rgba(225, 29, 72, 0.1);
+  box-shadow: 0 0 15px rgba(225, 29, 72, 0.1);
 }
-        .status - light {
-  width: 8px; height: 8px; border - radius: 50 %;
+        .status-light {
+  width: 8px; height: 8px; border-radius: 50 %;
   background: #333; transition: 0.3s;
 }
-        .tech - tag.active.status - light {
+        .tech-tag.active.status-light {
   background: #E11D48;
-  box - shadow: 0 0 10px #E11D48;
+  box-shadow: 0 0 10px #E11D48;
   animation: techHeartbeat 1.5s infinite;
 }
-        .tech - tag span { font - size: 11px; font - weight: 800; color: #666; transition: 0.3s; }
-        .tech - tag.active span { color: #E11D48; }
+        .tech-tag span { font-size: 11px; font-weight: 800; color: #666; transition: 0.3s; }
+        .tech-tag.active span { color: #E11D48; }
 
-        .pulse - red - icon { animation: redIconPulse 2s infinite; }
+        .pulse-red-icon { animation: redIconPulse 2s infinite; }
 @keyframes redIconPulse {
   0 % { box- shadow: 0 0 0 0 rgba(225, 29, 72, 0.4);
 }
@@ -2999,8 +2999,8 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
 100 % { box- shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
         }
 
-        .neon - red { color: #ff2d55; text - shadow: 0 0 10px rgba(255, 45, 85, 0.5); }
-        .neon - red - slider:: -webkit - slider - thumb { background: #ff2d55; box - shadow: 0 0 25px rgba(255, 45, 85, 1); }
+        .neon-red { color: #ff2d55; text-shadow: 0 0 10px rgba(255, 45, 85, 0.5); }
+        .neon-red-slider:: -webkit-slider-thumb { background: #ff2d55; box-shadow: 0 0 25px rgba(255, 45, 85, 1); }
 `}</style>
     </div>
   );
@@ -3026,18 +3026,18 @@ const ExerciseDbDetail = ({ onBack }) => (
     </div>
     <DetailStyles />
     <style>{`
-  .pulse - circle - db {
+  .pulse-circle-db {
   width: 80px; height: 80px;
   background: rgba(139, 92, 246, 0.1);
-  border - radius: 50 %;
+  border-radius: 50 %;
   position: absolute;
   animation: dbPulse 2s infinite;
 }
 @keyframes dbPulse { 0 % { transform: scale(1); opacity: 0.5; } 100 % { transform: scale(1.5); opacity: 0; } }
-      .placeholder - text - v2 {
-  margin - top: 24px; color: #888; font - size: 15px; font - weight: 500; line - height: 1.6;
+      .placeholder-text-v2 {
+  margin-top: 24px; color: #888; font-size: 15px; font-weight: 500; line-height: 1.6;
 }
-      .glow - text { color: #8b5cf6; font - weight: 800; text - shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
+      .glow-text { color: #8b5cf6; font-weight: 800; text-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
 `}</style>
   </div>
 );
@@ -3096,125 +3096,125 @@ const SupportBot = ({ onOpenChat }) => {
       </div>
 
       <style>{`
-  .support - bot - container {
-  position: fixed; bottom: 120px; right: 28px; z - index: 1500; display: flex; flex - direction: column; align - items: flex - end; gap: 14px; pointer - events: none;
+  .support-bot-container {
+  position: fixed; bottom: 120px; right: 28px; z-index: 1500; display: flex; flex-direction: column; align-items: flex-end; gap: 14px; pointer-events: none;
 }
-        .support - bot - container * { pointer- events: auto; }
+        .support-bot-container * { pointer- events: auto; }
         
-        .bot - speech - bubble {
+        .bot-speech-bubble {
   background: rgba(255, 255, 255, 0.9);
-  backdrop - filter: blur(10px);
-  border - radius: 20px 20px 6px 20px;
+  backdrop-filter: blur(10px);
+  border-radius: 20px 20px 6px 20px;
   padding: 14px 18px;
   width: 210px;
-  box - shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 242, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 242, 255, 0.1);
   position: relative;
-  transform - origin: bottom right;
-  animation: bounceInBot 0.5s cubic - bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: bottom right;
+  animation: bounceInBot 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
   border: 1px solid rgba(0, 242, 255, 0.2);
-  margin - bottom: 8px;
+  margin-bottom: 8px;
 }
-        .bot - speech - bubble p { font - size: 14px; font - weight: 700; line - height: 1.5; color: #1a202c; margin: 0; }
-        .bot - speech - bubble::after {
-  content: '🤖'; position: absolute; right: -8px; top: -12px; font - size: 18px;
-  filter: drop - shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        .bot-speech-bubble p { font-size: 14px; font-weight: 700; line-height: 1.5; color: #1a202c; margin: 0; }
+        .bot-speech-bubble::after {
+  content: '🤖'; position: absolute; right: -8px; top: -12px; font-size: 18px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
         
-        .robot - wrapper { display: flex; flex - direction: column; align - items: center; position: relative; }
-        .robot - body - anim { width: 80px; height: 100px; display: flex; flex - direction: column; align - items: center; animation: hoverV2 4s ease -in -out infinite; }
+        .robot-wrapper { display: flex; flex-direction: column; align-items: center; position: relative; }
+        .robot-body-anim { width: 80px; height: 100px; display: flex; flex-direction: column; align-items: center; animation: hoverV2 4s ease -in -out infinite; }
 
         /* Head Structure */
-        .robot - head - v2 {
+        .robot-head-v2 {
   width: 54px; height: 50px;
-  background: radial - gradient(circle at 30 % 30 %, #fff 0 %, #eef2f3 100 %);
-  border - radius: 50 % 50 % 45 % 45 %;
+  background: radial-gradient(circle at 30 % 30 %, #fff 0 %, #eef2f3 100 %);
+  border-radius: 50 % 50 % 45 % 45 %;
   position: relative;
-  display: flex; align - items: center; justify - content: center;
-  box - shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset - 2px - 2px 5px rgba(0, 0, 0, 0.05);
-  z - index: 10;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset-2px-2px 5px rgba(0, 0, 0, 0.05);
+  z-index: 10;
 }
-        .visor - v2 {
+        .visor-v2 {
   width: 38px; height: 20px;
   background: #0a0a0a;
-  border - radius: 12px;
-  display: flex; align - items: center; justify - content: center;
-  box - shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  margin - top: 2px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  margin-top: 2px;
 }
-        .robot - eyes - v2 { display: flex; gap: 10px; }
-        .eye - v2 {
+        .robot-eyes-v2 { display: flex; gap: 10px; }
+        .eye-v2 {
   width: 7px; height: 7px;
   background: #00f2ff;
-  border - radius: 50 %;
+  border-radius: 50 %;
   animation: blink 5s infinite;
-  box - shadow: 0 0 10px #00f2ff, 0 0 20px rgba(0, 242, 255, 0.4);
+  box-shadow: 0 0 10px #00f2ff, 0 0 20px rgba(0, 242, 255, 0.4);
 }
-        .ear - glow - left, .ear - glow - right {
+        .ear-glow-left, .ear-glow-right {
   position: absolute;
   width: 6px; height: 14px;
   background: rgba(0, 242, 255, 0.4);
-  border - radius: 50 %;
+  border-radius: 50 %;
   top: 35 %;
   filter: blur(2px);
 }
-        .ear - glow - left { left: -2px; }
-        .ear - glow - right { right: -2px; }
+        .ear-glow-left { left: -2px; }
+        .ear-glow-right { right: -2px; }
 
         /* Neck Ring */
-        .neck - ring {
+        .neck-ring {
   width: 22px; height: 4px;
   background: #00f2ff;
-  border - radius: 4px;
-  margin - top: -2px;
-  box - shadow: 0 0 10px #00f2ff;
-  z - index: 8;
+  border-radius: 4px;
+  margin-top: -2px;
+  box-shadow: 0 0 10px #00f2ff;
+  z-index: 8;
   animation: glowPulse 2s ease -in -out infinite;
 }
 
         /* Body Structure */
-        .body - container {
+        .body-container {
   display: flex;
-  align - items: flex - start;
-  justify - content: center;
-  margin - top: -1px;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: -1px;
   position: relative;
 }
-        .robot - torso - v2 {
+        .robot-torso-v2 {
   width: 44px; height: 42px;
-  background: radial - gradient(circle at 40 % 40 %, #fff 0 %, #dae1e7 100 %);
-  border - radius: 20px 20px 30px 30px;
+  background: radial-gradient(circle at 40 % 40 %, #fff 0 %, #dae1e7 100 %);
+  border-radius: 20px 20px 30px 30px;
   position: relative;
-  box - shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  z - index: 5;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  z-index: 5;
 }
-        .torso - detail {
+        .torso-detail {
   position: absolute;
   bottom: 8px; left: 50 %;
   transform: translateX(-50 %);
   width: 14px; height: 2px;
   background: #dae1e7;
-  border - radius: 2px;
+  border-radius: 2px;
 }
 
-        .shoulder - v2 {
+        .shoulder-v2 {
   width: 18px; height: 20px;
   background: #7f8c8d; /* Metallic Silver/Grey */
-  border - radius: 10px;
+  border-radius: 10px;
   position: absolute;
   top: 2px;
-  box - shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.2), 0 2px 5px rgba(0, 0, 0, 0.3);
-  z - index: 4;
+  box-shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.2), 0 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 4;
 }
-        .shoulder - v2.left { left: -14px; transform: rotate(-15deg); }
-        .shoulder - v2.right { right: -14px; transform: rotate(15deg); }
+        .shoulder-v2.left { left: -14px; transform: rotate(-15deg); }
+        .shoulder-v2.right { right: -14px; transform: rotate(15deg); }
 
-        .robot - platform - v2 {
+        .robot-platform-v2 {
   width: 50px; height: 6px;
   background: rgba(0, 242, 255, 0.2);
-  border - radius: 50 %;
+  border-radius: 50 %;
   filter: blur(4px);
-  margin - top: 5px;
+  margin-top: 5px;
   animation: shadowPulseV2 4s ease -in -out infinite;
 }
 
@@ -3266,7 +3266,7 @@ const ChatBotDetail = ({ onBack }) => {
 
 請以親切、幽默、專業的口吻回答問題。如果使用者詢問如何使用特定功能，請簡潔說明步驟。如果使用者想聊天，也可以愉快地聊天。`
             },
-            ...messages.map(m => ({ role: m.role === 'bot' ? 'assistant' : 'user', content: m.content })),
+            ...messages.map(m => ({ role: m.role==='bot' ? 'assistant':'user', content: m.content })),
             { role: 'user', content: userMsg }
           ]
         })
@@ -3309,7 +3309,7 @@ const ChatBotDetail = ({ onBack }) => {
       </header>
       <div className="chat-messages">
         {messages.map((m, i) => (
-          <div key={i} className={`chat - bubble - wrap ${ m.role === 'bot' ? 'bot' : 'user' } `}>
+          <div key={i} className={`chat-bubble-wrap ${ m.role==='bot' ? 'bot':'user' } `}>
             <div className="chat-bubble">{m.content}</div>
           </div>
         ))}
@@ -3328,97 +3328,97 @@ const ChatBotDetail = ({ onBack }) => {
           placeholder="請輸入您的問題..."
           value={input}
           onChange={e => setInput(e.target.value)}
-          onKeyPress={e => e.key === 'Enter' && handleSend()}
+          onKeyPress={e => e.key==='Enter' && handleSend()}
         />
         <button onClick={handleSend} className="chat-send-pulse"><Zap size={20} color="white" fill="white" /></button>
       </div>
 
       <style>{`
-  .chat - detail - page {
+  .chat-detail-page {
   position: fixed; top: 0; left: 0; width: 100 %; height: 100 %;
   background: #0d1117;
-  background - image: radial - gradient(circle at top right, rgba(0, 242, 255, 0.05), transparent 40 %);
-  z - index: 1200; display: flex; flex - direction: column;
-  font - family: 'Inter', system - ui, sans - serif;
+  background-image: radial-gradient(circle at top right, rgba(0, 242, 255, 0.05), transparent 40 %);
+  z-index: 1200; display: flex; flex-direction: column;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
-        .chat - detail - header {
+        .chat-detail-header {
   padding: 20px 24px;
   background: rgba(13, 17, 23, 0.8);
-  backdrop - filter: blur(20px);
-  border - bottom: 2px solid rgba(0, 242, 255, 0.1);
-  display: flex; align - items: center; gap: 16px;
+  backdrop-filter: blur(20px);
+  border-bottom: 2px solid rgba(0, 242, 255, 0.1);
+  display: flex; align-items: center; gap: 16px;
 }
-        .header - robot - info { display: flex; align - items: center; gap: 12px; }
-        .mini - robot - head {
+        .header-robot-info { display: flex; align-items: center; gap: 12px; }
+        .mini-robot-head {
   width: 44px; height: 44px;
   background: #000;
-  border - radius: 12px;
+  border-radius: 12px;
   border: 1px solid rgba(0, 242, 255, 0.3);
-  display: flex; align - items: center; justify - content: center;
-  box - shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
 }
-        .header - text - group { display: flex; flex - direction: column; gap: 2px; }
-        .chat - main - title { font - size: 16px; font - weight: 800; color: #fff; text - shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
-        .chat - status - text { font - size: 10px; color: #00f2ff; font - weight: 700; text - transform: uppercase; letter - spacing: 0.5px; opacity: 0.8; }
+        .header-text-group { display: flex; flex-direction: column; gap: 2px; }
+        .chat-main-title { font-size: 16px; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        .chat-status-text { font-size: 10px; color: #00f2ff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
 
-        .chat - messages {
-  flex: 1; padding: 24px; overflow - y: auto; display: flex; flex - direction: column; gap: 20px;
-  padding - bottom: 100px;
-  scrollbar - width: thin; scrollbar - color: rgba(0, 242, 255, 0.2) transparent;
+        .chat-messages {
+  flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;
+  padding-bottom: 100px;
+  scrollbar-width: thin; scrollbar-color: rgba(0, 242, 255, 0.2) transparent;
 }
-        .chat - bubble - wrap { display: flex; width: 100 %; }
-        .chat - bubble - wrap.bot { justify - content: flex - start; }
-        .chat - bubble - wrap.user { justify - content: flex - end; }
-        .chat - bubble { max - width: 85 %; padding: 14px 18px; font - size: 15px; font - weight: 600; line - height: 1.6; }
+        .chat-bubble-wrap { display: flex; width: 100 %; }
+        .chat-bubble-wrap.bot { justify-content: flex-start; }
+        .chat-bubble-wrap.user { justify-content: flex-end; }
+        .chat-bubble { max-width: 85 %; padding: 14px 18px; font-size: 15px; font-weight: 600; line-height: 1.6; }
         
-        .bot.chat - bubble {
+        .bot.chat-bubble {
   background: rgba(255, 255, 255, 0.03);
   color: #e2e8f0;
-  border - radius: 20px 20px 20px 4px;
+  border-radius: 20px 20px 20px 4px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box - shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-        .user.chat - bubble {
-  background: linear - gradient(135deg, #0066cc 0 %, #004499 100 %);
+        .user.chat-bubble {
+  background: linear-gradient(135deg, #0066cc 0 %, #004499 100 %);
   color: white;
-  border - radius: 20px 20px 4px 20px;
+  border-radius: 20px 20px 4px 20px;
   border: 1px solid rgba(0, 242, 255, 0.3);
-  box - shadow: 0 8px 20px rgba(0, 71, 171, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 71, 171, 0.3);
 }
 
-        .typing - indicator {
-  font - size: 12px; color: #00f2ff; font - weight: 700;
-  display: flex; align - items: center; gap: 6px;
-  opacity: 0.8; margin - top: 4px;
+        .typing-indicator {
+  font-size: 12px; color: #00f2ff; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+  opacity: 0.8; margin-top: 4px;
 }
-        .dot { width: 4px; height: 4px; background: #00f2ff; border - radius: 50 %; animation: blinkDots 1.4s infinite; }
-        .dot: nth - child(2) { animation - delay: 0.2s; }
-        .dot: nth - child(3) { animation - delay: 0.4s; }
+        .dot { width: 4px; height: 4px; background: #00f2ff; border-radius: 50 %; animation: blinkDots 1.4s infinite; }
+        .dot: nth-child(2) { animation-delay: 0.2s; }
+        .dot: nth-child(3) { animation-delay: 0.4s; }
 @keyframes blinkDots { 0 %, 100 % { opacity: 0.3; } 50 % { opacity: 1; } }
 
-        .chat - input - row {
+        .chat-input-row {
   position: fixed; bottom: 0; left: 0; width: 100 %;
   background: rgba(13, 17, 23, 0.9);
-  backdrop - filter: blur(20px);
+  backdrop-filter: blur(20px);
   padding: 24px;
-  border - top: 2px solid rgba(0, 242, 255, 0.1);
-  display: flex; gap: 14px; align - items: center;
+  border-top: 2px solid rgba(0, 242, 255, 0.1);
+  display: flex; gap: 14px; align-items: center;
 }
-        .chat - input - row input {
+        .chat-input-row input {
   flex: 1; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2);
-  border - radius: 16px; padding: 14px 20px; color: #fff; font - size: 15px; outline: none; transition: 0.3s;
+  border-radius: 16px; padding: 14px 20px; color: #fff; font-size: 15px; outline: none; transition: 0.3s;
 }
-        .chat - input - row input:focus { border - color: #00f2ff; box - shadow: 0 0 15px rgba(0, 242, 255, 0.1); }
-        .chat - send - pulse {
+        .chat-input-row input:focus { border-color: #00f2ff; box-shadow: 0 0 15px rgba(0, 242, 255, 0.1); }
+        .chat-send-pulse {
   width: 52px; height: 52px;
-  background: linear - gradient(135deg, #00f2ff 0 %, #0066cc 100 %);
-  border: none; border - radius: 16px;
-  display: flex; align - items: center; justify - content: center;
-  cursor: pointer; box - shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+  background: linear-gradient(135deg, #00f2ff 0 %, #0066cc 100 %);
+  border: none; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
   transition: 0.3s;
 }
-        .chat - send - pulse:active { transform: scale(0.9); }
+        .chat-send-pulse:active { transform: scale(0.9); }
 `}</style>
     </div>
   );

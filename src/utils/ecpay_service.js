@@ -12,7 +12,7 @@
  * The API server uses Node.js crypto (SHA256) with correct PHP-urlencode equivalent.
  */
 export const getPeriodicCheckoutPayload = async (plan, user) => {
-    const response = await fetch('http://localhost:5174/api/ecpay-checkout', {
+    const response = await fetch('/api/ecpay-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

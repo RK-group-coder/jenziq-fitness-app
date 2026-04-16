@@ -1627,11 +1627,12 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          // 壓縮邏輯：最大寬度/高度設為 1024px
+      // 使用 URL.createObjectURL 代替 FileReader 以節省記憶體，防止 iOS 黑屏/崩潰
+      const objectUrl = URL.createObjectURL(file);
+      const img = new Image();
+      
+      img.onload = () => {
+        try {
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
@@ -1654,14 +1655,24 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
-          // 轉為 0.7 品質的 jpeg 以大幅縮小體積
           const compressedB64 = canvas.toDataURL('image/jpeg', 0.7);
           setPreviewUrl(compressedB64);
           analyzeImage(compressedB64);
-        };
-        img.src = event.target.result;
+          
+          // 釋放記憶體
+          URL.revokeObjectURL(objectUrl);
+        } catch (err) {
+          console.error('Image processing error:', err);
+          alert('圖片處理失敗，請嘗試換一張照片或重新拍攝。');
+        }
       };
-      reader.readAsDataURL(file);
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        alert('無法讀取照片格式，請重新拍攝。');
+      };
+
+      img.src = objectUrl;
     }
   };
 

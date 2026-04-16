@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 import {
     LayoutDashboard,
@@ -124,15 +124,15 @@ const ManagerDashboard = ({ user, onLogout }) => {
             title: '學生專區',
             items: [
                 { id: 'student_mgmt', label: '學員管理', icon: UserCheck },
-                { id: 'student_courses', label: '學員課程管理', icon: Calendar },
-                { id: 'payment_mgmt', label: '應收帳款管理', icon: CreditCard },
-                { id: 'payment_history', label: '金流對帳中心', icon: CreditCard },
-                { id: 'membership_plans', label: '會籍方案管理', icon: Zap },
                 { id: 'student_plans', label: '學員方案與點數', icon: UserCheck },
+                { id: 'membership_plans', label: '會籍方案管理', icon: Zap },
+                { id: 'student_courses', label: '學員課程管理', icon: Calendar },
                 { id: 'activities', label: '學員活動管理', icon: Calendar },
                 { id: 'locations', label: '據點管理', icon: MapPin },
                 { id: 'hero_banner', label: '首頁形象管理', icon: ImageIcon },
                 { id: 'ad_banners', label: '廣告輪播管理', icon: Zap },
+                { id: 'payment_mgmt', label: '應收款項管理', icon: CreditCard },
+                { id: 'payment_history', label: '金流對帳中心', icon: CreditCard },
             ]
         },
         {
@@ -141,22 +141,22 @@ const ManagerDashboard = ({ user, onLogout }) => {
                 { id: 'coach_mgmt', label: '教練管理', icon: Briefcase },
                 { id: 'course_apps', label: '課程申請審核', icon: ShieldCheck, badge: pendingCourseAppCount },
                 { id: 'coach_schedule_review', label: '教練班表總覽', icon: Calendar },
-                { id: 'coach_activities', label: '教練活動管理', icon: Zap },
                 { id: 'leaves', label: '請假管理', icon: ClipboardList, badge: pendingLeaveCount },
-                { id: 'certs', label: '證照審核', icon: Award, badge: pendingCertCount },
+                { id: 'coach_activities', label: '教練活動管理', icon: Zap },
                 { id: 'xp_review', label: 'XP申請審核', icon: Award, badge: pendingXpCount },
+                { id: 'certs', label: '證照審核', icon: Award, badge: pendingCertCount },
             ]
         },
         {
             title: '共用區域',
             items: [
                 { id: 'home', label: '總覽儀表板', icon: LayoutDashboard },
-                { id: 'injury_alerts', label: '疼痛警訊系統', icon: ShieldAlert, badge: pendingInjuryCount },
-                { id: 'permissions', label: '權限設置', icon: ShieldAlert },
-                { id: 'manager_mgmt', label: '現有管理者', icon: ShieldCheck },
-                { id: 'xp_rules', label: 'XP規則管理', icon: Zap },
                 { id: 'notifications', label: '發送通知', icon: Bell },
                 { id: 'articles', label: '文章管理', icon: ClipboardList },
+                { id: 'injury_alerts', label: '疼痛資訊系統', icon: ShieldAlert, badge: pendingInjuryCount },
+                { id: 'permissions', label: '權限設置', icon: ShieldAlert },
+                { id: 'xp_rules', label: 'XP規則管理', icon: Zap },
+                { id: 'manager_mgmt', label: '現有管理者', icon: ShieldCheck },
                 { id: 'settings', label: '系統設定', icon: Settings },
             ]
         }

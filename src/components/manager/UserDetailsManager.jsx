@@ -49,7 +49,7 @@ const UserDetailsManager = ({ targetRole }) => {
         u.user_permissions?.user_id_string.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const roleTitle = targetRole === 'manager' ? '現有管理者' : targetRole === 'coach' ? '教練管理' : '學員管理';
+    const roleTitle = targetRole === 'manager' ? '現有管理者' : targetRole === 'coach' ? '教練資料管理' : '學員資料管理';
 
     return (
         <div className="user-details-manager">

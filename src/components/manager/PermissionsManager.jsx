@@ -66,7 +66,7 @@ const PermissionsManager = () => {
         <div className="permissions-manager">
             <header className="manager-header">
                 <div>
-                    <h2>權限設置</h2>
+                    <h2>權限總覽</h2>
                     <p>管理系統存取權限與登入帳號</p>
                 </div>
                 <button className="add-btn" onClick={() => setIsModalOpen(true)}>

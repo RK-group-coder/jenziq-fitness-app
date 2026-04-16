@@ -164,7 +164,7 @@ const PaymentRequestManager = () => {
             <header className="page-header">
                 <div className="header-icon-box"><CreditCard size={24} /></div>
                 <div className="header-info">
-                    <h2>應收帳款管理系統</h2>
+                    <h2>收款訊息派發系統</h2>
                     <p>支援個人多選、角色切換與全體一鍵發送</p>
                 </div>
             </header>

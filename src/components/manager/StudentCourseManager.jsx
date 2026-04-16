@@ -743,7 +743,7 @@ const StudentCourseManager = () => {
         <div className="student-course-manager">
             <header className="manager-header">
                 <div className="title-group">
-                    <h2 className="title">學員課程系統管理</h2>
+                    <h2 className="title">團課系統管理</h2>
                     <div className="tab-group-container">
                         <div className="view-selector">
                             <button className={`view-tab ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => setActiveTab('calendar')}>日曆排課</button>

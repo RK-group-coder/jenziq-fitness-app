@@ -194,7 +194,7 @@ const ActivityManager = () => {
             <header className="page-header">
                 <div className="header-top">
                     <div className="title-wrap">
-                        <h2 className="page-title">學員活動管理</h2>
+                        <h2 className="page-title">學員推廣活動</h2>
                         <p className="page-count">共 {events.length} 筆活動</p>
                     </div>
                     <button className="add-btn" onClick={() => setIsEditing(true)}>

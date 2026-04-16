@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 import {
     LayoutDashboard,
@@ -123,22 +123,22 @@ const ManagerDashboard = ({ user, onLogout }) => {
         {
             title: '學生專區',
             items: [
-                { id: 'student_mgmt', label: '學員管理', icon: UserCheck },
+                { id: 'student_mgmt', label: '學員資料管理', icon: UserCheck },
                 { id: 'student_plans', label: '學員方案與點數', icon: UserCheck },
                 { id: 'membership_plans', label: '會籍方案管理', icon: Zap },
-                { id: 'student_courses', label: '學員課程管理', icon: Calendar },
-                { id: 'activities', label: '學員活動管理', icon: Calendar },
+                { id: 'student_courses', label: '團課管理', icon: Calendar },
+                { id: 'activities', label: '學員推廣活動', icon: Calendar },
                 { id: 'locations', label: '據點管理', icon: MapPin },
                 { id: 'hero_banner', label: '首頁形象管理', icon: ImageIcon },
                 { id: 'ad_banners', label: '廣告輪播管理', icon: Zap },
-                { id: 'payment_mgmt', label: '應收款項管理', icon: CreditCard },
+                { id: 'payment_mgmt', label: '收款訊息派發', icon: CreditCard },
                 { id: 'payment_history', label: '金流對帳中心', icon: CreditCard },
             ]
         },
         {
             title: '教練專區',
             items: [
-                { id: 'coach_mgmt', label: '教練管理', icon: Briefcase },
+                { id: 'coach_mgmt', label: '教練資料管理', icon: Briefcase },
                 { id: 'course_apps', label: '課程申請審核', icon: ShieldCheck, badge: pendingCourseAppCount },
                 { id: 'coach_schedule_review', label: '教練班表總覽', icon: Calendar },
                 { id: 'leaves', label: '請假管理', icon: ClipboardList, badge: pendingLeaveCount },
@@ -154,7 +154,7 @@ const ManagerDashboard = ({ user, onLogout }) => {
                 { id: 'notifications', label: '發送通知', icon: Bell },
                 { id: 'articles', label: '文章管理', icon: ClipboardList },
                 { id: 'injury_alerts', label: '疼痛資訊系統', icon: ShieldAlert, badge: pendingInjuryCount },
-                { id: 'permissions', label: '權限設置', icon: ShieldAlert },
+                { id: 'permissions', label: '權限總攬', icon: ShieldAlert },
                 { id: 'xp_rules', label: 'XP規則管理', icon: Zap },
                 { id: 'manager_mgmt', label: '現有管理者', icon: ShieldCheck },
                 { id: 'settings', label: '系統設定', icon: Settings },

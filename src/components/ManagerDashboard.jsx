@@ -302,7 +302,7 @@ const ManagerDashboard = ({ user, onLogout }) => {
         .drawer-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; }
         .side-drawer { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background-color: #0F172A; z-index: 1001; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
         .side-drawer.open { left: 0; }
-        .drawer-header { padding: 32px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-header { padding: calc(32px + env(safe-area-inset-top)) 24px 32px; display: flex; justify-content: space-between; align-items: center; }
         .manager-brand { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 800; color: white; }
         .brand-dot { width: 12px; height: 12px; background-color: var(--primary); border-radius: 50%; }
         .close-btn { color: var(--text-secondary); background: none; }

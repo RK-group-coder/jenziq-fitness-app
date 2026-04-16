@@ -39,13 +39,13 @@ const TopNav = ({ onMenuClick, onInboxClick, onChatClick, onFriendListClick, onL
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 12px 20px;
+          padding: calc(12px + env(safe-area-inset-top)) 20px 12px;
           position: sticky;
           top: 0;
           background-color: var(--background);
           z-index: 1000;
           border-bottom: 1px solid var(--border);
-          height: 64px;
+          height: calc(64px + env(safe-area-inset-top));
         }
         .nav-left {
           display: flex;

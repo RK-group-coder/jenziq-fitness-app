@@ -1461,7 +1461,13 @@ const DetailStyles = () => (
       padding-bottom: 40px; 
       box-shadow: 0 0 30px rgba(0,0,0,0.5); 
     }
-    .detail-header { padding: 16px 20px; display: flex; align-items: center; gap: 16px; background: rgba(10, 10, 11, 0.9); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .detail-header { 
+      padding: calc(20px + env(safe-area-inset-top)) 20px 16px; 
+      display: flex; align-items: center; gap: 16px; 
+      background: rgba(10, 10, 11, 0.9); backdrop-filter: blur(12px); 
+      position: sticky; top: 0; z-index: 100; 
+      border-bottom: 1px solid rgba(255,255,255,0.05); 
+    }
     .back-btn { width: 40px; height: 40px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
     .header-info { display: flex; flex-direction: column; }
     .header-title-row { display: flex; align-items: center; gap: 10px; }
@@ -1959,7 +1965,11 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
       <style>{`
         .photo-cal-page { background: #0d1117; min-height: 100vh; }
         .photo-cal-records-view { position: fixed; inset: 0; background: #0d1117; display: flex; flex-direction: column; z-index: 1100; }
-        .records-header-v2 { padding: 60px 24px 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #111, transparent); }
+        .records-header-v2 { 
+          padding: calc(60px + env(safe-area-inset-top)) 24px 20px; 
+          display: flex; justify-content: space-between; align-items: center; 
+          background: linear-gradient(to bottom, #111, transparent); 
+        }
         .records-header-v2 h3 { font-size: 20px; font-weight: 900; color: white; margin: 0; }
         .h-back-btn { background: none; border: none; color: white; cursor: pointer; }
         .records-scroll-area { flex: 1; padding: 0 20px; overflow-y: auto; padding-bottom: 200px; }
@@ -2109,7 +2119,13 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
         .landing-btn.secondary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; backdrop-filter: blur(10px); }
 
         .photo-result-hero { position: relative; }
-        .hero-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
+        .hero-header { 
+          position: fixed; top: 0; left: 0; right: 0; 
+          height: calc(60px + env(safe-area-inset-top)); 
+          padding: env(safe-area-inset-top) 16px 0; 
+          display: flex; justify-content: space-between; align-items: center; 
+          z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); 
+        }
         .hero-back-btn, .hero-close-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); border: none; color: white; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .hero-image-wrap { width: 100%; height: 40vh; overflow: hidden; }
         .hero-image { width: 100%; height: 100%; object-fit: cover; }
@@ -3145,7 +3161,7 @@ const ChatBotDetail = ({ onBack }) => {
         }
 
         .chat-detail-header {
-          padding: 20px 24px;
+          padding: calc(20px + env(safe-area-inset-top)) 24px 20px;
           background: rgba(13,17,23,0.8);
           backdrop-filter: blur(20px);
           border-bottom: 2px solid rgba(0,242,255,0.1);

@@ -1622,9 +1622,38 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-        analyzeImage(reader.result);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          // 壓縮邏輯：最大寬度/高度設為 1024px
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const max_size = 1024;
+
+          if (width > height) {
+            if (width > max_size) {
+              height *= max_size / width;
+              width = max_size;
+            }
+          } else {
+            if (height > max_size) {
+              width *= max_size / height;
+              height = max_size;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // 轉為 0.7 品質的 jpeg 以大幅縮小體積
+          const compressedB64 = canvas.toDataURL('image/jpeg', 0.7);
+          setPreviewUrl(compressedB64);
+          analyzeImage(compressedB64);
+        };
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }

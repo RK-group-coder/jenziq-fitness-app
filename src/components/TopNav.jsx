@@ -61,6 +61,10 @@ const TopNav = ({ onMenuClick, onInboxClick, onChatClick, onFriendListClick, onL
           display: flex;
           align-items: center;
         }
+        @media (min-width: 1024px) {
+          .menu-btn, .logo { display: none; }
+          .top-nav { justify-content: flex-end; border-bottom: none; }
+        }
         .logo {
           font-size: 20px;
           font-weight: 700;

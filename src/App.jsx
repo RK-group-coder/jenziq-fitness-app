@@ -94,8 +94,11 @@ function App() {
     }
   };
 
+  const activeRole = user?.email === 'test@gmail.com' ? tempRole : user?.role;
+  const isManagerMode = activeRole === 'manager';
+
   return (
-    <div className="app-container">
+    <div className={`app-container ${isManagerMode ? 'manager-mode' : ''}`}>
       {renderContent()}
     </div>
   );

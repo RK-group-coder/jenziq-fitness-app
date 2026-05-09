@@ -63,9 +63,14 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  /* padding-bottom: var(--bottom-nav-height); moved to internal components */
   overflow-y: auto; /* Only allow scrolling inside the app container */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+@media (min-width: 1024px) {
+  .app-container.manager-mode {
+    max-width: none;
+  }
 }
 
 img {

@@ -30,7 +30,8 @@ const BottomNav = ({ activePage, onPageChange }) => {
           transform: translateX(-50%);
           width: 100%;
           max-width: 480px;
-          height: var(--bottom-nav-height);
+          height: calc(var(--bottom-nav-height) + var(--safe-bottom));
+          padding-bottom: var(--safe-bottom);
           background-color: var(--secondary-bg);
           display: flex;
           justify-content: space-around;

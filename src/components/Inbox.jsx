@@ -261,7 +261,7 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
 
                 <style>{`
                     .message-detail { display: flex; flex-direction: column; height: 100%; background-color: var(--background); }
-                    .detail-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+                    .detail-header { display: flex; justify-content: space-between; align-items: center; padding: calc(16px + var(--safe-top)) 20px 16px; border-bottom: 1px solid var(--border); }
                     .detail-content { flex: 1; padding: 24px 20px; overflow-y: auto; }
                     .msg-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
                     .msg-tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; opacity: 0.8; }
@@ -356,7 +356,7 @@ const Inbox = ({ role = 'student', onBack, user, onUnreadChange }) => {
 
             <style>{`
                 .inbox-container { height: 100%; display: flex; flex-direction: column; background-color: var(--background); }
-                .inbox-header { padding: 20px; border-bottom: 1px solid var(--border); }
+                .inbox-header { padding: calc(20px + var(--safe-top)) 20px 20px; border-bottom: 1px solid var(--border); }
                 .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
                 .title { font-size: 20px; font-weight: 800; color: white; }
                 .close-btn { background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.2s; }

@@ -80,7 +80,7 @@ const EventModal = ({ event, onClose, currentUserLevel = 1 }) => {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 20px 20px calc(20px + var(--safe-bottom));
             z-index: 3000;
             animation: fadeIn 0.3s ease-out;
         }

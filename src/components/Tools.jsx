@@ -1462,7 +1462,7 @@ const DetailStyles = () => (
       box-shadow: 0 0 30px rgba(0,0,0,0.5); 
     }
     .detail-header { 
-      padding: calc(20px + env(safe-area-inset-top)) 20px 16px; 
+      padding: calc(20px + var(--safe-top)) 20px 16px; 
       display: flex; align-items: center; gap: 16px; 
       background: rgba(10, 10, 11, 0.9); backdrop-filter: blur(12px); 
       position: sticky; top: 0; z-index: 100; 
@@ -1475,9 +1475,10 @@ const DetailStyles = () => (
     .icon-wrap.orange { background: #FF6B00; }
     .icon-wrap.red { background: #E11D48; }
     .icon-wrap.blue { background: #3B82F6; }
+    .icon-wrap.green { background: #10B981; }
     .detail-title { font-size: 18px; font-weight: 800; color: white; }
     .detail-subtitle { font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; margin-top: -2px; padding-left: 42px; }
-    .detail-content { padding: 24px 20px; position: relative; z-index: 2; }
+    .detail-content { padding: 24px 20px; position: relative; z-index: 2; padding-bottom: calc(40px + var(--safe-bottom)); }
 
     /* Premium Form Shared Styles */
     .premium-form-container { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -1977,7 +1978,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
         .photo-cal-page { background: #0d1117; min-height: 100vh; }
         .photo-cal-records-view { position: fixed; inset: 0; background: #0d1117; display: flex; flex-direction: column; z-index: 1100; }
         .records-header-v2 { 
-          padding: calc(60px + env(safe-area-inset-top)) 24px 20px; 
+          padding: calc(20px + var(--safe-top)) 24px 20px; 
           display: flex; justify-content: space-between; align-items: center; 
           background: linear-gradient(to bottom, #111, transparent); 
         }
@@ -2116,10 +2117,10 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
 
         .fixed-landing-actions {
           position: fixed; bottom: 0; left: 0; right: 0;
-          padding: 40px 24px;
-          background: linear-gradient(to top, #0d1117 70%, transparent);
+          padding: 24px 24px calc(24px + var(--safe-bottom));
+          background: linear-gradient(to top, #0d1117 80%, transparent);
           display: flex; flex-direction: column; gap: 12px;
-          z-index: 50;
+          z-index: 100;
         }
         .landing-btn {
           width: 100%; height: 56px; border-radius: 16px; border: none; font-size: 16px; font-weight: 800;
@@ -2132,8 +2133,8 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
         .photo-result-hero { position: relative; }
         .hero-header { 
           position: fixed; top: 0; left: 0; right: 0; 
-          height: calc(60px + env(safe-area-inset-top)); 
-          padding: env(safe-area-inset-top) 16px 0; 
+          height: calc(60px + var(--safe-top)); 
+          padding: var(--safe-top) 16px 0; 
           display: flex; justify-content: space-between; align-items: center; 
           z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); 
         }
@@ -3172,7 +3173,7 @@ const ChatBotDetail = ({ onBack }) => {
         }
 
         .chat-detail-header {
-          padding: calc(20px + env(safe-area-inset-top)) 24px 20px;
+          padding: calc(20px + var(--safe-top)) 24px 20px;
           background: rgba(13,17,23,0.8);
           backdrop-filter: blur(20px);
           border-bottom: 2px solid rgba(0,242,255,0.1);
@@ -3230,7 +3231,7 @@ const ChatBotDetail = ({ onBack }) => {
           position: fixed; bottom: 0; left: 0; width: 100%;
           background: rgba(13,17,23,0.9);
           backdrop-filter: blur(20px);
-          padding: 24px;
+          padding: 24px 24px calc(24px + var(--safe-bottom));
           border-top: 2px solid rgba(0,242,255,0.1);
           display: flex; gap: 14px; align-items: center;
         }

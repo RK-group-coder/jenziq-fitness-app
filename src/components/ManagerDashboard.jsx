@@ -335,7 +335,7 @@ const ManagerDashboard = ({ user, onLogout }) => {
             .drawer-overlay, .close-btn { display: none; }
         }
 
-        .drawer-header { padding: calc(32px + env(safe-area-inset-top)) 24px 32px; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-header { padding: calc(24px + var(--safe-top)) 24px 32px; display: flex; justify-content: space-between; align-items: center; }
         .manager-brand { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 900; color: white; letter-spacing: -0.5px; }
         .brand-dot { width: 12px; height: 12px; background-color: #FF5C00; border-radius: 50%; box-shadow: 0 0 15px rgba(255, 92, 0, 0.5); }
         .close-btn { color: var(--text-secondary); background: none; }
@@ -370,7 +370,7 @@ const ManagerDashboard = ({ user, onLogout }) => {
         .nav-item.active .arrow { opacity: 1; transform: translateX(0); }
         .nav-item:hover .arrow { opacity: 0.5; transform: translateX(0); }
 
-        .drawer-footer { padding: 24px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .drawer-footer { padding: 24px 24px calc(24px + var(--safe-bottom)); border-top: 1px solid rgba(255,255,255,0.05); }
         .admin-profile { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
         .prof-avatar { width: 40px; height: 40px; background-color: #18181B; color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 850; border: 1px solid rgba(255,255,255,0.1); }
         .prof-info { flex: 1; overflow: hidden; }

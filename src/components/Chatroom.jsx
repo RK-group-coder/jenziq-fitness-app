@@ -575,6 +575,14 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                 </div>
             </header>
 
+            <style>{`
+                .chat-header {
+                    padding: calc(12px + var(--safe-top)) 16px 12px;
+                    display: flex; align-items: center; gap: 12px;
+                    border-bottom: 1px solid var(--border);
+                }
+            `}</style>
+
             <div className="messages-area">
                 <div className="chat-intro">
                     <div className={`large-avatar ${selectedFriend.email === SUPPORT_EMAIL ? 'support-glow-large' : ''}`}>
@@ -639,7 +647,7 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                 <div ref={messagesEndRef} />
             </div>
 
-            <div className="chat-bottom-container">
+            <div className="chat-bottom-container" style={{ paddingBottom: 'var(--safe-bottom)', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(20px)' }}>
                 {showMentionSuggest && (
                     <div className="mention-suggest-box" onClick={applyMention}>
                         <div className="mention-item">
@@ -730,7 +738,7 @@ const Chatroom = ({ user, onBack, initialFriend }) => {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 12px 16px;
+                    padding: calc(12px + var(--safe-top)) 16px 12px;
                     border-bottom: 1px solid var(--border);
                 }
                 .title { font-size: 20px; font-weight: 800; }

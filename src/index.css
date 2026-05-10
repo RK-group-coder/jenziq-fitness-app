@@ -19,6 +19,12 @@
   --radius-lg: 12px;
   --nav-height: 64px;
   --bottom-nav-height: 72px;
+
+  /* Safe Area Insets for modern devices */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 }
 
 * {
@@ -26,24 +32,22 @@
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
-  /* Disable selection for native feel (optional) */
-  /* user-select: none; */
 }
 
 html, body {
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Lock the root scrolling */
-  overscroll-behavior: none; /* Disable rubber-band pull to refresh */
+  height: -webkit-fill-available; /* Critical for iOS Safari */
+  overflow: hidden; 
+  overscroll-behavior: none;
 }
 
 body {
   font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #000; /* Outer background */
+  background-color: #000;
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -51,20 +55,27 @@ body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  height: 100dvh; /* Dynamic viewport height for mobile */
+  height: 100dvh;
 }
 
 .app-container {
   width: 100%;
-  max-width: 480px; /* Mobile width cap for desktop */
+  max-width: 480px;
   background-color: var(--background);
   height: 100%;
   height: 100dvh;
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Only allow scrolling inside the app container */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  overflow: hidden; /* Ensure container itself doesn't scroll */
+}
+
+/* Base scrollable content class */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom));
 }
 
 @media (min-width: 1024px) {

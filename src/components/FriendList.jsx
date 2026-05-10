@@ -478,7 +478,7 @@ const FriendList = ({ user, onBack, onSelectFriend }) => {
           background-color: var(--background); color: white;
         }
         .panel-header {
-          padding: 12px 16px; display: flex; align-items: center;
+          padding: calc(12px + var(--safe-top)) 16px 12px; display: flex; align-items: center;
           background: #111827; border-bottom: 1px solid var(--border);
           position: sticky; top: 0; z-index: 100;
         }
@@ -569,7 +569,7 @@ const FriendList = ({ user, onBack, onSelectFriend }) => {
         .profile-overlay {
           position: fixed; inset: 0; background: rgba(0,0,0,0.85);
           display: flex; align-items: flex-end; justify-content: center; z-index: 1100;
-          backdrop-filter: blur(8px); padding-bottom: 20px;
+          backdrop-filter: blur(8px); padding-bottom: calc(20px + var(--safe-bottom));
         }
         .profile-card {
           width: 95%; max-width: 450px; background: #1a1a1a;

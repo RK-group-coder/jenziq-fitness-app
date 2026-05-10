@@ -583,7 +583,7 @@ const RecordsPage = () => {
 
       <style>{`
         .records-page {
-          padding: 20px 16px 100px;
+          padding: calc(20px + var(--safe-top)) 16px calc(100px + var(--safe-bottom));
           background: var(--background);
           min-height: 100vh;
           position: relative;
@@ -733,7 +733,7 @@ const RecordsPage = () => {
           padding-top: 10px;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .view-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-top: 10px; }
+        .view-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
         .back-to-calendar { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ccc; padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; }
         .timeline-view .title { font-size: 18px; margin: 0; }
 

@@ -220,11 +220,20 @@ const RecordsPage = () => {
                     key={h}
                     data-hour={h}
                     className={`time-slot ${isSelected ? 'selected' : ''}`}
-                    onMouseDown={() => isToday && handleTimeDown(h)}
+                    onMouseDown={() => {
+                      if (isToday) {
+                        handleTimeDown(h);
+                      } else {
+                        alert('只能登記或編輯今日的習慣與飲食紀錄');
+                      }
+                    }}
                     onMouseEnter={() => isToday && handleTimeEnter(h)}
                     onMouseUp={() => isToday && handleTimeUp()}
                     onTouchStart={(e) => {
-                      if (!isToday) return;
+                      if (!isToday) {
+                        alert('只能登記或編輯今日的習慣與飲食紀錄');
+                        return;
+                      }
                       const isInside = selection && h >= Math.min(selection.start, selection.end) && h <= Math.max(selection.start, selection.end);
                       if (!isInside) {
                         e.preventDefault();

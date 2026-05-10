@@ -1733,7 +1733,9 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
         calories: analysis.total.calories,
         protein: analysis.total.protein,
         carbs: analysis.total.carbs,
-        fat: analysis.total.fat
+        fat: analysis.total.fat,
+        chefNote: analysis.chefNote,
+        items: analysis.items
       };
       saveRecord(newRec);
       setResult(analysis);
@@ -1796,8 +1798,8 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
                           setResult({
                             mealName: rec.name,
                             total: { calories: rec.calories, protein: rec.protein, carbs: rec.carbs, fat: rec.fat },
-                            items: [],
-                            chefNote: "查看歷史紀錄摘要。"
+                            items: rec.items || [],
+                            chefNote: rec.chefNote || "查看歷史紀錄摘要。"
                           });
                         }}>
                           <div className="rec-img-box">

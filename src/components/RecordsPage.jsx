@@ -427,6 +427,12 @@ const RecordsPage = () => {
                 ))}
               </div>
               <div className="report-grid">
+                {/* Background Hour Lines */}
+                <div className="report-grid-bg">
+                  {hours.map(h => (
+                    <div key={h} className="hour-grid-line" style={{ top: (h / 24) * 100 + '%' }}></div>
+                  ))}
+                </div>
                 {weekDays.map((day, dIdx) => {
                   const dayRecords = records.filter(r => isSameDay(r.date, day));
                   return (
@@ -439,6 +445,7 @@ const RecordsPage = () => {
                         {dayRecords.map(r => {
                           const habit = r.type === 'habit' ? habits.find(h => h.id === r.habitId) : null;
                           const color = r.type === 'diet' ? '#FFD700' : (habit?.color || '#FF6B00');
+                          const duration = r.endTime - r.startTime + 1;
                           return (
                             <div 
                               key={r.id} 
@@ -446,26 +453,33 @@ const RecordsPage = () => {
                               onClick={() => setViewedFood(r)}
                               style={{
                                 top: (r.startTime / 24) * 100 + '%',
-                                height: ((r.endTime - r.startTime + 1) / 24) * 100 + '%',
+                                height: (duration / 24) * 100 + '%',
                                 backgroundColor: color,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 padding: '2px',
                                 overflow: 'hidden',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                borderRadius: '4px',
+                                zIndex: 10
                               }}
                             >
-                              <span style={{ 
-                                fontSize: '8px', 
-                                color: '#fff', 
-                                fontWeight: '900', 
-                                textAlign: 'center',
-                                textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                                lineBreak: 'anywhere'
-                              }}>
-                                {r.type === 'diet' ? '🍽️' : habit?.name}
-                              </span>
+                              {duration >= 1 && (
+                                <span style={{ 
+                                  fontSize: '9px', 
+                                  color: '#fff', 
+                                  fontWeight: '900', 
+                                  textAlign: 'center',
+                                  textShadow: '0 1px 2px rgba(0,0,0,0.8)',
+                                  lineBreak: 'anywhere',
+                                  lineHeight: '1',
+                                  transform: duration < 2 ? 'scale(0.8)' : 'none'
+                                }}>
+                                  {r.type === 'diet' ? '🍽️' : habit?.name}
+                                </span>
+                              )}
                             </div>
                           );
                         })}
@@ -958,6 +972,20 @@ const RecordsPage = () => {
           grid-template-columns: repeat(7, 1fr);
           gap: 6px;
           height: 100%;
+          position: relative;
+        }
+        .report-grid-bg {
+          position: absolute;
+          inset: 45px 0 0 0;
+          pointer-events: none;
+        }
+        .hour-grid-line {
+          position: absolute;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: rgba(255,255,255,0.03);
+          border-top: 1px dashed rgba(255,255,255,0.02);
         }
         .report-day-column {
           display: flex;
@@ -965,6 +993,8 @@ const RecordsPage = () => {
           height: 100%;
           background: rgba(255,255,255,0.02);
           border-radius: 8px;
+          position: relative;
+          z-index: 1;
         }
         .report-day-header {
           display: flex;
@@ -988,8 +1018,14 @@ const RecordsPage = () => {
           position: absolute;
           left: 0;
           right: 0;
-          border-radius: 2px;
-          min-height: 4px;
+          border-radius: 4px;
+          min-height: 8px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          transition: 0.2s;
+        }
+        .report-record-bar:hover {
+          filter: brightness(1.2);
+          z-index: 20;
         }
 
         .report-footer {

@@ -3212,18 +3212,18 @@ const ChatBotDetail = ({ onBack }) => {
         .chat-bubble-wrap.user { justify-content: flex-start; }
         .chat-bubble { max-width: 85%; padding: 14px 18px; font-size: 15px; font-weight: 600; line-height: 1.6; }
         
-        .bot.chat-bubble {
-          background: rgba(255,255,255,0.03);
+        .bot .chat-bubble {
+          background: rgba(255,255,255,0.05);
           color: #e2e8f0;
           border-radius: 20px 20px 4px 20px;
-          border: 1px solid rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.15);
           box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        .user.chat-bubble {
+        .user .chat-bubble {
           background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
           color: white;
           border-radius: 20px 20px 20px 4px;
-          border: 1px solid rgba(0,242,255,0.3);
+          border: 1px solid rgba(0,242,255,0.5);
           box-shadow: 0 8px 20px rgba(0,71,171,0.3);
         }
 

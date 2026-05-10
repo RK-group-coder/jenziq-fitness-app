@@ -2407,6 +2407,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   className="modern-input tech-input"
                   value={target}
                   onChange={e => setTarget(e.target.value)}
+                  disabled={isAnalyzing || result}
                 />
                 <div className="input-glow"></div>
               </div>
@@ -2422,6 +2423,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   <div
                     key={opt}
                     className={`stack-btn-v2 tech-stack-btn ${timing === opt ? 'active red tech-glow' : ''}`}
+                    style={(isAnalyzing || result) ? { pointerEvents: 'none', opacity: 0.6 } : {}}
                     onClick={() => setTiming(opt)}
                   >
                     <span className="btn-label">{opt}</span>
@@ -2447,6 +2449,7 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   className={`premium-slider red tech-slider ${intensity >= 8 ? 'neon-red-slider' : ''}`}
                   value={intensity}
                   onChange={e => setIntensity(Number(e.target.value))}
+                  disabled={isAnalyzing || result}
                 />
                 <div className="slider-ticks">
                   {[...Array(10)].map((_, i) => <div key={i} className={`tick ${intensity > i ? 'active' : ''}`}></div>)}
@@ -2469,12 +2472,13 @@ const InjuryAssessmentDetail = ({ onBack, user }) => {
                   className="modern-textarea tech-textarea"
                   value={details}
                   onChange={e => setDetails(e.target.value)}
+                  disabled={isAnalyzing || result}
                 ></textarea>
                 <div className="input-glow"></div>
               </div>
             </div>
 
-            <button className="premium-submit-btn red-glow tech-submit" onClick={analyzeInjury} disabled={isAnalyzing}>
+            <button className="premium-submit-btn red-glow tech-submit" onClick={analyzeInjury} disabled={isAnalyzing || result}>
               {isAnalyzing ? (
                 <div className="tech-loading-wrap">
                   <div className="tech-spinner"></div>

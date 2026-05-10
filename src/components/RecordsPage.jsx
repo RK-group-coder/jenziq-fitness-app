@@ -213,15 +213,18 @@ const RecordsPage = () => {
             <div className="timeline-slots">
               {hours.map(h => {
                 const isSelected = selection && h >= Math.min(selection.start, selection.end) && h <= Math.max(selection.start, selection.end);
+                const isToday = isSameDay(selectedDate, new Date());
+                
                 return (
                   <div
                     key={h}
                     data-hour={h}
                     className={`time-slot ${isSelected ? 'selected' : ''}`}
-                    onMouseDown={() => handleTimeDown(h)}
-                    onMouseEnter={() => handleTimeEnter(h)}
-                    onMouseUp={handleTimeUp}
+                    onMouseDown={() => isToday && handleTimeDown(h)}
+                    onMouseEnter={() => isToday && handleTimeEnter(h)}
+                    onMouseUp={() => isToday && handleTimeUp()}
                     onTouchStart={(e) => {
+                      if (!isToday) return;
                       const isInside = selection && h >= Math.min(selection.start, selection.end) && h <= Math.max(selection.start, selection.end);
                       if (!isInside) {
                         e.preventDefault();
@@ -231,12 +234,17 @@ const RecordsPage = () => {
                       }
                     }}
                     onTouchMove={(e) => {
+                      if (!isToday) return;
                       if (isSelecting) e.preventDefault();
                       handleTouchMove(e);
                     }}
-                    onTouchEnd={handleTimeUp}
-                    onClick={() => handleTimeClick(h)}
-                    style={{ userSelect: 'none', touchAction: 'pan-x' }}
+                    onTouchEnd={() => isToday && handleTimeUp()}
+                    onClick={() => isToday && handleTimeClick(h)}
+                    style={{ 
+                      userSelect: 'none', 
+                      touchAction: isToday ? 'pan-x' : 'auto',
+                      cursor: isToday ? 'crosshair' : 'default'
+                    }}
                   />
                 );
               })}
@@ -371,11 +379,7 @@ const RecordsPage = () => {
                   onClick={() => {
                     if (!day) return;
                     setSelectedDate(day);
-                    if (isSameDay(day, new Date())) {
-                      setShowTimeline(true);
-                    } else {
-                      alert('只能登記當天的排程紀錄');
-                    }
+                    setShowTimeline(true);
                   }}
                 >
                   {day && (

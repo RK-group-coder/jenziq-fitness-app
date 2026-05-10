@@ -38,10 +38,8 @@ const RecordsPage = () => {
   const [viewedFood, setViewedFood] = useState(null);
   const [showActionPopover, setShowActionPopover] = useState(false);
   const [selection, setSelection] = useState(null); // { start, end }
-  const [showDietModal, setShowDietModal] = useState(false);
-  const [dietForm, setDietForm] = useState({ photo: null, note: '' });
-  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [selectedReportWeek, setSelectedReportWeek] = useState(new Date());
+  const dietInputRef = useRef(null);
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const timelineRef = useRef(null);
@@ -442,12 +440,30 @@ const RecordsPage = () => {
                             <div 
                               key={r.id} 
                               className="report-record-bar"
+                              onClick={() => setViewedFood(r)}
                               style={{
                                 top: (r.startTime / 24) * 100 + '%',
                                 height: ((r.endTime - r.startTime + 1) / 24) * 100 + '%',
-                                backgroundColor: color
+                                backgroundColor: color,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '2px',
+                                overflow: 'hidden',
+                                cursor: 'pointer'
                               }}
-                            />
+                            >
+                              <span style={{ 
+                                fontSize: '8px', 
+                                color: '#fff', 
+                                fontWeight: '900', 
+                                textAlign: 'center',
+                                textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                                lineBreak: 'anywhere'
+                              }}>
+                                {r.type === 'diet' ? '🍽️' : habit?.name}
+                              </span>
+                            </div>
                           );
                         })}
                       </div>
@@ -502,18 +518,31 @@ const RecordsPage = () => {
               <button onClick={() => setViewedFood(null)}><X size={20} /></button>
             </div>
             <div className="popup-body">
-              <div className="diet-time-badge">
-                <Clock size={14} /> {viewedFood.startTime}:00 - {viewedFood.endTime}:00
+              <div className="diet-time-badge" style={{ backgroundColor: viewedFood.type === 'habit' ? (habits.find(h => h.id === viewedFood.habitId)?.color + '33' || 'rgba(255,255,255,0.1)') : '#FFD70033' }}>
+                <Clock size={14} /> {viewedFood.startTime}:00 - {viewedFood.endTime + 1}:00
+                {viewedFood.type === 'habit' && <span style={{ marginLeft: '8px', fontWeight: '900' }}>{habits.find(h => h.id === viewedFood.habitId)?.name}</span>}
               </div>
-              {viewedFood.dietData.photo ? (
-                <img src={viewedFood.dietData.photo} alt="Food" className="detail-photo" />
+              {viewedFood.type === 'diet' ? (
+                <>
+                  {viewedFood.dietData?.photo ? (
+                    <img src={viewedFood.dietData.photo} alt="Food" className="detail-photo" />
+                  ) : (
+                    <div className="no-photo-placeholder"><ImageIcon size={48} /><span>未提供照片</span></div>
+                  )}
+                  <div className="detail-note-box">
+                    <label>飲食備註</label>
+                    <p>{viewedFood.dietData?.note || '無備註資訊'}</p>
+                  </div>
+                </>
               ) : (
-                <div className="no-photo-placeholder"><ImageIcon size={48} /><span>未提供照片</span></div>
+                <div className="habit-detail-summary">
+                  <div className="habit-icon-large" style={{ backgroundColor: habits.find(h => h.id === viewedFood.habitId)?.color }}>
+                    <Activity size={32} color="white" />
+                  </div>
+                  <h4>{habits.find(h => h.id === viewedFood.habitId)?.name}</h4>
+                  <p>這是一個良好的生活習慣，繼續保持！</p>
+                </div>
               )}
-              <div className="detail-note-box">
-                <label>備註內容</label>
-                <p>{viewedFood.dietData.note || '無備註資訊'}</p>
-              </div>
             </div>
             <button className="close-btn-full" onClick={() => setViewedFood(null)}>關閉視窗</button>
           </div>
@@ -561,10 +590,30 @@ const RecordsPage = () => {
         <div className="modal-overlay">
           <div className="modal-content diet-modal">
             <h3>紀錄飲食內容</h3>
-            <div className="diet-upload-zone" onClick={() => alert('此為功能演示，請在手機端開啟相機')}>
-              <ImageIcon size={32} />
-              <span>貼上照片或開啟相機</span>
+            <div className="diet-upload-zone" onClick={() => dietInputRef.current.click()}>
+              {dietForm.photo ? (
+                <img src={dietForm.photo} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
+              ) : (
+                <>
+                  <ImageIcon size={32} />
+                  <span>點擊開啟相機或相簿</span>
+                </>
+              )}
             </div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              ref={dietInputRef} 
+              style={{ display: 'none' }} 
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => setDietForm({ ...dietForm, photo: reader.result });
+                  reader.readAsDataURL(file);
+                }
+              }}
+            />
             <div className="form-group">
               <label>備註</label>
               <textarea
@@ -671,6 +720,14 @@ const RecordsPage = () => {
         .day-number { font-size: 15px; font-weight: 700; color: #ccc; }
         .day-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--primary); position: absolute; bottom: 4px; }
         .calendar-day.selected .day-dot { background: white; }
+
+        .calendar-day.selected .day-dot { background: white; }
+        
+        .report-record-bar:active { opacity: 0.7; transform: scale(0.9); }
+        .habit-detail-summary { padding: 20px 0; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+        .habit-icon-large { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .habit-detail-summary h4 { font-size: 20px; font-weight: 900; color: white; margin: 0; }
+        .habit-detail-summary p { font-size: 14px; color: #888; font-weight: 500; }
 
         /* Habit Checklist Section */
         .habit-checklist-container {

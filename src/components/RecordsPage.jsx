@@ -37,11 +37,8 @@ const RecordsPage = () => {
   // Modals & Popovers
   const [viewedFood, setViewedFood] = useState(null);
   const [showActionPopover, setShowActionPopover] = useState(false);
-  const [selection, setSelection] = useState(null); // { start, end }
   const [showDietModal, setShowDietModal] = useState(false);
   const [dietForm, setDietForm] = useState({ photo: null, note: '' });
-  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
-  const [selectedReportWeek, setSelectedReportWeek] = useState(new Date());
   const dietInputRef = useRef(null);
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -401,109 +398,12 @@ const RecordsPage = () => {
               <span>小撇步：新增飲食紀錄功能可供使用</span>
             </div>
 
-            <button className="generate-weekly-btn" onClick={() => setShowWeeklyReport(true)}>
-              <Calendar size={18} /> 產生周紀錄回顧
-            </button>
+
           </div>
         </div>
       )}
 
-      {/* Weekly Report Modal */}
-      {showWeeklyReport && (
-        <div className="modal-overlay full-screen" onClick={() => setShowWeeklyReport(false)}>
-          <div className="weekly-report-container" onClick={e => e.stopPropagation()}>
-            <div className="report-header">
-              <div className="header-info">
-                <h2>周計畫回顧回報表</h2>
-                <span>{weekDays[0].toLocaleDateString()} - {weekDays[6].toLocaleDateString()}</span>
-              </div>
-              <button className="close-report-btn" onClick={() => setShowWeeklyReport(false)}><X size={24} /></button>
-            </div>
 
-            <div className="report-content">
-              <div className="report-time-labels">
-                {hours.filter(h => h % 2 === 0).map(h => (
-                  <div key={h} className="report-hour-label">{`${h.toString().padStart(2, '0')}:00`}</div>
-                ))}
-              </div>
-              <div className="report-grid">
-                {/* Background Hour Lines */}
-                <div className="report-grid-bg">
-                  {hours.map(h => (
-                    <div key={h} className="hour-grid-line" style={{ top: (h / 24) * 100 + '%' }}></div>
-                  ))}
-                </div>
-                {weekDays.map((day, dIdx) => {
-                  const dayRecords = records.filter(r => isSameDay(r.date, day));
-                  return (
-                    <div key={dIdx} className="report-day-column">
-                      <div className="report-day-header">
-                        <span className="day-name">{['一', '二', '三', '四', '五', '六', '日'][dIdx]}</span>
-                        <span className="day-date">{day.getDate()}</span>
-                      </div>
-                      <div className="report-day-timeline">
-                        {dayRecords.map(r => {
-                          const habit = r.type === 'habit' ? habits.find(h => h.id === r.habitId) : null;
-                          const color = r.type === 'diet' ? '#FFD700' : (habit?.color || '#FF6B00');
-                          const duration = r.endTime - r.startTime + 1;
-                          return (
-                            <div 
-                              key={r.id} 
-                              className="report-record-bar"
-                              onClick={() => setViewedFood(r)}
-                              style={{
-                                top: (r.startTime / 24) * 100 + '%',
-                                height: (duration / 24) * 100 + '%',
-                                backgroundColor: color,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: '2px',
-                                overflow: 'hidden',
-                                cursor: 'pointer',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                borderRadius: '4px',
-                                zIndex: 10
-                              }}
-                            >
-                              {duration >= 1 && (
-                                <span style={{ 
-                                  fontSize: '9px', 
-                                  color: '#fff', 
-                                  fontWeight: '900', 
-                                  textAlign: 'center',
-                                  textShadow: '0 1px 2px rgba(0,0,0,0.8)',
-                                  lineBreak: 'anywhere',
-                                  lineHeight: '1',
-                                  transform: duration < 2 ? 'scale(0.8)' : 'none'
-                                }}>
-                                  {r.type === 'diet' ? '🍽️' : habit?.name}
-                                </span>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            
-            <div className="report-footer">
-              <div className="footer-stat">
-                <div className="stat-dot" style={{ backgroundColor: 'var(--primary)' }}></div>
-                <span>習慣紀錄</span>
-                <div className="stat-dot" style={{ backgroundColor: '#FFD700', marginLeft: '12px' }}></div>
-                <span>飲食紀錄</span>
-              </div>
-              <button className="download-report-btn" onClick={() => alert('報表已存入相簿 (模擬效果)')}>
-                下載保存圖片
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Action Popover */}
       {showActionPopover && selection && (
@@ -928,124 +828,7 @@ const RecordsPage = () => {
           box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        /* Weekly Report Modal Style */
-        .modal-overlay.full-screen { padding: 0; align-items: flex-end; }
-        .weekly-report-container {
-          background: #151516;
-          width: 100%;
-          height: 90vh;
-          border-radius: 32px 32px 0 0;
-          display: flex;
-          flex-direction: column;
-          padding: 24px;
-          box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
-          animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-          z-index: 3000;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .report-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-        .header-info h2 { font-size: 24px; color: white; margin: 0 0 4px 0; }
-        .header-info span { color: #555; font-weight: 700; font-size: 14px; }
-        .close-report-btn { background: none; border: none; color: #555; }
-
-        .report-content {
-          flex: 1;
-          display: flex;
-          gap: 10px;
-          padding-bottom: 20px;
-          overflow: hidden;
-        }
-        .report-time-labels {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 45px 0 0 0;
-          color: #444;
-          font-size: 10px;
-          font-weight: 800;
-          width: 35px;
-        }
-        .report-grid {
-          flex: 1;
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          gap: 6px;
-          height: 100%;
-          position: relative;
-        }
-        .report-grid-bg {
-          position: absolute;
-          inset: 45px 0 0 0;
-          pointer-events: none;
-        }
-        .hour-grid-line {
-          position: absolute;
-          left: 0;
-          right: 0;
-          height: 1px;
-          background: rgba(255,255,255,0.03);
-          border-top: 1px dashed rgba(255,255,255,0.02);
-        }
-        .report-day-column {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          background: rgba(255,255,255,0.02);
-          border-radius: 8px;
-          position: relative;
-          z-index: 1;
-        }
-        .report-day-header {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 8px 0;
-          background: rgba(255,255,255,0.03);
-          border-radius: 8px 8px 0 0;
-        }
-        .day-name { font-size: 11px; color: #666; font-weight: 800; }
-        .day-date { font-size: 16px; color: white; font-weight: 900; }
-        
-        .report-day-timeline {
-          flex: 1;
-          position: relative;
-          margin: 4px;
-          background: rgba(0,0,0,0.2);
-          border-radius: 4px;
-        }
-        .report-record-bar {
-          position: absolute;
-          left: 0;
-          right: 0;
-          border-radius: 4px;
-          min-height: 8px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          transition: 0.2s;
-        }
-        .report-record-bar:hover {
-          filter: brightness(1.2);
-          z-index: 20;
-        }
-
-        .report-footer {
-          padding-top: 20px;
-          border-top: 1px solid rgba(255,255,255,0.05);
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-        .footer-stat { display: flex; align-items: center; font-size: 12px; color: #666; font-weight: 700; justify-content: center; }
-        .stat-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .download-report-btn {
-          background: var(--primary);
-          color: white;
-          border: none;
-          padding: 16px;
-          border-radius: 16px;
-          font-weight: 850;
-          font-size: 16px;
-        }
       `}</style>
     </div>
   );

@@ -3149,7 +3149,7 @@ const ChatBotDetail = ({ onBack }) => {
       </header>
       <div className="chat-messages">
         {messages.map((m, i) => (
-          <div key={i} className={`chat - bubble - wrap ${ m.role === 'bot' ? 'bot' : 'user' } `}>
+          <div key={i} className={`chat-bubble-wrap ${m.role === 'bot' ? 'bot' : 'user'}`}>
             <div className="chat-bubble">{m.content}</div>
           </div>
         ))}

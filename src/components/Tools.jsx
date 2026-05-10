@@ -3170,7 +3170,7 @@ const ChatBotDetail = ({ onBack }) => {
           onChange={e => setInput(e.target.value)}
           onKeyPress={e => e.key === 'Enter' && handleSend()}
         />
-        <button onClick={handleSend} className="chat-send-pulse"><Zap size={20} color="white" fill="white" /></button>
+        <button onClick={handleSend} className="chat-send-pulse">發送</button>
       </div>
 
       <style>{`
@@ -3251,12 +3251,16 @@ const ChatBotDetail = ({ onBack }) => {
         }
         .chat-input-row input:focus { border-color: #00f2ff; box-shadow: 0 0 15px rgba(0,242,255,0.1); }
         .chat-send-pulse {
-          width: 52px; height: 52px;
+          min-width: 72px; height: 52px;
+          padding: 0 16px;
           background: linear-gradient(135deg, #00f2ff 0%, #0066cc 100%);
           border: none; border-radius: 16px;
           display: flex; align-items: center; justify-content: center;
           cursor: pointer; box-shadow: 0 4px 15px rgba(0,242,255,0.3);
           transition: 0.3s;
+          color: white;
+          font-weight: 850;
+          font-size: 15px;
         }
         .chat-send-pulse:active { transform: scale(0.9); }
 `}</style>

@@ -3220,11 +3220,11 @@ const ChatBotDetail = ({ onBack }) => {
           box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .user .chat-bubble {
-          background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+          background: rgba(0, 242, 255, 0.1);
           color: white;
           border-radius: 20px 20px 20px 4px;
-          border: 1px solid rgba(0,242,255,0.5);
-          box-shadow: 0 8px 20px rgba(0,71,171,0.3);
+          border: 1px solid #00f2ff;
+          box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
         }
 
         .typing-indicator {

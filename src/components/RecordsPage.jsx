@@ -38,6 +38,9 @@ const RecordsPage = () => {
   const [viewedFood, setViewedFood] = useState(null);
   const [showActionPopover, setShowActionPopover] = useState(false);
   const [selection, setSelection] = useState(null); // { start, end }
+  const [showDietModal, setShowDietModal] = useState(false);
+  const [dietForm, setDietForm] = useState({ photo: null, note: '' });
+  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [selectedReportWeek, setSelectedReportWeek] = useState(new Date());
   const dietInputRef = useRef(null);
 

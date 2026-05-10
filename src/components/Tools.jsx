@@ -2154,7 +2154,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
         .macro-item.calories .macro-label { color: #FF6B00; opacity: 1; }
         .divider-line { height: 1px; background: rgba(255,255,255,0.05); margin: 0 -20px 30px; }
         .ai-advice-section { margin-bottom: 32px; }
-        .advice-text { font-size: 15px; line-height: 1.7; color: #ccc; font-weight: 500; background: rgba(16,185,129,0.05); padding: 18px; border-radius: 20px; border-left: 4px solid #10B981; }
+        .advice-text { font-size: 15px; line-height: 1.7; color: #eee; font-weight: 500; background: rgba(255,255,255,0.03); padding: 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
         .section-title { font-size: 17px; font-weight: 800; color: white; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
         .ingredient-cards { display: grid; gap: 14px; }
         .ingredient-card { background: rgba(255,255,255,0.02); border-radius: 18px; padding: 18px; border: 1px solid rgba(255,255,255,0.05); }

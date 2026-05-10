@@ -266,20 +266,58 @@ const RecordsPage = () => {
                       <div 
                         key={r.id} 
                         className="timeline-card"
-                        onClick={(e) => { e.stopPropagation(); if (r.type === 'diet') setViewedFood(r); }}
                         style={{
                           top: r.startTime * 50 + 2,
                           height: (r.endTime - r.startTime + 1) * 50 - 4,
                           left: (r.lane / totalLanes) * 100 + '%',
                           width: (100 / totalLanes) - 1 + '%',
                           backgroundColor: color + '15',
-                          borderLeft: `4px solid ${color}`
+                          borderLeft: `4px solid ${color}`,
+                          pointerEvents: 'none'
                         }}
                       >
                         <div className="card-content">
-                          <span className="card-title" style={{ color: color }}>
-                            {r.type === 'diet' ? '飲食紀錄' : habit?.name}
-                          </span>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <span className="card-title" style={{ color: color }}>
+                              {r.type === 'diet' ? '飲食紀錄' : habit?.name}
+                            </span>
+                            {r.type === 'diet' && (
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); setViewedFood(r); }}
+                                style={{ 
+                                  pointerEvents: 'auto',
+                                  background: color,
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  padding: '2px 6px',
+                                  fontSize: '10px',
+                                  color: 'black',
+                                  fontWeight: '900',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                查看
+                              </button>
+                            )}
+                            {r.type === 'habit' && (
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); setViewedFood(r); }}
+                                style={{ 
+                                  pointerEvents: 'auto',
+                                  background: 'rgba(255,255,255,0.1)',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  padding: '2px 6px',
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  fontWeight: '900',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                詳情
+                              </button>
+                            )}
+                          </div>
                           <span className="card-time">
                             <Clock size={10} /> {r.startTime}:00 - {r.endTime + 1}:00
                           </span>

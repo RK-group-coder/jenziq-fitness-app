@@ -37,6 +37,7 @@ const RecordsPage = () => {
   // Modals & Popovers
   const [viewedFood, setViewedFood] = useState(null);
   const [showActionPopover, setShowActionPopover] = useState(false);
+  const [selection, setSelection] = useState(null); // { start, end }
   const [showDietModal, setShowDietModal] = useState(false);
   const [dietForm, setDietForm] = useState({ photo: null, note: '' });
   const dietInputRef = useRef(null);

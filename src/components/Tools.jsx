@@ -3208,21 +3208,21 @@ const ChatBotDetail = ({ onBack }) => {
           scrollbar-width: thin; scrollbar-color: rgba(0,242,255,0.2) transparent;
         }
         .chat-bubble-wrap { display: flex; width: 100%; }
-        .chat-bubble-wrap.bot { justify-content: flex-start; }
-        .chat-bubble-wrap.user { justify-content: flex-end; }
+        .chat-bubble-wrap.bot { justify-content: flex-end; }
+        .chat-bubble-wrap.user { justify-content: flex-start; }
         .chat-bubble { max-width: 85%; padding: 14px 18px; font-size: 15px; font-weight: 600; line-height: 1.6; }
         
         .bot.chat-bubble {
           background: rgba(255,255,255,0.03);
           color: #e2e8f0;
-          border-radius: 20px 20px 20px 4px;
+          border-radius: 20px 20px 4px 20px;
           border: 1px solid rgba(255,255,255,0.08);
           box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .user.chat-bubble {
           background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
           color: white;
-          border-radius: 20px 20px 4px 20px;
+          border-radius: 20px 20px 20px 4px;
           border: 1px solid rgba(0,242,255,0.3);
           box-shadow: 0 8px 20px rgba(0,71,171,0.3);
         }

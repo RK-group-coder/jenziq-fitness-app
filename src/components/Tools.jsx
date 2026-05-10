@@ -1933,7 +1933,7 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
               <div className="meal-total-summary">{result.total.calories} Cal</div>
             </div>
             <div className="macros-strip">
-              <div className="macro-item"><span className="macro-num">{result.total.calories}</span><span className="macro-label">Cal</span></div>
+              <div className="macro-item calories"><span className="macro-num">{result.total.calories}</span><span className="macro-label">Cal</span></div>
               <div className="macro-item"><span className="macro-num">{result.total.protein}g</span><span className="macro-label">P</span></div>
               <div className="macro-item"><span className="macro-num">{result.total.carbs}g</span><span className="macro-label">C</span></div>
               <div className="macro-item"><span className="macro-num">{result.total.fat}g</span><span className="macro-label">F</span></div>
@@ -2145,10 +2145,13 @@ const PhotoCalDetail = ({ onBack, onChat }) => {
         .meal-main-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
         .meal-name { font-size: 26px; font-weight: 900; color: white; flex: 1; line-height: 1.2; }
         .meal-total-summary { font-size: 14px; color: #666; font-weight: 700; margin-top: 6px; }
-        .macros-strip { display: flex; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px 10px; margin-bottom: 30px; }
-        .macro-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
-        .macro-num { font-size: 26px; font-weight: 900; color: #FF6B00; text-shadow: 0 0 15px rgba(255, 107, 0, 0.4); }
-        .macro-label { font-size: 12px; color: #FF6B00; opacity: 0.7; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .macros-strip { display: flex; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px 10px; margin-bottom: 30px; align-items: flex-end; }
+        .macro-item { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+        .macro-num { font-size: 22px; font-weight: 900; color: #fff; }
+        .macro-label { font-size: 11px; color: #fff; opacity: 0.5; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .macro-item.calories .macro-num { font-size: 32px; color: #FF6B00; text-shadow: 0 0 15px rgba(255, 107, 0, 0.4); }
+        .macro-item.calories .macro-label { color: #FF6B00; opacity: 1; }
         .divider-line { height: 1px; background: rgba(255,255,255,0.05); margin: 0 -20px 30px; }
         .ai-advice-section { margin-bottom: 32px; }
         .advice-text { font-size: 15px; line-height: 1.7; color: #ccc; font-weight: 500; background: rgba(16,185,129,0.05); padding: 18px; border-radius: 20px; border-left: 4px solid #10B981; }

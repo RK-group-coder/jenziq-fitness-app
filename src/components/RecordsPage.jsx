@@ -169,20 +169,7 @@ const RecordsPage = () => {
     setDietForm({ photo: null, note: '' });
   };
 
-  const getWeekDays = (baseDate) => {
-    const curr = new Date(baseDate);
-    const day = curr.getDay(); // 0 is Sun, 1 is Mon
-    const diff = (day === 0 ? -6 : 1) - day; // Adjust to Monday
-    const startOfWeek = new Date(curr.setDate(curr.getDate() + diff));
-    
-    return Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(startOfWeek);
-      d.setDate(startOfWeek.getDate() + i);
-      return d;
-    });
-  };
 
-  const weekDays = getWeekDays(selectedReportWeek);
 
   // Calendar Helpers
   const getDaysInMonth = (date) => {

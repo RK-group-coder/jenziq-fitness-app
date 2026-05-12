@@ -1,39 +1,6 @@
 === Integrated JZ-Dev Server Log ===
-2026-04-04T12:47:05.167Z AI Request: gpt-4o-mini
-2026-04-04T12:47:39.566Z AI Request: gpt-4o-mini
-2026-04-04T13:13:45.560Z AI Request: gpt-4o-mini
-2026-04-04T13:14:00.605Z AI Request: gpt-4o-mini
-2026-04-04T13:17:11.630Z AI Request: gpt-4o-mini
-2026-04-04T13:17:54.460Z AI Request: gpt-4o-mini
-2026-04-04T13:18:11.244Z AI Request: gpt-4o-mini
-2026-04-04T13:21:12.723Z AI Request: gpt-4o-mini
-2026-04-04T13:28:51.480Z AI Request: gpt-4o-mini
-2026-04-05T05:45:56.120Z AI Request: gpt-4o-mini
-2026-04-05T05:59:03.628Z AI Request: gpt-4o-mini
-2026-04-05T05:59:31.697Z AI Request: gpt-4o-mini
-2026-04-05T06:05:31.923Z AI Request: gpt-4o-mini
-2026-04-05T06:05:45.324Z AI Request: gpt-4o-mini
-2026-04-05T06:12:11.108Z AI Request: gpt-4o-mini
-2026-04-05T06:18:39.710Z AI Request: gpt-4o-mini
-2026-04-05T06:19:20.770Z AI Request: gpt-4o-mini
-2026-04-05T06:20:57.224Z AI Request: gpt-4o-mini
-2026-04-05T06:38:43.625Z AI Request: gpt-4o-mini
-2026-04-05T06:40:39.786Z AI Request: gpt-4o-mini
-2026-04-05T06:51:55.494Z AI Request: gpt-4o-mini
-2026-04-05T07:06:49.524Z AI Request: gpt-4o-mini
-2026-04-05T07:09:04.330Z AI Request: gpt-4o-mini
-2026-04-05T07:13:59.756Z AI Request: gpt-4o-mini
-2026-04-05T07:35:38.770Z AI Request: gpt-4o-mini
-2026-04-05T07:48:41.473Z AI Request: gpt-4o-mini
-2026-04-05T08:40:47.968Z AI Request: gpt-4o-mini
-2026-04-05T09:21:07.052Z ECPay Request: {"price":988,"months":24}
-2026-04-05T10:26:30.203Z AI Request: gpt-4o-mini
-2026-04-05T10:26:51.066Z AI Request: gpt-4o-mini
-2026-04-05T10:56:26.388Z AI Request: gpt-4o-mini
-2026-04-05T10:57:36.421Z AI Request: gpt-4o-mini
-2026-04-05T10:58:56.672Z AI Request: gpt-4o-mini
-2026-04-05T10:59:43.265Z AI Request: gpt-4o-mini
-2026-04-05T12:15:17.560Z ECPay Request: {"price":1388,"months":12}
-2026-04-05T12:21:15.961Z ECPay Request: {"price":1388,"months":12}
-2026-04-05T12:22:20.660Z ECPay Request: {"price":1388,"months":12}
-2026-04-05T12:26:03.120Z ECPay Request: {"price":1388,"months":12}
+2026-05-12T07:55:16.962Z JZ Integrated API server (ECPay + AI) running at http://localhost:5174
+2026-05-12T07:55:16.967Z Proxying /api/chat to OpenAI...
+2026-05-12T08:13:00.026Z AI Request: gpt-4o-mini
+2026-05-12T08:13:31.587Z ECPay Request: {"price":988,"months":24}
+2026-05-12T08:13:31.590Z Generated Payload: {"MerchantID":"2000132","MerchantTradeNo":"JZ1778573611588","MerchantTradeDate":"2026/05/12 16:13:31","PaymentType":"aio","TotalAmount":"988","TradeDesc":"MembershipPlan","ItemName":"MembershipPlan","ReturnURL":"https://your-domain.com/api/ecpay-return","ChoosePayment":"Credit","EncryptType":"1","PeriodAmount":"988","PeriodType":"M","Frequency":"1","ExecTimes":"24","PeriodReturnURL":"https://your-domain.com/api/ecpay-return","CheckMacValue":"A313C46871424FACA2CD98FCD0B49C10410C3FD0A560F6879DB2448DD3279222"}

@@ -47,6 +47,7 @@ import PaymentRequestManager from './manager/PaymentRequestManager';
 import MembershipPlanManager from './manager/MembershipPlanManager';
 import PaymentHistoryManager from './manager/PaymentHistoryManager';
 import AccountPlanManager from './manager/AccountPlanManager';
+import ProductManager from './manager/ProductManager';
 
 const ManagerDashboard = ({ user, onLogout }) => {
     const [activeTab, setActiveTab] = useState('home');
@@ -133,6 +134,7 @@ const ManagerDashboard = ({ user, onLogout }) => {
                 { id: 'ad_banners', label: '廣告輪播管理', icon: Zap },
                 { id: 'payment_mgmt', label: '收款訊息派發', icon: CreditCard },
                 { id: 'payment_history', label: '金流對帳中心', icon: CreditCard },
+                { id: 'product_mgmt', label: '商品商城管理', icon: Package },
             ]
         },
         {
@@ -196,6 +198,7 @@ const ManagerDashboard = ({ user, onLogout }) => {
             case 'payment_history': return <PaymentHistoryManager onBack={() => setActiveTab('home')} />;
             case 'hero_banner': return <HeroBannerEditor />;
             case 'ad_banners': return <BannerManager />;
+            case 'product_mgmt': return <ProductManager />;
             case 'settings': return <SettingsManager />;
             default: return <ManagerHome onNavigate={setActiveTab} pendingCounts={pendingCounts} />;
         }

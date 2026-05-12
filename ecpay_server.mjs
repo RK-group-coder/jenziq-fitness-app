@@ -109,6 +109,7 @@ const server = http.createServer(async (req, res) => {
         }
 
         payload.CheckMacValue = generateCheckMacValue(payload);
+        log('Generated Payload: ' + JSON.stringify(payload));
         res.writeHead(200);
         res.end(JSON.stringify({ action: ECPAY_CONFIG.ActionURL, fields: payload }));
         return;

@@ -6,7 +6,7 @@ import PromoBanner from './PromoBanner';
 import Events from './Events';
 import Tools from './Tools';
 import BottomNav from './BottomNav';
-import ShopifyMall from './ShopifyMall';
+import JenziaMall from './JenziaMall';
 import ActivitiesPage from './ActivitiesPage';
 import RecordsPage from './RecordsPage';
 import Locations from './Locations';
@@ -72,7 +72,7 @@ const StudentDashboard = ({ user, onLogout }) => {
             <Hero user={user} onNavigate={setActivePage} />
             <PromoBanner />
             <Events user={user} onSeeAll={() => setActivePage('events')} />
-            <ShopifyMall />
+            <JenziaMall user={user} />
             <Locations onNavigate={setActivePage} />
           </>
         );

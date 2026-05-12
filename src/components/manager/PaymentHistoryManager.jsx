@@ -19,6 +19,7 @@ import { supabase } from '../../supabase';
 const PaymentHistoryManager = ({ onBack }) => {
     const [activeTab, setActiveTab] = useState('membership');
     const [payments, setPayments] = useState([]);
+    const [orders, setOrders] = useState([]); // New: for Mall orders
     const [availableMonths, setAvailableMonths] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState('All');
     const [isLoading, setIsLoading] = useState(true);
@@ -28,61 +29,88 @@ const PaymentHistoryManager = ({ onBack }) => {
     useEffect(() => {
         fetchPaymentHistory();
     }, [activeTab]);
-
     const fetchPaymentHistory = async () => {
         setIsLoading(true);
         try {
-            // Fetch real notifications filtered by tag and content
-            let query = supabase
-                .from('notifications')
-                .select('*')
-                .or('tag.eq.公告,tag.eq.繳費')
-                .order('created_at', { ascending: false });
+            if (activeTab === 'mall') {
+                const { data: orderData, error: orderError } = await supabase
+                    .from('orders')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-            // Apply category filters
-            if (activeTab === 'membership') {
-                query = query.ilike('content', '%方案%');
-            } else if (activeTab === 'broadcast') {
-                query = query.is('target_email', null).eq('target_role', 'student');
-            } else if (activeTab === 'individual') {
-                query = query.not('target_email', 'is', null);
+                if (orderError) throw orderError;
+
+                const mallPayments = (orderData || []).map(order => {
+                    const date = new Date(order.created_at);
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    return {
+                        id: order.merchant_trade_no,
+                        target_name: order.customer_name || '未知客戶',
+                        target_email: order.customer_email || 'No Email',
+                        amount: order.amount,
+                        category: '商城購物',
+                        status: order.status === 'paid' ? 'Succeeded' : (order.status === 'pending' ? 'Pending' : 'Failed'),
+                        created_at_raw: date,
+                        created_at: date.toLocaleString('zh-TW', { hour12: false }),
+                        monthKey: monthKey,
+                        paid_at: order.paid_at ? new Date(order.paid_at).toLocaleString('zh-TW', { hour12: false }) : null,
+                        method: order.payment_type || 'ECPAY / 未知'
+                    };
+                });
+                setPayments(mallPayments);
+                const months = [...new Set(mallPayments.map(p => p.monthKey))].sort((a, b) => b.localeCompare(a));
+                setAvailableMonths(months);
+            } else {
+                // Fetch real notifications filtered by tag and content
+                let query = supabase
+                    .from('notifications')
+                    .select('*')
+                    .or('tag.eq.公告,tag.eq.繳費')
+                    .order('created_at', { ascending: false });
+
+                // Apply category filters
+                if (activeTab === 'membership') {
+                    query = query.ilike('content', '%方案%');
+                } else if (activeTab === 'broadcast') {
+                    query = query.is('target_email', null).eq('target_role', 'student');
+                } else if (activeTab === 'individual') {
+                    query = query.not('target_email', 'is', null);
+                }
+
+                const { data, error } = await query;
+
+                if (error) throw error;
+
+                // Parse raw notifications into payment records
+                const parsedPayments = (data || []).map(notice => {
+                    // Extract amount using Regex: NT$ 1,234
+                    const amountMatch = notice.content.match(/NT\$\s*(\d+(?:,\d+)*)/i);
+                    const amount = amountMatch ? parseInt(amountMatch[1].replace(/,/g, '')) : 0;
+                    
+                    const isPaid = notice.content.includes('已完成') || notice.content.includes('支付成功');
+                    const date = new Date(notice.created_at);
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                    return {
+                        id: `NOTIF-${notice.id.toString().substr(0, 8)}`,
+                        target_name: notice.target_email ? notice.target_email.split('@')[0] : '全體學員',
+                        target_email: notice.target_email || 'Broadcast',
+                        amount: amount,
+                        category: activeTab === 'membership' ? '會籍方案' : (notice.target_email ? '個人發送' : '群體發送'),
+                        status: isPaid ? 'Succeeded' : 'Pending',
+                        created_at_raw: date,
+                        created_at: date.toLocaleString('zh-TW', { hour12: false }),
+                        monthKey: monthKey,
+                        paid_at: isPaid ? '已入帳' : null,
+                        method: 'ECPAY / 信用卡'
+                    };
+                }).filter(p => p.amount > 0);
+
+                // Extract unique months for the selector
+                const months = [...new Set(parsedPayments.map(p => p.monthKey))].sort((a, b) => b.localeCompare(a));
+                setAvailableMonths(months);
+                setPayments(parsedPayments);
             }
-
-            const { data, error } = await query;
-
-            if (error) throw error;
-
-            // Parse raw notifications into payment records
-            const parsedPayments = (data || []).map(notice => {
-                // Extract amount using Regex: NT$ 1,234
-                const amountMatch = notice.content.match(/NT\$\s*(\d+(?:,\d+)*)/i);
-                const amount = amountMatch ? parseInt(amountMatch[1].replace(/,/g, '')) : 0;
-                
-                // For Status: If there's no payment_history table yet, we show Pending/Succeeded based on context
-                // In production, we would join with an 'orders' table.
-                const isPaid = notice.content.includes('已完成') || notice.content.includes('支付成功');
-                const date = new Date(notice.created_at);
-                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-
-                return {
-                    id: `NOTIF-${notice.id.toString().substr(0, 8)}`,
-                    target_name: notice.target_email ? notice.target_email.split('@')[0] : '全體學員',
-                    target_email: notice.target_email || 'Broadcast',
-                    amount: amount,
-                    category: activeTab === 'membership' ? '會籍方案' : (notice.target_email ? '個人發送' : '群體發送'),
-                    status: isPaid ? 'Succeeded' : 'Pending',
-                    created_at_raw: date,
-                    created_at: date.toLocaleString('zh-TW', { hour12: false }),
-                    monthKey: monthKey,
-                    paid_at: isPaid ? '已入帳' : null,
-                    method: 'ECPAY / 信用卡'
-                };
-            }).filter(p => p.amount > 0);
-
-            // Extract unique months for the selector
-            const months = [...new Set(parsedPayments.map(p => p.monthKey))].sort((a, b) => b.localeCompare(a));
-            setAvailableMonths(months);
-            setPayments(parsedPayments);
         } catch (error) {
             console.error('Error fetching real payment history:', error);
         } finally {
@@ -134,7 +162,10 @@ const PaymentHistoryManager = ({ onBack }) => {
                         <Users size={16} /> 群體發送
                     </button>
                     <button className={`ph-tab ${activeTab === 'individual' ? 'active' : ''}`} onClick={() => setActiveTab('individual')}>
-                        <User size={16} /> 單一發送
+                        <User size={16} /> 個人發送
+                    </button>
+                    <button className={`ph-tab ${activeTab === 'mall' ? 'active' : ''}`} onClick={() => setActiveTab('mall')}>
+                        <Package size={16} /> 商城訂單
                     </button>
                 </div>
             </header>

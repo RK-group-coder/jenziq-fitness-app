@@ -10,6 +10,8 @@ import Inbox from './Inbox';
 import Chatroom from './Chatroom';
 import FriendList from './FriendList';
 import Tools from './Tools';
+import { supabase } from '../supabase';
+
 
 // 錯誤邊界組件
 class ErrorBoundary extends React.Component {

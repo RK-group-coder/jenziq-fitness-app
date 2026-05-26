@@ -19,7 +19,8 @@ import {
     Briefcase,
     ShieldCheck,
     Image as ImageIcon,
-    CreditCard
+    CreditCard,
+    Package
 } from 'lucide-react';
 import ManagerHome from './manager/ManagerHome';
 import TopNav from './TopNav';
